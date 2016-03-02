@@ -47,10 +47,9 @@ public class MainWindow {
 	private JTable calendarTable;
 	private JPanel calendarPanel;
 	
-	static JLabel lblMonth, lblYear;
+	static JLabel lblMonth;
 	static JButton btnPrev, btnNext;
 	static JTable tblCalendar;
-	static JComboBox cmbYear;
 	static JFrame frmMain;
 	static Container pane;
 	static DefaultTableModel mtblCalendar; //Table model
@@ -165,8 +164,6 @@ public class MainWindow {
 	
 	private void initiliazeCalendarComponents() {
 		lblMonth = new JLabel ("January");
-		lblYear = new JLabel ("Change year:");
-		cmbYear = new JComboBox();
 		btnPrev = new JButton ("<<");
 		btnNext = new JButton (">>");
 		mtblCalendar = getDefaultTableModel();
@@ -188,10 +185,8 @@ public class MainWindow {
 		calendarPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		calendarPanel.setBorder(BorderFactory.createTitledBorder("Calendar"));
 		mainTab.add(calendarPanel);
-		calendarPanel.add(lblMonth);
-		calendarPanel.add(lblYear);
-		calendarPanel.add(cmbYear);
 		calendarPanel.add(btnPrev);
+		calendarPanel.add(lblMonth);
 		calendarPanel.add(btnNext);
 		calendarPanel.add(stblCalendar);
 	}
@@ -199,8 +194,6 @@ public class MainWindow {
 	private void setBoundsCalendarComponents() {
 		calendarPanel.setBounds(239, 0, 417, 331);
 		lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 100, 25);
-		lblYear.setBounds(10, 305, 80, 20);
-		cmbYear.setBounds(230, 305, 80, 20);
 		btnPrev.setBounds(10, 25, 50, 25);
 		btnNext.setBounds(260, 25, 50, 25);
 		stblCalendar.setBounds(10, 50, 200, 200);
