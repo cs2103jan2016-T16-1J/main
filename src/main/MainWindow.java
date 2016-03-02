@@ -1,3 +1,5 @@
+package main;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -40,6 +42,7 @@ import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 
 public class MainWindow {
@@ -54,7 +57,7 @@ public class MainWindow {
 	private JTextField textField;
 	private JTable calendarTable;
 	private JPanel calendarPanel;
-	private JTextArea actionsTextArea;
+	private static JTextArea actionsTextArea;
 	
 	static JLabel lblMonth;
 	static JButton btnPrev, btnNext;
@@ -72,16 +75,52 @@ public class MainWindow {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		//For Testing Purposes
+		/*Index Positions of Data
+ 			public static final int NAME = 0;
+			public static final int DESCRIPTION = 1;
+			public static final int START_TIME = 2;
+			public static final int END_TIME = 3;
+			public static final int STATUS = 4;
+		public static final int CATEGORY = 5;
+		 */
+		String[][] testParsedInformation = {
+				{
+				"testName",
+				"test description blah blah but i'm not a rapper",
+				"2016-01-01 00:00:00.0",
+				"2011-01-19 00:00:00.0",
+				"INCOMPLETE",
+				"SCHOOL CATEGORY"
+				}
+		};
+		
+		InfoHandler info =  new InfoHandler(testParsedInformation);
+		info.setNumberOfEvents(testParsedInformation.length);
+		ArrayList<Event> allEvents = info.processInfo();
+		//Getting Events to display in Text Area
+		String result = new String("");
+		
+		for(int i = 0; i < info.numberOfEvents; i++){
+			result = result + allEvents.get(i).printEvent();
+			
+		}
+		final String finalResult = result;
+		
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					MainWindow window = new MainWindow();
+					actionsTextArea.append(finalResult);
+
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+		
 	}
 
 	/**
