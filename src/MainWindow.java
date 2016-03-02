@@ -57,7 +57,7 @@ public class MainWindow {
 	static JScrollPane stblCalendar; //The scrollpane
 	static JPanel pnlCalendar; //The panel
 	static int realDay, realMonth, realYear, currentMonth, currentYear;
-	private JTable table;
+	private JTable rowHeaderTable;
 
 
 	/**
@@ -171,19 +171,8 @@ public class MainWindow {
 		mtblCalendar = getDefaultTableModel();
 		tblCalendar = new JTable(mtblCalendar); //Table using the above model
 		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table
-		
-		table = new RowNumberTable(tblCalendar);
-		
-	
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.setRowSelectionAllowed(true);
-		table.setRowHeight(38);
-		table.setColumnSelectionAllowed(true);
-		stblCalendar.setRowHeaderView(table);
-		for (int i = 1; i <= 24; i++) {
-			table.setValueAt(i, i, 1);
-		}
 		calendarPanel = new JPanel();
+		rowHeaderTable = new RowNumberTable(tblCalendar);
 	}
 	
 	private DefaultTableModel getDefaultTableModel() {
@@ -223,6 +212,11 @@ public class MainWindow {
 	
 	private void setCalendarRows() {
 		mtblCalendar.setRowCount(20);
+		rowHeaderTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		rowHeaderTable.setRowSelectionAllowed(true);
+		rowHeaderTable.setRowHeight(38);
+		rowHeaderTable.setColumnSelectionAllowed(true);
+		stblCalendar.setRowHeaderView(rowHeaderTable);
 	}
 	
 	private void setSingleCellSelection() {
