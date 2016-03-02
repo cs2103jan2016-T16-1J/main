@@ -1,6 +1,11 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
@@ -170,8 +175,22 @@ public class RowNumberTable extends JTable
 			{
 				setFont( getFont().deriveFont(Font.BOLD) );
 			}
-
-			setText((value == null) ? "" : value.toString());
+			
+			if (value == null) {
+				setText("");
+			} else {
+				int hour = Integer.parseInt(value.toString()) -1;
+				Calendar c = Calendar.getInstance();
+				c.set(Calendar.HOUR_OF_DAY, hour);
+				c.set(Calendar.MINUTE, 0);
+				c.set(Calendar.SECOND, 0);
+				
+				SimpleDateFormat format = new SimpleDateFormat("H:mm");
+				
+				String formatted = format.format(c.getTime());
+				
+				setText(formatted);
+			}
 			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
 
 			return this;

@@ -211,7 +211,7 @@ public class MainWindow {
 	}
 	
 	private void setCalendarRows() {
-		mtblCalendar.setRowCount(20);
+		mtblCalendar.setRowCount(24);
 		rowHeaderTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		rowHeaderTable.setRowSelectionAllowed(true);
 		rowHeaderTable.setRowHeight(38);
