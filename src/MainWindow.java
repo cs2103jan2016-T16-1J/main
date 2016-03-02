@@ -33,6 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 
 public class MainWindow {
@@ -41,8 +42,8 @@ public class MainWindow {
 	private JPanel mainTab;
 	private int WINDOW_X = 100;
 	private int WINDOW_Y = 100;
-	private int WINDOW_WIDTH = 800;
-	private int WINDOW_HEIGHT = 600;
+	private int WINDOW_WIDTH = 1200;
+	private int WINDOW_HEIGHT = 800;
 	private JTextField textField;
 	private JTable calendarTable;
 	private JPanel calendarPanel;
@@ -56,6 +57,7 @@ public class MainWindow {
 	static JScrollPane stblCalendar; //The scrollpane
 	static JPanel pnlCalendar; //The panel
 	static int realDay, realMonth, realYear, currentMonth, currentYear;
+	private JTable table;
 
 
 	/**
@@ -124,26 +126,26 @@ public class MainWindow {
 	private void initializeMainTab() {
 		mainTab = new JPanel();
 		mainTab.setLayout(null);
-		mainTab.setBounds(118, 0, 656, 561);
+		mainTab.setBounds(118, 0, 1056, 750);
 		frame.getContentPane().add(mainTab);
 	}
 	
 	private void initializeDetailScrollbar() {
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 0, 229, 530);
+		scrollPane.setBounds(0, 0, 265, 719);
 		mainTab.add(scrollPane);
 	}
 	
 	private void initializeInputField() {
 		textField = new JTextField();
 		textField.setColumns(10);
-		textField.setBounds(0, 541, 669, 20);
+		textField.setBounds(0, 730, 1046, 20);
 		mainTab.add(textField);
 	}
 	
 	private void initializeOutputField() {
 		JTextArea textArea = new JTextArea("BRUH");
-		textArea.setBounds(239, 342, 417, 188);
+		textArea.setBounds(275, 531, 771, 188);
 		textArea.setEditable(false);
 		mainTab.add(textArea);
 	}
@@ -169,6 +171,18 @@ public class MainWindow {
 		mtblCalendar = getDefaultTableModel();
 		tblCalendar = new JTable(mtblCalendar); //Table using the above model
 		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table
+		
+		table = new RowNumberTable(tblCalendar);
+		
+	
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.setRowSelectionAllowed(true);
+		table.setRowHeight(38);
+		table.setColumnSelectionAllowed(true);
+		stblCalendar.setRowHeaderView(table);
+		for (int i = 1; i <= 24; i++) {
+			table.setValueAt(i, i, 1);
+		}
 		calendarPanel = new JPanel();
 	}
 	
@@ -182,9 +196,9 @@ public class MainWindow {
 	}
 	
 	private void addCalendarComponents() {
-		calendarPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		calendarPanel.setBorder(BorderFactory.createTitledBorder("Calendar"));
 		mainTab.add(calendarPanel);
+		calendarPanel.setLayout(null);
 		calendarPanel.add(btnPrev);
 		calendarPanel.add(lblMonth);
 		calendarPanel.add(btnNext);
@@ -192,11 +206,12 @@ public class MainWindow {
 	}
 	
 	private void setBoundsCalendarComponents() {
-		calendarPanel.setBounds(239, 0, 417, 331);
-		lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 100, 25);
-		btnPrev.setBounds(10, 25, 50, 25);
-		btnNext.setBounds(260, 25, 50, 25);
-		stblCalendar.setBounds(10, 50, 200, 200);
+		calendarPanel.setBounds(275, 0, 771, 519);
+		lblMonth.setBounds(348, 85, 49, 14);
+		btnPrev.setBounds(289, 81, 49, 23);
+		btnNext.setBounds(407, 81, 49, 23);
+		tblCalendar.setSize(100, 100);
+		stblCalendar.setBounds(10, 110, 751, 402);
 	}
 	
 	private void setCalendarHeaders() {
@@ -216,5 +231,4 @@ public class MainWindow {
         tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblCalendar.setRowHeight(38);
 	}
-	
 }
