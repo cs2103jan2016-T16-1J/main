@@ -13,6 +13,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -35,9 +37,14 @@ import javax.swing.JTextPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 
 public class MainWindow {
-
+	private String EMPTY_STRING = "";
+	private String NEW_LINE = "\n";
 	private JFrame frame;
 	private JPanel mainTab;
 	private int WINDOW_X = 100;
@@ -47,6 +54,7 @@ public class MainWindow {
 	private JTextField textField;
 	private JTable calendarTable;
 	private JPanel calendarPanel;
+	private JTextArea actionsTextArea;
 	
 	static JLabel lblMonth;
 	static JButton btnPrev, btnNext;
@@ -138,16 +146,35 @@ public class MainWindow {
 	
 	private void initializeInputField() {
 		textField = new JTextField();
+		
+		Action inputAction = getInputAction();
+		textField.addActionListener(inputAction);
 		textField.setColumns(10);
 		textField.setBounds(0, 730, 1046, 20);
 		mainTab.add(textField);
 	}
 	
+	private Action getInputAction() {
+		Action action = new AbstractAction()
+		{
+		    @Override
+		    public void actionPerformed(ActionEvent e)
+		    {
+		    	String inputString = textField.getText() + NEW_LINE;
+		    	textField.setText(EMPTY_STRING);
+		    	actionsTextArea.append(inputString);
+		    	
+		        System.out.println("");
+		    }
+		};
+		return action;
+	}
+	
 	private void initializeOutputField() {
-		JTextArea textArea = new JTextArea("BRUH");
-		textArea.setBounds(275, 531, 771, 188);
-		textArea.setEditable(false);
-		mainTab.add(textArea);
+		actionsTextArea = new JTextArea("BRUH");
+		actionsTextArea.setBounds(275, 531, 771, 188);
+		actionsTextArea.setEditable(false);
+		mainTab.add(actionsTextArea);
 	}
 	
 	private void initializeCalendar() {
