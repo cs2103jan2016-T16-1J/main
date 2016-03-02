@@ -109,16 +109,16 @@ public class MainWindow {
 	}
 	
 	private void initializeTabButtons() {
-		JToggleButton tglbtnNewToggleButton = new JToggleButton("New toggle button");
-		tglbtnNewToggleButton.setBounds(0, 68, 121, 23);
+		JToggleButton tglbtnNewToggleButton = new JToggleButton("Today");
+		tglbtnNewToggleButton.setBounds(0, 68, 119, 23);
 		frame.getContentPane().add(tglbtnNewToggleButton);
 		
-		JToggleButton tglbtnNewToggleButton_1 = new JToggleButton("New toggle button");
-		tglbtnNewToggleButton_1.setBounds(0, 0, 121, 23);
+		JToggleButton tglbtnNewToggleButton_1 = new JToggleButton("Undetermined");
+		tglbtnNewToggleButton_1.setBounds(0, 0, 119, 23);
 		frame.getContentPane().add(tglbtnNewToggleButton_1);
 		
-		JToggleButton tglbtnNewToggleButton_2 = new JToggleButton("New toggle button");
-		tglbtnNewToggleButton_2.setBounds(0, 34, 121, 23);
+		JToggleButton tglbtnNewToggleButton_2 = new JToggleButton("Completed");
+		tglbtnNewToggleButton_2.setBounds(0, 34, 119, 23);
 		frame.getContentPane().add(tglbtnNewToggleButton_2);
 	}
 	
@@ -150,7 +150,20 @@ public class MainWindow {
 	}
 	
 	private void initializeCalendar() {
+		initiliazeCalendarComponents();
 		
+		addCalendarComponents();
+		
+		setBoundsCalendarComponents();
+		
+		setCalendarHeaders();
+		
+		setCalendarRows();
+		
+        setSingleCellSelection();
+	}
+	
+	private void initiliazeCalendarComponents() {
 		lblMonth = new JLabel ("January");
 		lblYear = new JLabel ("Change year:");
 		cmbYear = new JComboBox();
@@ -159,41 +172,7 @@ public class MainWindow {
 		mtblCalendar = getDefaultTableModel();
 		tblCalendar = new JTable(mtblCalendar); //Table using the above model
 		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table
-		
 		calendarPanel = new JPanel();
-		calendarPanel.setBounds(239, 0, 417, 331);
-		mainTab.add(calendarPanel);
-		calendarPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		calendarPanel.add(lblMonth);
-		calendarPanel.add(lblYear);
-		calendarPanel.add(cmbYear);
-		calendarPanel.add(btnPrev);
-		calendarPanel.add(btnNext);
-		calendarPanel.add(stblCalendar);
-		
-		lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 100, 25);
-		lblYear.setBounds(10, 305, 80, 20);
-		cmbYear.setBounds(230, 305, 80, 20);
-		btnPrev.setBounds(10, 25, 50, 25);
-		btnNext.setBounds(260, 25, 50, 25);
-		stblCalendar.setBounds(10, 50, 300, 250);
-		
-		calendarPanel.setBorder(BorderFactory.createTitledBorder("Calendar"));
-		
-		String[] headers = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; //All headers
-		mtblCalendar.setRowCount(20);
-        
-        for (int i=0; i<7; i++) {
-        	mtblCalendar.addColumn(headers[i]);
-        }
-		
-		//Single cell selection
-        tblCalendar.setColumnSelectionAllowed(true);
-        tblCalendar.setRowSelectionAllowed(true);
-        tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tblCalendar.setRowHeight(38);
-		
 	}
 	
 	private DefaultTableModel getDefaultTableModel() {
@@ -205,7 +184,44 @@ public class MainWindow {
 		return defaultModel;
 	}
 	
+	private void addCalendarComponents() {
+		calendarPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		calendarPanel.setBorder(BorderFactory.createTitledBorder("Calendar"));
+		mainTab.add(calendarPanel);
+		calendarPanel.add(lblMonth);
+		calendarPanel.add(lblYear);
+		calendarPanel.add(cmbYear);
+		calendarPanel.add(btnPrev);
+		calendarPanel.add(btnNext);
+		calendarPanel.add(stblCalendar);
+	}
 	
+	private void setBoundsCalendarComponents() {
+		calendarPanel.setBounds(239, 0, 417, 331);
+		lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 100, 25);
+		lblYear.setBounds(10, 305, 80, 20);
+		cmbYear.setBounds(230, 305, 80, 20);
+		btnPrev.setBounds(10, 25, 50, 25);
+		btnNext.setBounds(260, 25, 50, 25);
+		stblCalendar.setBounds(10, 50, 200, 200);
+	}
 	
+	private void setCalendarHeaders() {
+		String[] headers = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; //All headers
+		for (int i=0; i < 7; i++) {
+        	mtblCalendar.addColumn(headers[i]);
+        }	
+	}
+	
+	private void setCalendarRows() {
+		mtblCalendar.setRowCount(20);
+	}
+	
+	private void setSingleCellSelection() {
+        tblCalendar.setColumnSelectionAllowed(true);
+        tblCalendar.setRowSelectionAllowed(true);
+        tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblCalendar.setRowHeight(38);
+	}
 	
 }
