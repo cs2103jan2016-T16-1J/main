@@ -23,9 +23,10 @@ import javax.swing.JToggleButton;
 public class MainWindow {
 
 	private JFrame frame;
+	private JPanel mainTab;
 	private int WINDOW_X = 100;
 	private int WINDOW_Y = 100;
-	private int WINDOW_WIDTH = 650;
+	private int WINDOW_WIDTH = 800;
 	private int WINDOW_HEIGHT = 600;
 	private JTextField textField;
 
@@ -57,27 +58,47 @@ public class MainWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		initializeMainWindow();
+		
+		initializeMainTab();
+		
+		initializeDetailScrollbar();
+		
+		initializeInputField();
+		
+		initializeTabButtons();
+	}
+	
+	private void initializeMainWindow() {
 		frame = new JFrame();
-		frame.setBounds(WINDOW_X, WINDOW_Y, 800, 600);
+		frame.setBounds(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
-		JPanel panel = new JPanel();
-		panel.setLayout(null);
-		panel.setBounds(118, 0, 656, 561);
-		frame.getContentPane().add(panel);
-		
+	}
+	
+	private void initializeMainTab() {
+		mainTab = new JPanel();
+		mainTab.setLayout(null);
+		mainTab.setBounds(118, 0, 656, 561);
+		frame.getContentPane().add(mainTab);
+	}
+	
+	private void initializeDetailScrollbar() {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 0, 229, 538);
-		panel.add(scrollPane);
-		
+		mainTab.add(scrollPane);
+	}
+	
+	private void initializeInputField() {
 		textField = new JTextField();
 		textField.setColumns(10);
 		textField.setBounds(0, 541, 669, 20);
-		panel.add(textField);
-		
+		mainTab.add(textField);
+	}
+	
+	private void initializeTabButtons() {
 		JToggleButton tglbtnNewToggleButton = new JToggleButton("New toggle button");
-		tglbtnNewToggleButton.setBounds(0, 23, 121, 23);
+		tglbtnNewToggleButton.setBounds(0, 68, 121, 23);
 		frame.getContentPane().add(tglbtnNewToggleButton);
 		
 		JToggleButton tglbtnNewToggleButton_1 = new JToggleButton("New toggle button");
@@ -85,7 +106,7 @@ public class MainWindow {
 		frame.getContentPane().add(tglbtnNewToggleButton_1);
 		
 		JToggleButton tglbtnNewToggleButton_2 = new JToggleButton("New toggle button");
-		tglbtnNewToggleButton_2.setBounds(0, 53, 121, 23);
+		tglbtnNewToggleButton_2.setBounds(0, 34, 121, 23);
 		frame.getContentPane().add(tglbtnNewToggleButton_2);
 	}
 }
