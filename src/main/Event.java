@@ -2,18 +2,32 @@ package main;
 
 import java.util.Date;
 
+import javax.tools.DocumentationTool.Location;
+
+import constant.Constant;
+
 public class Event {
 	enum Status {
 		COMPETE, INCOMPLETE, FLOATING
 	};
+	
 	String name;
 	String description;
 	String category;
+	String location;
 	Date startTime;
 	Date endTime;
 	Status status;
 	
-	public Event(){}
+	public Event(){
+		name = Constant.EMPTY_NAME;
+		location = Constant.EMPTY_LOCATION;
+		description = Constant.EMPTY_DESCRIPTION;
+		category = Constant.EMPTY_CATEGORY;
+		startTime = Constant.MIN_DATE;
+		endTime = Constant.MAX_DATE;
+		status = Status.INCOMPLETE;
+	}
 	
 	public void setName(String name){
 		this.name = name;
@@ -61,6 +75,14 @@ public class Event {
 	
 	public Status getStatus(){
 		return this.status;
+	}
+	
+	public void setLocation(String location){
+		this.location = location;
+	}
+	
+	public String getLocation(){
+		return this.location;
 	}
 	
 	/**

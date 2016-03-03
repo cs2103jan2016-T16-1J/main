@@ -1,5 +1,6 @@
 package parser;
 
+import java.awt.Event;
 import java.awt.List;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -12,13 +13,12 @@ import javax.print.attribute.standard.DateTimeAtCompleted;
 
 import constant.CommandType;
 import constant.Constant;
-import object.Task;
 
 public class Parser {
 
 	private final int ZERO = 0;
 
-	public Task parseCommand(String input){
+	public main.Event parseCommand(String input){
 
 		String command = getFirstWord(input);
 		CommandType tempCmd = getCommandType(command);
@@ -32,7 +32,7 @@ public class Parser {
 		return null;
 	}
 
-	private Task executeAdd(String input){
+	private main.Event executeAdd(String input){
 		Boolean isSingleQuoted = false;
 		Boolean isDoubleQuoted = false;
 		Boolean isStartQuoted = false;
@@ -43,8 +43,7 @@ public class Parser {
 		StringBuffer sBuffer = new StringBuffer();
 		int startIndex = ZERO;
 		int endIndex= startIndex;
-		Task task = new Task();
-		task.setType(CommandType.ADD);
+		main.Event event = new main.Event();
 
 		while(!isEndOfTaskName){
 			endIndex = input.indexOf(" ", startIndex);
@@ -59,7 +58,7 @@ public class Parser {
 
 			if(isPreposition(tempWord)){
 				isEndOfTaskName = true;
-				task = determineInputData(task, input, startIndex, endIndex);
+				event = determineInputData(event, input, startIndex, endIndex);
 			}
 			
 			startIndex = endIndex + 1;	
@@ -68,15 +67,15 @@ public class Parser {
 
 		String taskName = sBuffer.toString().trim();
 		if(taskName.isEmpty()){
-			task.setName(Constant.EMPTY_NAME);
+			event.setName(Constant.EMPTY_NAME);
 		}else{
-			task.setName(sBuffer.toString().trim());
+			event.setName(sBuffer.toString().trim());
 		}	
 
-		task.setPlace(Constant.EMPTY_LOCATION);
-		task.setNote(Constant.EMPTY_NOTE);
+		event.setLocation(Constant.EMPTY_LOCATION);
+		event.setDescription(Constant.EMPTY_DESCRIPTION);
 
-		return task;
+		return event;
 
 	}
 
@@ -90,7 +89,7 @@ public class Parser {
 		return false;
 	}
 	
-	private Task determineInputData(Task task, String input, int startIndex, int endIndex){
+	private main.Event determineInputData(main.Event event, String input, int startIndex, int endIndex){
 		boolean isTimeDefined = false;
 		boolean isLocationDefined = false;
 		String tempWord = input.substring(startIndex,endIndex);
@@ -117,7 +116,7 @@ public class Parser {
 			
 		}
 		
-		return task;
+		return event;
 	}
 	
 	private void checkDate(String dateInput){

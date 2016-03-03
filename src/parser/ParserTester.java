@@ -4,14 +4,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import constant.CommandType;
-import constant.Constant;
-import object.Task;
-
 public class ParserTester {
 
 	@Test
-	public void tesAddCommand() {
+	public void testAddCommand() {
 		Parser parse = new Parser();
 		Task task = parse.parseCommand("add watching movies");
 		Task expected = new Task();
@@ -26,12 +22,6 @@ public class ParserTester {
 		assertEquals(expected.getPlace(), task.getPlace());
 		assertEquals(expected.getNote(), task.getNote());
 		assertEquals(expected.getStartTime(), task.getStartTime());
-		assertEquals(expected.getEndTime(), task.getEndTime());
-
-
-
-
-
-	}
+		assertEquals(expected.getEndTime(), task.getEndTime())	}
 
 }

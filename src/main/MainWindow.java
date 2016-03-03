@@ -97,7 +97,7 @@ public class MainWindow {
 		
 		InfoHandler info =  new InfoHandler(testParsedInformation);
 		info.setNumberOfEvents(testParsedInformation.length);
-		ArrayList<Event> allEvents = info.processInfo();
+		ArrayList<Event> allEvents = InfoHandler.processInfo();
 		//Getting Events to display in Text Area
 		String result = new String("");
 		
