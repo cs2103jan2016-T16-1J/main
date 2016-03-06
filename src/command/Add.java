@@ -1,18 +1,18 @@
 package command;
 
 import main.Event;
-import state.State;
+import state.CompleteState;
 
 public class Add implements Command{
 
 	Event modifiedEvent;
-	State completeState;
+	CompleteState completeState;
 	
 	public Add(Event modifiedEvent){
 		this.modifiedEvent = modifiedEvent;
 	}
 	
-	public State execute(State completeState){
+	public CompleteState execute(CompleteState completeState){
 		
 		this.completeState = completeState;
 		

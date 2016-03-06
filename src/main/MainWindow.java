@@ -15,6 +15,9 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 
+import controller.Controller;
+import state.CompleteState;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -42,7 +45,12 @@ import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+import command.*;
 
 
 public class MainWindow {
@@ -75,43 +83,56 @@ public class MainWindow {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		//For Testing Purposes
-		/*Index Positions of Data
- 			public static final int NAME = 0;
-			public static final int DESCRIPTION = 1;
-			public static final int START_TIME = 2;
-			public static final int END_TIME = 3;
-			public static final int STATUS = 4;
-		public static final int CATEGORY = 5;
-		 */
-		String[][] testParsedInformation = {
-				{
-				"testName",
-				"test description blah blah but i'm not a rapper",
-				"2016-01-01 00:00:00.0",
-				"2011-01-19 00:00:00.0",
-				"INCOMPLETE",
-				"SCHOOL CATEGORY"
-				}
-		};
+
 		
-		InfoHandler info =  new InfoHandler(testParsedInformation);
-		info.setNumberOfEvents(testParsedInformation.length);
-		ArrayList<Event> allEvents = InfoHandler.processInfo();
-		//Getting Events to display in Text Area
-		String result = new String("");
 		
-		for(int i = 0; i < info.numberOfEvents; i++){
-			result = result + allEvents.get(i).printEvent();
-			
+		/*_________ Testing ADD ______________*/
+		//Creating object manually
+		Controller controller = new Controller();
+		CompleteState completeState = new CompleteState();
+		Event testNewEvent = new Event();
+		String result = new String();
+		final String finalResult;
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+		String dateInString = "31-08-1982 10:20:56";
+		Date aTime = null;
+		try {
+			aTime = sdf.parse(dateInString);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		final String finalResult = result;
+		testNewEvent.setName("TEST EVENT NAME");
+		testNewEvent.setDescription("This is a test event created in main");
+		testNewEvent.setLocation("Supahotfire's house");
+		testNewEvent.setStatus(Event.Status.COMPLETE);
+		testNewEvent.setStartTime(aTime);
+		testNewEvent.setEndTime(aTime);
+		Command adding = new Add(testNewEvent);
+		//Add twice to test delete once
+		completeState = adding.execute(completeState);
+		completeState = adding.execute(completeState);
+		
+		Command deleting = new Delete(testNewEvent);
+		completeState = deleting.execute(completeState);
+		
+		for(Event e: completeState.completedTasks){
+			result = result + e.printEvent();
+			System.out.println(result);
+		}
+	
+		finalResult = result;
+		
+		/*_________ Testing ADD ______________*/
+		
 		
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					MainWindow window = new MainWindow();
+					
+					//for Testing Purposes
 					actionsTextArea.append(finalResult);
 
 					window.frame.setVisible(true);

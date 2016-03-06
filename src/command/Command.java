@@ -1,8 +1,8 @@
 package command;
 
-import state.State;
+import state.CompleteState;
 import main.Event;
 
 public interface Command {
-	public State execute(State completeState);
+	public CompleteState execute(CompleteState completeState);
 }

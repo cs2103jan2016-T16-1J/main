@@ -3,7 +3,6 @@ package main;
 import java.util.Date;
 
 import javax.tools.DocumentationTool.Location;
-
 import constant.Constant;
 
 public class Event {
@@ -93,7 +92,7 @@ public class Event {
 		result = result + "\t " + description + "\n";
 		result = result + "\t Start Time: " + this.startTime + " End Time: " + this.endTime + "\n";
 		result = result + "\t Category: " + this.category + " Status: " + this.status + "\n";
-		
+		result = result + "\t Location: " + this.location + "\n";
 		return result;
 
 	}
