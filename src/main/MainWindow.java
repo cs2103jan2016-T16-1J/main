@@ -16,7 +16,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 
 import controller.Controller;
-import state.CompleteState;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -116,7 +115,7 @@ public class MainWindow {
 		Command deleting = new Delete(testNewEvent);
 		completeState = deleting.execute(completeState);
 		
-		for(Event e: completeState.completedTasks){
+		for(Event e: completeState.completedEvents){
 			result = result + e.printEvent();
 			System.out.println(result);
 		}

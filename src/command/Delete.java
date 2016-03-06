@@ -54,7 +54,7 @@ public class Delete implements Command{
 	 * @return whether or not the event was found and deleted
 	 */
 	public boolean deleteFromCompleteList(){
-		return completeState.completedTasks.remove(modifiedEvent);
+		return completeState.completedEvents.remove(modifiedEvent);
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class Delete implements Command{
 	 * @return whether or not the event was found and deleted
 	 */
 	public boolean deleteFromIncompleteList(){
-		return completeState.incompletedTasks.remove(modifiedEvent);
+		return completeState.incompletedEvents.remove(modifiedEvent);
 	}
 	
 	/**
@@ -70,6 +70,6 @@ public class Delete implements Command{
 	 * @return whether or not the event was found and deleted
 	 */
 	public boolean deleteFromFloatingList(){
-		return completeState.incompletedTasks.remove(modifiedEvent);
+		return completeState.incompletedEvents.remove(modifiedEvent);
 	}
 }

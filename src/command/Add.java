@@ -49,21 +49,21 @@ public class Add implements Command{
 	 * adds the given task to the completed list in State
 	 */
 	public void addToCompleteList(){
-		completeState.completedTasks.add(modifiedEvent);
+		completeState.completedEvents.add(modifiedEvent);
 	}
 
 	/**
 	 * adds the given task to the incomplete list in State
 	 */
 	public void addToIncompleteList(){
-		completeState.incompletedTasks.add(modifiedEvent);
+		completeState.incompletedEvents.add(modifiedEvent);
 	}
 
 	/**
 	 * adds the given task to the floating list in State
 	 */
 	public void addToFloatingList(){
-		completeState.floatingTasks.add(modifiedEvent);
+		completeState.floatingEvents.add(modifiedEvent);
 		
 	}
 }

@@ -58,7 +58,7 @@ public class Edit implements Command{
 	 * @param index the index of the event
 	 */
 	public void editInCompletedEventList(int index){
-		completeState.completedTasks.set(index, editedEvent);
+		completeState.completedEvents.set(index, editedEvent);
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class Edit implements Command{
 	 * @param index the index of the event
 	 */
 	public void editInIncompletedEventList(int index){
-		completeState.incompletedTasks.set(index, editedEvent);
+		completeState.incompletedEvents.set(index, editedEvent);
 	}
 	
 	/**
@@ -74,7 +74,7 @@ public class Edit implements Command{
 	 * @param index the index of the event
 	 */
 	public void editInFloatingEventList(int index){
-		completeState.floatingTasks.set(index, editedEvent);
+		completeState.floatingEvents.set(index, editedEvent);
 	}
 	
 	/**
@@ -86,13 +86,13 @@ public class Edit implements Command{
 		
 		switch (originalEvent.getStatus()){
 		case COMPLETE:
-			completeState.completedTasks.indexOf(originalEvent);
+			completeState.completedEvents.indexOf(originalEvent);
 			break;
 		case INCOMPLETE:
-			completeState.incompletedTasks.indexOf(originalEvent);
+			completeState.incompletedEvents.indexOf(originalEvent);
 			break;
 		case FLOATING:
-			completeState.floatingTasks.indexOf(originalEvent);
+			completeState.floatingEvents.indexOf(originalEvent);
 			break;
 		}
 		

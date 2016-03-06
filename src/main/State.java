@@ -8,14 +8,14 @@ import main.Event;;
 public class State {
 
 	public static final String MESSAGE_EVENT_NOT_FOUND = "The request event was not found";
-	public ArrayList<Event> completedTasks;
-	public ArrayList<Event> incompletedTasks;
-	public ArrayList<Event> floatingTasks;
+	public ArrayList<Event> completedEvents;
+	public ArrayList<Event> incompletedEvents;
+	public ArrayList<Event> floatingEvents;
 	
-	public ArrayList<Event> displayedTasks;
+	public ArrayList<Event> displayedEvents;
 	Stack<Event> eventHistory;
 	
-	public Event selectedTask;
+	public Event selectedEvent;
 	
 	public String statusMessage;
 
@@ -23,10 +23,10 @@ public class State {
 	 * CompleteState constructor initializes all Event Lists
 	 */
 	public State(){
-		completedTasks = new ArrayList<Event>();
-		incompletedTasks = new ArrayList<Event>();
-		floatingTasks = new ArrayList<Event>();
-		displayedTasks = new ArrayList<Event>();
+		completedEvents = new ArrayList<Event>();
+		incompletedEvents = new ArrayList<Event>();
+		floatingEvents = new ArrayList<Event>();
+		displayedEvents = new ArrayList<Event>();
 		statusMessage = new String();
 
 	}
