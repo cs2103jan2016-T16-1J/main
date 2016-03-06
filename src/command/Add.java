@@ -41,6 +41,8 @@ public class Add implements Command{
 			addToFloatingList();
 			break;
 		}
+
+		updatedDisplayedEvents();
 		
 		return completeState;
 	}
@@ -66,4 +68,15 @@ public class Add implements Command{
 		completeState.floatingEvents.add(modifiedEvent);
 		
 	}
+	
+	/**
+	 * updates the displayedEvents with new information
+	 */
+	public void updatedDisplayedEvents(){
+		completeState.displayedEvents.clear();
+		completeState.displayedEvents.addAll(completeState.completedEvents);
+		completeState.displayedEvents.addAll(completeState.incompletedEvents);
+		completeState.displayedEvents.addAll(completeState.floatingEvents);		
+	}
+
 }

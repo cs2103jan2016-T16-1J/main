@@ -50,6 +50,8 @@ public class Edit implements Command{
 			break;
 		}
 		
+		updatedDisplayedEvents();
+		
 		return completeState;
 	}
 	
@@ -97,5 +99,15 @@ public class Edit implements Command{
 		}
 		
 		return index;
+	}
+	
+	/**
+	 * updates the displayedEvents with new information
+	 */
+	public void updatedDisplayedEvents(){
+		completeState.displayedEvents.clear();
+		completeState.displayedEvents.addAll(completeState.completedEvents);
+		completeState.displayedEvents.addAll(completeState.incompletedEvents);
+		completeState.displayedEvents.addAll(completeState.floatingEvents);		
 	}
 }

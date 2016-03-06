@@ -46,6 +46,9 @@ public class Delete implements Command{
 		if(!successfullyDeleted){
 			completeState.setStatusMessage(State.MESSAGE_EVENT_NOT_FOUND);
 		}
+		
+		updatedDisplayedEvents();
+
 		return completeState;
 	}
 	
@@ -71,5 +74,15 @@ public class Delete implements Command{
 	 */
 	public boolean deleteFromFloatingList(){
 		return completeState.incompletedEvents.remove(modifiedEvent);
+	}
+	
+	/**
+	 * updates the displayedEvents with new information
+	 */
+	public void updatedDisplayedEvents(){
+		completeState.displayedEvents.clear();
+		completeState.displayedEvents.addAll(completeState.completedEvents);
+		completeState.displayedEvents.addAll(completeState.incompletedEvents);
+		completeState.displayedEvents.addAll(completeState.floatingEvents);		
 	}
 }

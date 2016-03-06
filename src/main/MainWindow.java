@@ -115,7 +115,7 @@ public class MainWindow {
 		Command deleting = new Delete(testNewEvent);
 		completeState = deleting.execute(completeState);
 		
-		for(Event e: completeState.completedEvents){
+		for(Event e: completeState.displayedEvents){
 			result = result + e.printEvent();
 			System.out.println(result);
 		}

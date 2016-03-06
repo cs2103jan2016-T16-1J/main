@@ -15,5 +15,7 @@ public interface Command {
 	 * @param completeState the state of all tasks in the program
 	 * @return the state of all tasks in the program
 	 */
-	public State execute(State completeState);	
+	public State execute(State completeState);
+	
+	public void updatedDisplayedEvents();
 }
