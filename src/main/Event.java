@@ -7,8 +7,8 @@ import javax.tools.DocumentationTool.Location;
 import constant.Constant;
 
 public class Event {
-	enum Status {
-		COMPETE, INCOMPLETE, FLOATING
+	public enum Status {
+		COMPLETE, INCOMPLETE, FLOATING
 	};
 	
 	String name;
