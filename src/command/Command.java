@@ -1,8 +1,19 @@
 package command;
 
-import state.CompleteState;
+import main.State;
 import main.Event;
 
+/**
+ * Command interface- commands are defined by the action that the user provides
+ * @author Reem
+ *
+ */
 public interface Command {
-	public CompleteState execute(CompleteState completeState);
+	
+	/**
+	 * execute must be inherited by each command. This method invokes the command action
+	 * @param completeState the state of all tasks in the program
+	 * @return the state of all tasks in the program
+	 */
+	public State execute(State completeState);
 }

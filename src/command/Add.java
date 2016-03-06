@@ -1,18 +1,32 @@
 package command;
 
 import main.Event;
-import state.CompleteState;
+import main.State;
 
+/**
+ * Add class must be instantiated with an event to add
+ * @author Reem
+ *
+ */
 public class Add implements Command{
 
 	Event modifiedEvent;
-	CompleteState completeState;
-	
+	State completeState;
+
+	/**
+	 * Add class constructor
+	 * @param modifiedEvent the event that will be added
+	 */
 	public Add(Event modifiedEvent){
 		this.modifiedEvent = modifiedEvent;
 	}
-	
-	public CompleteState execute(CompleteState completeState){
+
+	/**
+	 * Inherited from the Command interface
+	 * execute will add the event to its corresponding list based on status
+	 * @param completeState the state of all the tasks in the program
+	 */
+	public State execute(State completeState){
 		
 		this.completeState = completeState;
 		
@@ -30,15 +44,24 @@ public class Add implements Command{
 		
 		return completeState;
 	}
-	
+
+	/**
+	 * adds the given task to the completed list in State
+	 */
 	public void addToCompleteList(){
 		completeState.completedTasks.add(modifiedEvent);
 	}
-	
+
+	/**
+	 * adds the given task to the incomplete list in State
+	 */
 	public void addToIncompleteList(){
 		completeState.incompletedTasks.add(modifiedEvent);
 	}
-	
+
+	/**
+	 * adds the given task to the floating list in State
+	 */
 	public void addToFloatingList(){
 		completeState.floatingTasks.add(modifiedEvent);
 		

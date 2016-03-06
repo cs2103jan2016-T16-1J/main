@@ -89,7 +89,7 @@ public class MainWindow {
 		/*_________ Testing ADD ______________*/
 		//Creating object manually
 		Controller controller = new Controller();
-		CompleteState completeState = new CompleteState();
+		State completeState = new State();
 		Event testNewEvent = new Event();
 		String result = new String();
 		final String finalResult;

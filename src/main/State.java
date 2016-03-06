@@ -3,12 +3,28 @@ package main;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import main.Event;;
+
 public class State {
-	ArrayList<Event> completed = new ArrayList<Event>();
-	ArrayList<Event> incomplete = new ArrayList<Event>();
-	ArrayList<Event> floating = new ArrayList<Event>();
-	ArrayList<Event> displayedEvents = new ArrayList<Event>();
-	ArrayList<Event> selectedEvents = new ArrayList<Event>();
-	Stack<Event> eventHistory;
+
+	public ArrayList<Event> completedTasks;
+	public ArrayList<Event> incompletedTasks;
+	public ArrayList<Event> floatingTasks;
 	
+	public ArrayList<Event> displayedTasks;
+	Stack<Event> eventHistory;
+
+	
+	public Event selectedTask;
+
+	/**
+	 * CompleteState constructor initializes all Event Lists
+	 */
+	public State(){
+		completedTasks = new ArrayList<Event>();
+		incompletedTasks = new ArrayList<Event>();
+		floatingTasks = new ArrayList<Event>();
+		displayedTasks = new ArrayList<Event>();
+
+	}
 }

@@ -1,7 +1,7 @@
 package command;
 
 import main.Event;
-import state.CompleteState;
+import main.State;
 
 /**
  * Delete class must be instantiated with an Event object to delete
@@ -10,13 +10,23 @@ import state.CompleteState;
  */
 public class Delete implements Command{
 	Event modifiedEvent;
-	CompleteState completeState;
+	State completeState;
 
+	/**
+	 * Delete class constructor. 
+	 * @param modifiedEvent the event that will be deleted
+	 */
 	public Delete(Event modifiedEvent){
 		this.modifiedEvent = modifiedEvent;
 	}
 	
-	public CompleteState execute(CompleteState completeState){
+	/**
+	 * Inherited from the Command interface
+	 * execute will delete the event from its corresponding list based on status
+	 * If two identical instances of the class are found in the list, only one is deleted
+	 * @param completeState the state of all the tasks in the program
+	 */
+	public State execute(State completeState){
 		
 		this.completeState = completeState;
 		
@@ -35,14 +45,23 @@ public class Delete implements Command{
 		return completeState;
 	}
 	
+	/**
+	 * deletes the given task from the completed list in State
+	 */
 	public void deleteFromCompleteList(){
 		completeState.completedTasks.remove(modifiedEvent);
 	}
 	
+	/**
+	 * deletes the given task from the incomplete list in State
+	 */
 	public void deleteFromIncompleteList(){
 		completeState.incompletedTasks.remove(modifiedEvent);
 	}
 	
+	/**
+	 * deletes the given task from the floating list in STate
+	 */
 	public void deleteFromFloatingList(){
 		completeState.incompletedTasks.remove(modifiedEvent);
 	}
