@@ -27,42 +27,49 @@ public class Delete implements Command{
 	 * @param completeState the state of all the tasks in the program
 	 */
 	public State execute(State completeState){
-		
+		boolean successfullyDeleted = false;
 		this.completeState = completeState;
 		
 		switch(modifiedEvent.getStatus()){
 		case COMPLETE:
-			deleteFromCompleteList();
+			successfullyDeleted = deleteFromCompleteList();
 			break;
 		case INCOMPLETE:
-			deleteFromIncompleteList();
+			successfullyDeleted = deleteFromIncompleteList();
 			break;
 		case FLOATING:
-			deleteFromFloatingList();
+			successfullyDeleted = deleteFromFloatingList();
 			break;
 				
+		}
+		
+		if(!successfullyDeleted){
+			completeState.setStatusMessage(State.MESSAGE_EVENT_NOT_FOUND);
 		}
 		return completeState;
 	}
 	
 	/**
 	 * deletes the given task from the completed list in State
+	 * @return whether or not the event was found and deleted
 	 */
-	public void deleteFromCompleteList(){
-		completeState.completedTasks.remove(modifiedEvent);
+	public boolean deleteFromCompleteList(){
+		return completeState.completedTasks.remove(modifiedEvent);
 	}
 	
 	/**
 	 * deletes the given task from the incomplete list in State
+	 * @return whether or not the event was found and deleted
 	 */
-	public void deleteFromIncompleteList(){
-		completeState.incompletedTasks.remove(modifiedEvent);
+	public boolean deleteFromIncompleteList(){
+		return completeState.incompletedTasks.remove(modifiedEvent);
 	}
 	
 	/**
-	 * deletes the given task from the floating list in STate
+	 * deletes the given task from the floating list in State
+	 * @return whether or not the event was found and deleted
 	 */
-	public void deleteFromFloatingList(){
-		completeState.incompletedTasks.remove(modifiedEvent);
+	public boolean deleteFromFloatingList(){
+		return completeState.incompletedTasks.remove(modifiedEvent);
 	}
 }
