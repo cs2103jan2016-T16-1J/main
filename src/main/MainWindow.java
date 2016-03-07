@@ -46,6 +46,7 @@ import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.FileNotFoundException;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -82,8 +83,9 @@ public class MainWindow {
 
 	/**
 	 * Launch the application.
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 
 		/*_________ Testing ADD ______________*/
 		//Creating object manually
@@ -101,6 +103,9 @@ public class MainWindow {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		storage.Storage.createFile();
+		
 		testNewEvent.setName("TEST EVENT NAME");
 		testNewEvent.setDescription("This is a test event created in main");
 		testNewEvent.setLocation("Supahotfire's house");

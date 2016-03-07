@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import main.Event;
 import main.Event.Status;
+import main.State;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -20,11 +21,13 @@ public class Storage {
 	
 	public static final String fileName =  ("./storage.txt");
 	public static final String tempFileName = ("temp.txt");
-	File file = new File(fileName);
 	
-	public  void createFile() throws FileNotFoundException {
-		 PrintWriter writer = new PrintWriter(fileName);
-		 writer.close();
+	public static void createFile() throws FileNotFoundException {
+		File file = new File(fileName);
+		if (!file.exists()){
+			 PrintWriter writer = new PrintWriter(fileName);
+			 writer.close();
+		}
 	}
 	
 	public void addToStorage(Event event) throws IOException, JSONException{
@@ -45,6 +48,7 @@ public class Storage {
 		String line = null;
 		
 		try {
+			File file = new File(fileName);
 			File tempFile = new File(tempFileName);
 			PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
 			FileReader fr = new FileReader(fileName);
@@ -87,7 +91,13 @@ public class Storage {
 				JSONObject jsonObj = new JSONObject(line);
 				Event event = castJSONObjToEvent(jsonObj);
 				
-				//import into state class???
+					if (event.getStatus() == Status.COMPLETE){
+						State.addToCompletedList(event);
+					} else if (event.getStatus() == Status.INCOMPLETE){
+						State.addToIncompletedList(event);
+					} else if (event.getStatus() == Status.FLOATING){
+						State.addToFloatingList(event);
+					}
 			}
 			
 		} catch(FileNotFoundException ex) {
