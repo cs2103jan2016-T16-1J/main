@@ -1,13 +1,10 @@
 package main;
 
 import java.util.Date;
-
-import javax.tools.DocumentationTool.Location;
-
 import constant.Constant;
 
 public class Event {
-	public static enum Status {
+	public enum Status {
 		COMPETE, INCOMPLETE, OVERDUE, BLOCKED, FLOATING
 	};
 	
