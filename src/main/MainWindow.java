@@ -15,6 +15,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 
+import constant.Constant;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -90,7 +92,7 @@ public class MainWindow {
 				"test description blah blah but i'm not a rapper",
 				"2016-01-01 00:00:00.0",
 				"2011-01-19 00:00:00.0",
-				"INCOMPLETE",
+				Constant.CATEGORY_UNDETERMINED,
 				"SCHOOL CATEGORY"
 				}
 		};

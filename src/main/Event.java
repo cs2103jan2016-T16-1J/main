@@ -7,23 +7,27 @@ import javax.tools.DocumentationTool.Location;
 import constant.Constant;
 
 public class Event {
-	enum Status {
-		COMPETE, INCOMPLETE, FLOATING
+	public static enum Status {
+		COMPETE, INCOMPLETE, OVERDUE, BLOCKED, FLOATING
 	};
 	
-	String name;
-	String description;
-	String category;
-	String location;
-	Date startTime;
-	Date endTime;
-	Status status;
+	enum Category {
+		DEADLINE, EVENT, FLOATING
+	};
+	
+	private String name;
+	private String description;
+	private String category;
+	private String location;
+	private Date startTime;
+	private Date endTime;
+	private Status status;
 	
 	public Event(){
 		name = Constant.EMPTY_NAME;
 		location = Constant.EMPTY_LOCATION;
 		description = Constant.EMPTY_DESCRIPTION;
-		category = Constant.EMPTY_CATEGORY;
+		category = constant.Constant.CATEGORY_FLOATING;
 		startTime = Constant.MIN_DATE;
 		endTime = Constant.MAX_DATE;
 		status = Status.INCOMPLETE;
