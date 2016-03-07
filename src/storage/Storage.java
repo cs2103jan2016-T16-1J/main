@@ -2,7 +2,6 @@ package storage;
 
 import java.io.BufferedReader;
 import java.io.File;
-import JSON.org.json.*;
 import main.Event;
 import main.Event.Status;
 import java.io.FileNotFoundException;
@@ -14,6 +13,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import json.*;
+
 
 public class Storage {
 	
