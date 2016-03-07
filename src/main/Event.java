@@ -5,10 +5,10 @@ import constant.Constant;
 
 public class Event {
 	public enum Status {
-		COMPETE, INCOMPLETE, OVERDUE, BLOCKED, FLOATING
+		INCOMPLETE, OVERDUE, BLOCKED, FLOATING, COMPLETE
 	};
 	
-	enum Category {
+	public enum Category {
 		DEADLINE, EVENT, FLOATING
 	};
 	
