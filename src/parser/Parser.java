@@ -5,10 +5,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import command.Add;
+import command.Command;
+import command.Delete;
+import command.Edit;
+
 import java.util.Date;
 
 import constant.CommandType;
 import constant.Constant;
+import main.Event;
+import main.State;
 
 public class Parser {
 
@@ -33,18 +41,24 @@ public class Parser {
 
 	private final String ERROR_DATE_FORMAT = "The input date format is not supported";
 
-	public main.Event parseCommand(String input){
-
+	public Command parseCommand(String input){
+		Command cmdInterface = null;
+		main.Event event = new main.Event();
 		String command = getFirstWord(input);
 		CommandType tempCmd = getCommandType(command);
 
-		if(tempCmd == CommandType.INVALID){
+		if (tempCmd == CommandType.INVALID){
 
-		}else if(tempCmd == CommandType.ADD){
-			return executeAdd(removeFirstWord(input));
+		} else if(tempCmd == CommandType.ADD){
+			event = executeAdd(removeFirstWord(input));
+			cmdInterface = new Add(event);
+		} else if(tempCmd == CommandType.DISPLAY){
+			event =  executeDisplay(removeFirstWord(input));
+		} else if(tempCmd == CommandType.DELETE){
+			cmdInterface = new Delete(event);
 		}
-
-		return null;
+		return cmdInterface;
+		
 	}
 	/**
 	 * This method finds the pattern provided which is used in data extraction
@@ -111,12 +125,14 @@ public class Parser {
 	}
 
 	private main.Event executeAdd(String input){
-
 		main.Event task = new main.Event();
 		String remainingInput = extractDescription(task, input);
-
 		return determineInput(task, remainingInput);
-
+	}
+	
+	private main.Event executeDisplay(String input){
+		main.Event task = new main.Event();
+		return task;
 	}
 
 	private main.Event determineInput(main.Event task, String input){
@@ -437,11 +453,11 @@ public class Parser {
 			return CommandType.ADD;
 		}else if (command.equalsIgnoreCase("delete")){
 			return CommandType.DELETE;
-		}else if (command.equalsIgnoreCase("display")){
+		}else if (command.equalsIgnoreCase("display") || 
+				command.equalsIgnoreCase("search")){
 			return CommandType.DISPLAY;
-		}else if (command.equalsIgnoreCase("search")){
-			return CommandType.SEARCH;
-		}else if (command.equalsIgnoreCase("edit")){
+		}else if (command.equalsIgnoreCase("edit") || 
+				command.equalsIgnoreCase("e")){
 			return CommandType.EDIT;
 		}else if (command.equalsIgnoreCase("import")){
 			return CommandType.IMPORT;

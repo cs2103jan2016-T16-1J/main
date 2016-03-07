@@ -45,7 +45,8 @@ public class Controller{
 	 */
 	public void executeCommand(String commandText){
 		Command userCommand;
-		/*userCommand = */parser.parseCommand(commandText); //parser should return Command
-		//userCommand.execute();
+		State newState = new State();
+		userCommand = parser.parseCommand(commandText); //parser should return Command
+		userCommand.execute(newState);
 	}
 }

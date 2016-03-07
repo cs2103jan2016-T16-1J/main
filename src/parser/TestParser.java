@@ -12,12 +12,11 @@ import main.Event;
 public class TestParser {
 
 	@Test
-	public void test() throws ParseException {
+	public void testAdd() throws ParseException {
 		Parser parse = new Parser();
 		main.Event task = new Event();
 		main.Event expected = new Event();
 		
-		task = parse.parseCommand("Add submit thesis//don't forget the references");
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		expected.setName("submit thesis");
 		expected.setStartTime(Constant.MIN_DATE);
@@ -33,6 +32,11 @@ public class TestParser {
 		assertEquals(expected.getStatus(), task.getStatus());
 		assertEquals(expected.getDescription(), task.getDescription());
 		//assertEquals(expected.getLocation(), task.getLocation());
-		}
+	}
+	
+	@Test
+	public void testSearch(){
+		
+	}
 
 }
