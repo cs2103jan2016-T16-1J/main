@@ -32,6 +32,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import command.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.SoftBevelBorder;
 
 
 public class MainWindow {
@@ -48,6 +53,10 @@ public class MainWindow {
 	private JTable calendarTable;
 	private JPanel calendarPanel;
 	private static JTextArea actionsTextArea;
+	private static Color navbarColor;
+	private static Color backgroundColor;
+	private static Color buttonColor;
+	private static Color buttonColorSelected;
 	private Controller mainController;
 	private State currentState;
 	private Calendar calendarInstance;
@@ -145,6 +154,8 @@ public class MainWindow {
 		
 		intializeState();
 		
+		initColors();
+		
 		initializeMainWindow();
 		
 		initializeTabButtons();
@@ -168,8 +179,18 @@ public class MainWindow {
 		currentState = new State();
 	}
 	
+	private void initColors() {
+		navbarColor = new Color(55, 71, 79);
+		backgroundColor = new Color(243, 243, 244);
+		buttonColor = new Color(28, 192, 159);
+		buttonColorSelected = new Color(23, 152, 126);
+	}
+	
 	private void initializeMainWindow() {
+		navbarColor = new Color(55, 71, 79);
 		frame = new JFrame();
+		frame.getContentPane().setBackground(navbarColor);
+		frame.setBackground(navbarColor);
 		frame.setBounds(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -177,38 +198,51 @@ public class MainWindow {
 	
 	private void initializeTabButtons() {
 		JToggleButton tglbtnNewToggleButton = new JToggleButton("Today");
-		tglbtnNewToggleButton.setBounds(0, 68, 119, 23);
+		tglbtnNewToggleButton.setForeground(Color.WHITE);
+		tglbtnNewToggleButton.setBorder(null);
+		tglbtnNewToggleButton.setBackground(buttonColor);
+		tglbtnNewToggleButton.setBounds(0, 68, 119, 34);
 		frame.getContentPane().add(tglbtnNewToggleButton);
 		
 		JToggleButton tglbtnNewToggleButton_1 = new JToggleButton("Undetermined");
-		tglbtnNewToggleButton_1.setBounds(0, 0, 119, 23);
+		tglbtnNewToggleButton_1.setForeground(Color.WHITE);
+		tglbtnNewToggleButton_1.setBorder(null);
+		tglbtnNewToggleButton_1.setBackground(buttonColor);
+		tglbtnNewToggleButton_1.setBounds(0, 0, 119, 34);
 		frame.getContentPane().add(tglbtnNewToggleButton_1);
 		
 		JToggleButton tglbtnNewToggleButton_2 = new JToggleButton("Completed");
-		tglbtnNewToggleButton_2.setBounds(0, 34, 119, 23);
+		tglbtnNewToggleButton_2.setForeground(Color.WHITE);
+		tglbtnNewToggleButton_2.setBorder(null);
+		tglbtnNewToggleButton_2.setBackground(buttonColor);
+		tglbtnNewToggleButton_2.setBounds(0, 34, 119, 34);
 		frame.getContentPane().add(tglbtnNewToggleButton_2);
 	}
 	
 	private void initializeMainTab() {
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(null);
+		scrollPane.setBounds(119, 0, 286, 761);
+		frame.getContentPane().add(scrollPane);
+		scrollPane.setBackground(navbarColor);
 		mainTab = new JPanel();
+		mainTab.setBackground(backgroundColor);
 		mainTab.setLayout(null);
-		mainTab.setBounds(118, 0, 1056, 750);
+		mainTab.setBounds(402, 0, 782, 761);
 		frame.getContentPane().add(mainTab);
 	}
 	
 	private void initializeDetailScrollbar() {
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 0, 265, 719);
-		mainTab.add(scrollPane);
 	}
 	
 	private void initializeInputField() {
 		textField = new JTextField();
+		textField.setBorder(new LineBorder(Color.GRAY));
 		
 		Action inputAction = getInputAction();
 		textField.addActionListener(inputAction);
 		textField.setColumns(10);
-		textField.setBounds(0, 730, 1046, 20);
+		textField.setBounds(10, 730, 761, 20);
 		mainTab.add(textField);
 	}
 	
@@ -242,7 +276,7 @@ public class MainWindow {
 	
 	private void initializeOutputField() {
 		actionsTextArea = new JTextArea("BRUH");
-		actionsTextArea.setBounds(275, 531, 771, 188);
+		actionsTextArea.setBounds(10, 531, 761, 188);
 		actionsTextArea.setEditable(false);
 		mainTab.add(actionsTextArea);
 	}
@@ -274,6 +308,7 @@ public class MainWindow {
 		tblCalendar = new JTable(mtblCalendar); //Table using the above model
 		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table
 		calendarPanel = new JPanel();
+		calendarPanel.setBackground(backgroundColor);
 		rowHeaderTable = new RowNumberTable(tblCalendar);
 	}
 	
@@ -341,7 +376,7 @@ public class MainWindow {
 	}
 	
 	private void setBoundsCalendarComponents() {
-		calendarPanel.setBounds(275, 0, 771, 519);
+		calendarPanel.setBounds(10, 0, 761, 519);
 		lblMonth.setBounds(348, 85, 107, 14);
 		tblCalendar.setSize(100, 100);
 		stblCalendar.setBounds(10, 110, 751, 402);
