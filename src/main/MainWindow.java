@@ -1,10 +1,13 @@
 package main;
 
 import java.awt.EventQueue;
+
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
+
 import controller.Controller;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -13,15 +16,20 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+
 import java.awt.Container;
+
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
+import java.util.Calendar;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import command.*;
 
 
@@ -38,6 +46,8 @@ public class MainWindow {
 	private JTable calendarTable;
 	private JPanel calendarPanel;
 	private static JTextArea actionsTextArea;
+	private Controller mainController;
+	private State currentState;
 	
 	static JLabel lblMonth;
 	static JButton btnPrev, btnNext;
@@ -129,6 +139,10 @@ public class MainWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		initializeController();
+		
+		intializeState();
+		
 		initializeMainWindow();
 		
 		initializeTabButtons();
@@ -142,6 +156,14 @@ public class MainWindow {
 		initializeOutputField();
 		
 		initializeCalendar();
+	}
+	
+	private void initializeController() {
+		mainController = new Controller();
+	}
+	
+	private void intializeState() {
+		currentState = new State();
 	}
 	
 	private void initializeMainWindow() {
@@ -199,10 +221,8 @@ public class MainWindow {
 		    	actionsTextArea.append(inputString);
 		    	
 		    	//calling controller
-		    	Controller testNewController = new Controller();
-		    	State testState = new State();
-		    	testState = testNewController.executeCommand(inputString);
-		    	for (Event event : testState.displayedEvents){
+		    	currentState = mainController.executeCommand(inputString);
+		    	for (Event event : currentState.displayedEvents){
 			    	actionsTextArea.append(event.printEvent());
 		    	}
 		        System.out.println("");
@@ -272,9 +292,15 @@ public class MainWindow {
 	}
 	
 	private void setCalendarHeaders() {
-		String[] headers = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; //All headers
+		Calendar c = Calendar.getInstance();
+		
+		SimpleDateFormat format = new SimpleDateFormat("E (d)");
+		
+		String formatted = format.format(c.getTime());
 		for (int i=0; i < 7; i++) {
-        	mtblCalendar.addColumn(headers[i]);
+			formatted = format.format(c.getTime());
+			c.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + 1);
+        	mtblCalendar.addColumn(formatted);
         }	
 	}
 	
