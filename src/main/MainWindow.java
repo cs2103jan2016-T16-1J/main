@@ -8,6 +8,7 @@ import javax.swing.JTextField;
 import javax.swing.JPanel;
 
 import controller.Controller;
+import json.JSONException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -26,6 +27,7 @@ import javax.swing.table.DefaultTableModel;
 
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.text.ParseException;
@@ -75,9 +77,10 @@ public class MainWindow {
 
 	/**
 	 * Launch the application.
-	 * @throws FileNotFoundException 
+	 * @throws JSONException 
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws IOException, JSONException {
 
 		/*_________ Testing ADD ______________*/
 		//Creating object manually
@@ -258,7 +261,12 @@ public class MainWindow {
 		    	actionsTextArea.append(inputString);
 		    	
 		    	//calling controller
-		    	currentState = mainController.executeCommand(inputString);
+		    	try {
+					currentState = mainController.executeCommand(inputString);
+				} catch (IOException | JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 		    	renderCalendar();
 		    }
 		};
