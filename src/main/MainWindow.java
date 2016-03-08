@@ -37,6 +37,7 @@ import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
+import javax.swing.ScrollPaneConstants;
 
 
 public class MainWindow {
@@ -160,10 +161,10 @@ public class MainWindow {
 		
 		initializeTabButtons();
 		
+		initializeInfoSection();
+		
 		initializeMainTab();
-		
-		initializeDetailScrollbar();
-		
+				
 		initializeInputField();
 		
 		initializeOutputField();
@@ -219,20 +220,20 @@ public class MainWindow {
 		frame.getContentPane().add(tglbtnNewToggleButton_2);
 	}
 	
-	private void initializeMainTab() {
+	private void initializeInfoSection() {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBorder(null);
 		scrollPane.setBounds(119, 0, 286, 761);
-		frame.getContentPane().add(scrollPane);
 		scrollPane.setBackground(navbarColor);
+		frame.getContentPane().add(scrollPane);
+	}
+	
+	private void initializeMainTab() {
 		mainTab = new JPanel();
 		mainTab.setBackground(backgroundColor);
 		mainTab.setLayout(null);
 		mainTab.setBounds(402, 0, 782, 761);
 		frame.getContentPane().add(mainTab);
-	}
-	
-	private void initializeDetailScrollbar() {
 	}
 	
 	private void initializeInputField() {
@@ -269,7 +270,7 @@ public class MainWindow {
 	    	actionsTextArea.append(event.printEvent());
 	    	String category = event.getCategory();
 	    	if (category == "DEADLINE") {
-	    		addDeadlineToTimetable(event);
+	    		createDeadlineEvent(event);
 	    	}
     	}
 	}
@@ -302,11 +303,12 @@ public class MainWindow {
 	}
 	
 	private void initiliazeCalendarComponents() {
-		lblMonth = new JLabel ();
+		lblMonth = new JLabel();
 		refreshMonth();
 		mtblCalendar = getDefaultTableModel();
 		tblCalendar = new JTable(mtblCalendar); //Table using the above model
 		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table
+		stblCalendar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		calendarPanel = new JPanel();
 		calendarPanel.setBackground(backgroundColor);
 		rowHeaderTable = new RowNumberTable(tblCalendar);
@@ -335,10 +337,7 @@ public class MainWindow {
 		calendarPanel.add(stblCalendar);
 	}
 	
-	private void addDeadlineToTimetable(Event deadline) {
-		double eventHeight = getDeadlineHeight();
-		double eventWidth = getDeadlineWidth();
-		
+	private void createDeadlineEvent(Event deadline) {
 		Calendar startCalendar = (Calendar) calendarInstance.clone();
 		Date startDate = startCalendar.getTime();
 		
@@ -353,18 +352,25 @@ public class MainWindow {
 		deadlineCalendar.setTime(deadlineDate);
 
 		if (deadlineDate.after(startDate) && deadlineDate.before(endDate)) {
-			JTextField currentEvent = new JTextField(deadline.getName());
-			int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
-			int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
-			int xOffset = (int) eventWidth * dayDifference + dayDifference;
-			int yOffset = (int) eventHeight * hour;
- 			currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
-			currentEvent.setBackground(darkGreen);
-			currentEvent.setBorder(null);
-			currentEvent.setHorizontalAlignment(JTextField.CENTER);
-			currentEvent.setForeground(Color.WHITE);
-			tblCalendar.add(currentEvent);
+			addDeadlineEvent(deadline, deadlineCalendar, startCalendar);
 		}
+	}
+	
+	private void addDeadlineEvent(Event deadline, Calendar deadlineCalendar, Calendar startCalendar) {
+		double eventHeight = getDeadlineHeight();
+		double eventWidth = getDeadlineWidth();
+		int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
+		int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
+		int xOffset = (int) eventWidth * dayDifference + dayDifference;
+		int yOffset = (int) eventHeight * hour;
+		
+		JTextField currentEvent = new JTextField(deadline.getName());
+		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
+		currentEvent.setBackground(darkGreen);
+		currentEvent.setBorder(null);
+		currentEvent.setHorizontalAlignment(JTextField.CENTER);
+		currentEvent.setForeground(Color.WHITE);
+		tblCalendar.add(currentEvent);
 	}
 	
 	private double getDeadlineHeight() {
