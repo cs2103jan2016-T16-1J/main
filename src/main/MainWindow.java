@@ -53,7 +53,6 @@ public class MainWindow {
 	private Calendar calendarInstance;
 	
 	static JLabel lblMonth;
-	static JButton btnPrev, btnNext;
 	static JTable tblCalendar;
 	static JFrame frmMain;
 	static Container pane;
@@ -236,12 +235,9 @@ public class MainWindow {
 	    	actionsTextArea.append(event.printEvent());
 	    	String category = event.getCategory();
 	    	if (category == "DEADLINE") {
-	    		//Add specific category action
 	    		addDeadlineToTimetable(event);
 	    	}
-	    	
     	}
-        System.out.println("");
 	}
 	
 	private void initializeOutputField() {
@@ -272,14 +268,19 @@ public class MainWindow {
 	}
 	
 	private void initiliazeCalendarComponents() {
-		lblMonth = new JLabel ("January");
-		btnPrev = new JButton ("<<");
-		btnNext = new JButton (">>");
+		lblMonth = new JLabel ();
+		refreshMonth();
 		mtblCalendar = getDefaultTableModel();
 		tblCalendar = new JTable(mtblCalendar); //Table using the above model
 		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table
 		calendarPanel = new JPanel();
 		rowHeaderTable = new RowNumberTable(tblCalendar);
+	}
+	
+	private void refreshMonth() {
+		Date currentDate = calendarInstance.getTime();
+		SimpleDateFormat format = getHeaderFormat();
+		lblMonth.setText(format.format(currentDate));
 	}
 	
 	private DefaultTableModel getDefaultTableModel() {
@@ -295,9 +296,7 @@ public class MainWindow {
 		calendarPanel.setBorder(BorderFactory.createTitledBorder("Calendar"));
 		mainTab.add(calendarPanel);
 		calendarPanel.setLayout(null);
-		calendarPanel.add(btnPrev);
 		calendarPanel.add(lblMonth);
-		calendarPanel.add(btnNext);
 		calendarPanel.add(stblCalendar);
 	}
 	
@@ -343,15 +342,13 @@ public class MainWindow {
 	
 	private void setBoundsCalendarComponents() {
 		calendarPanel.setBounds(275, 0, 771, 519);
-		lblMonth.setBounds(348, 85, 49, 14);
-		btnPrev.setBounds(289, 81, 49, 23);
-		btnNext.setBounds(407, 81, 49, 23);
+		lblMonth.setBounds(348, 85, 107, 14);
 		tblCalendar.setSize(100, 100);
 		stblCalendar.setBounds(10, 110, 751, 402);
 	}
 	
 	private void setCalendarHeaders() {
-		SimpleDateFormat format = getHeaderFormat();
+		SimpleDateFormat format = getHeaderTableFormat();
 		String formatted = format.format(calendarInstance.getTime());
 		Calendar calendarClone = (Calendar) calendarInstance.clone();
 		for (int i=0; i < DISPLAYED_DAYS_NUM; i++) {
@@ -361,8 +358,13 @@ public class MainWindow {
         }
 	}
 	
-	private SimpleDateFormat getHeaderFormat() {
+	private SimpleDateFormat getHeaderTableFormat() {
 		SimpleDateFormat format = new SimpleDateFormat("E (d)");
+		return format;
+	}
+	
+	private SimpleDateFormat getHeaderFormat() {
+		SimpleDateFormat format = new SimpleDateFormat("MMMM / yyyy");
 		return format;
 	}
 	
