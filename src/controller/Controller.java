@@ -43,10 +43,11 @@ public class Controller{
 	 * The Command is then executed
 	 * @param commandText
 	 */
-	public void executeCommand(String commandText){
+	public State executeCommand(String commandText){
 		Command userCommand;
-		State newState = new State();
 		userCommand = parser.parseCommand(commandText); //parser should return Command
-		userCommand.execute(newState);
+		userCommand.execute(completeState);
+		
+		return completeState;
 	}
 }

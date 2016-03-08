@@ -107,7 +107,7 @@ public class MainWindow {
 					MainWindow window = new MainWindow();
 					
 					//for Testing Purposes
-					actionsTextArea.append(finalResult);
+					//actionsTextArea.append(finalResult);
 
 					window.frame.setVisible(true);
 				} catch (Exception e) {
@@ -198,6 +198,13 @@ public class MainWindow {
 		    	textField.setText(EMPTY_STRING);
 		    	actionsTextArea.append(inputString);
 		    	
+		    	//calling controller
+		    	Controller testNewController = new Controller();
+		    	State testState = new State();
+		    	testState = testNewController.executeCommand(inputString);
+		    	for (Event event : testState.displayedEvents){
+			    	actionsTextArea.append(event.printEvent());
+		    	}
 		        System.out.println("");
 		    }
 		};
