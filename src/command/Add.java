@@ -1,7 +1,11 @@
 package command;
 
+import java.io.IOException;
+
+import json.JSONException;
 import main.Event;
 import main.State;
+import storage.Storage;
 
 /**
  * Add class must be instantiated with an event to add
@@ -25,20 +29,25 @@ public class Add implements Command{
 	 * Inherited from the Command interface
 	 * execute will add the event to its corresponding list based on status
 	 * @param completeState the state of all the tasks in the program
+	 * @throws JSONException 
+	 * @throws IOException 
 	 */
-	public State execute(State completeState){
+	public State execute(State completeState) throws IOException, JSONException{
 		
 		this.completeState = completeState;
 		
 		switch (modifiedEvent.getStatus()){
 		case COMPLETE:
 			addToCompleteList();
+			Storage.addToStorage(modifiedEvent);
 			break;
 		case INCOMPLETE:
 			addToIncompleteList();
+			Storage.addToStorage(modifiedEvent);
 			break;
 		case FLOATING:
 			addToFloatingList();
+			Storage.addToStorage(modifiedEvent);
 			break;
 		}
 
