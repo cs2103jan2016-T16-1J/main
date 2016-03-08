@@ -48,6 +48,7 @@ public class MainWindow {
 	private static JTextArea actionsTextArea;
 	private Controller mainController;
 	private State currentState;
+	private Calendar calendarInstance;
 	
 	static JLabel lblMonth;
 	static JButton btnPrev, btnNext;
@@ -239,6 +240,8 @@ public class MainWindow {
 	}
 	
 	private void initializeCalendar() {
+		initializeCalendarInstance();
+		
 		initiliazeCalendarComponents();
 		
 		addCalendarComponents();
@@ -250,6 +253,10 @@ public class MainWindow {
 		setCalendarRows();
 		
         setSingleCellSelection();
+	}
+	
+	private void initializeCalendarInstance() {
+		calendarInstance = Calendar.getInstance();
 	}
 	
 	private void initiliazeCalendarComponents() {
@@ -292,16 +299,19 @@ public class MainWindow {
 	}
 	
 	private void setCalendarHeaders() {
-		Calendar c = Calendar.getInstance();
+		SimpleDateFormat format = getHeaderFormat();
+		String formatted = format.format(calendarInstance.getTime());
 		
-		SimpleDateFormat format = new SimpleDateFormat("E (d)");
-		
-		String formatted = format.format(c.getTime());
 		for (int i=0; i < 7; i++) {
-			formatted = format.format(c.getTime());
-			c.set(Calendar.DAY_OF_MONTH, c.get(Calendar.DAY_OF_MONTH) + 1);
+			formatted = format.format(calendarInstance.getTime());
+			calendarInstance.set(Calendar.DAY_OF_MONTH, calendarInstance.get(Calendar.DAY_OF_MONTH) + 1);
         	mtblCalendar.addColumn(formatted);
         }	
+	}
+	
+	private SimpleDateFormat getHeaderFormat() {
+		SimpleDateFormat format = new SimpleDateFormat("E (d)");
+		return format;
 	}
 	
 	private void setCalendarRows() {
