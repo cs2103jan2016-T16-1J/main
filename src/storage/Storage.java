@@ -30,7 +30,7 @@ public class Storage {
 		}
 	}
 	
-	public void addToStorage(Event event) throws IOException, JSONException{
+	public static void addToStorage(Event event) throws IOException, JSONException{
 		JSONObject jsonObj = castEventToJSONObj(event);
 		
 		try {
@@ -44,7 +44,7 @@ public class Storage {
 		
 	}
 	
-	public void removeFromStorage(Event event) throws JSONException {
+	public static void removeFromStorage(Event event) throws JSONException {
 		String line = null;
 		
 		try {
@@ -80,7 +80,7 @@ public class Storage {
 	}
 	
 	
-	public void readStorage() throws JSONException{
+	public static void readStorage() throws JSONException{
 		String line = null;
 		
 		try {
@@ -108,7 +108,7 @@ public class Storage {
 	}
 	
 	
-	public JSONObject castEventToJSONObj(Event event) throws JSONException{
+	public static JSONObject castEventToJSONObj(Event event) throws JSONException{
 		JSONObject jsonObj = new JSONObject();
 		
 		jsonObj.put("name", event.getName());
@@ -123,7 +123,7 @@ public class Storage {
 	
 	}
 	
-	public Event castJSONObjToEvent(JSONObject jsonObj) throws JSONException{
+	public static Event castJSONObjToEvent(JSONObject jsonObj) throws JSONException{
 		Event event = new Event();
 		
 		event.setName(jsonObj.getString("name"));
@@ -138,7 +138,7 @@ public class Storage {
 	}
 	
 	
-	public boolean isSameJSONObj (JSONObject js1, JSONObject js2) throws JSONException {
+	public static boolean isSameJSONObj (JSONObject js1, JSONObject js2) throws JSONException {
 	    if (js1 == null || js2 == null) {
 	        return (js1 == js2);
 	    }
