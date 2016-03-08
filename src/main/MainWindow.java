@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -38,6 +39,7 @@ public class MainWindow {
 	private String NEW_LINE = "\n";
 	private JFrame frame;
 	private JPanel mainTab;
+	private int DISPLAYED_DAYS_NUM = 7;
 	private int WINDOW_X = 100;
 	private int WINDOW_Y = 100;
 	private int WINDOW_WIDTH = 1200;
@@ -223,13 +225,23 @@ public class MainWindow {
 		    	
 		    	//calling controller
 		    	currentState = mainController.executeCommand(inputString);
-		    	for (Event event : currentState.displayedEvents){
-			    	actionsTextArea.append(event.printEvent());
-		    	}
-		        System.out.println("");
+		    	renderCalendar();
 		    }
 		};
 		return action;
+	}
+	
+	private void renderCalendar() {
+		for (Event event : currentState.displayedEvents){
+	    	actionsTextArea.append(event.printEvent());
+	    	String category = event.getCategory();
+	    	if (category == "DEADLINE") {
+	    		//Add specific category action
+	    		addDeadlineToTimetable(event);
+	    	}
+	    	
+    	}
+        System.out.println("");
 	}
 	
 	private void initializeOutputField() {
@@ -289,6 +301,46 @@ public class MainWindow {
 		calendarPanel.add(stblCalendar);
 	}
 	
+	private void addDeadlineToTimetable(Event deadline) {
+		double eventHeight = getDeadlineHeight();
+		double eventWidth = getDeadlineWidth();
+		
+		Calendar startCalendar = (Calendar) calendarInstance.clone();
+		Date startDate = startCalendar.getTime();
+		
+		Calendar endCalendar = (Calendar) calendarInstance.clone();
+		endCalendar.set(Calendar.DAY_OF_MONTH, calendarInstance.get(Calendar.DAY_OF_MONTH) + DISPLAYED_DAYS_NUM);
+		endCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		endCalendar.set(Calendar.MINUTE, 0);
+		Date endDate = endCalendar.getTime();
+		
+		Date deadlineDate = deadline.getEndTime();
+		Calendar deadlineCalendar = (Calendar) calendarInstance.clone();
+		deadlineCalendar.setTime(deadlineDate);
+
+		if (deadlineDate.after(startDate) && deadlineDate.before(endDate)) {
+			JTextField currentEvent = new JTextField(deadline.getName());
+			int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
+			int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
+			int xOffset = (int) eventWidth * dayDifference;
+			int yOffset = (int) eventHeight * hour;
+ 			currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
+			currentEvent.setColumns(10);
+			currentEvent.setBackground(Color.GREEN);
+			tblCalendar.add(currentEvent);
+		}
+	}
+	
+	private double getDeadlineHeight() {
+		double height = tblCalendar.getHeight() / (double) 24;
+		return height;
+	}
+	
+	private double getDeadlineWidth() {
+		double width = tblCalendar.getWidth() / (double) DISPLAYED_DAYS_NUM;
+		return width;
+	}
+	
 	private void setBoundsCalendarComponents() {
 		calendarPanel.setBounds(275, 0, 771, 519);
 		lblMonth.setBounds(348, 85, 49, 14);
@@ -301,12 +353,12 @@ public class MainWindow {
 	private void setCalendarHeaders() {
 		SimpleDateFormat format = getHeaderFormat();
 		String formatted = format.format(calendarInstance.getTime());
-		
-		for (int i=0; i < 7; i++) {
-			formatted = format.format(calendarInstance.getTime());
-			calendarInstance.set(Calendar.DAY_OF_MONTH, calendarInstance.get(Calendar.DAY_OF_MONTH) + 1);
+		Calendar calendarClone = (Calendar) calendarInstance.clone();
+		for (int i=0; i < DISPLAYED_DAYS_NUM; i++) {
+			formatted = format.format(calendarClone.getTime());
+			calendarClone.set(Calendar.DAY_OF_MONTH, calendarClone.get(Calendar.DAY_OF_MONTH) + 1);
         	mtblCalendar.addColumn(formatted);
-        }	
+        }
 	}
 	
 	private SimpleDateFormat getHeaderFormat() {
