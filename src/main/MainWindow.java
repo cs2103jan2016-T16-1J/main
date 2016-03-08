@@ -56,7 +56,7 @@ public class MainWindow {
 	private static Color navbarColor;
 	private static Color backgroundColor;
 	private static Color buttonColor;
-	private static Color buttonColorSelected;
+	private static Color darkGreen;
 	private Controller mainController;
 	private State currentState;
 	private Calendar calendarInstance;
@@ -183,7 +183,7 @@ public class MainWindow {
 		navbarColor = new Color(55, 71, 79);
 		backgroundColor = new Color(243, 243, 244);
 		buttonColor = new Color(28, 192, 159);
-		buttonColorSelected = new Color(23, 152, 126);
+		darkGreen = new Color(23, 152, 126);
 	}
 	
 	private void initializeMainWindow() {
@@ -356,11 +356,13 @@ public class MainWindow {
 			JTextField currentEvent = new JTextField(deadline.getName());
 			int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 			int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
-			int xOffset = (int) eventWidth * dayDifference;
+			int xOffset = (int) eventWidth * dayDifference + dayDifference;
 			int yOffset = (int) eventHeight * hour;
  			currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
-			currentEvent.setColumns(10);
-			currentEvent.setBackground(Color.GREEN);
+			currentEvent.setBackground(darkGreen);
+			currentEvent.setBorder(null);
+			currentEvent.setHorizontalAlignment(JTextField.CENTER);
+			currentEvent.setForeground(Color.WHITE);
 			tblCalendar.add(currentEvent);
 		}
 	}
