@@ -30,35 +30,36 @@ public class Parser {
 	public static main.Event oldEvent;
 	
 	private final String PATTERN_SPACE = "(\\s)";
-	private final String PATTERN_AT = "(\\bat\\w*\\b)";
-	private final String PATTERN_AT_OR_BY = "(\\bat|by\\w*\\b)";
-	private final String PATTERN_FROM = "(\\bfrom\\w*\\b)";
-	private final String PATTERN_TO = "(\\bto\\w*\\b)";
-	private final String PATTERN_ON = "(\\bon\\w*\\b)";
-	private final String PATTERN_BY = "(\\bby\\w*\\b)";
-	private final String PATTERN_BEFORE = "(\\bbefore\\w*\\b)";
-	private final String PATTERN_AFTER = "(\\bafter\\w*\\b)";
-	private final String PATTERN_NEXT = "(\\bnext\\w*\\\b)";
-	private final String PATTERN_TODAY = "(\\btoday\\w*\\b)";
-	private final String PATTERN_TOMORROW = "(\\btomorrow\\w*\\b)";
-	private final String PATTERN_YESTERDAY = "(\\byesterday\\w*\\b)";
-	private final String PATTERN_TOD = "(\\btod\\w*\\b)";
-	private final String PATTERN_TOM = "(\\btom\\w*\\b)";
-	private final String PATTERN_YES = "(\\byes\\w*\\b)";
-	private final String PATTERN_ALL = "(\\bon|at|by|from\\w*\\b)";
+	private final String PATTERN_AT = "(\\bat\\b)";
+	private final String PATTERN_AT_OR_BY = "(\\b(at)\\b|\\b(by)\\b)";
+	private final String PATTERN_FROM = "(\\bfrom\\b)";
+	private final String PATTERN_TO = "(\\bto\\b)";
+	private final String PATTERN_ON = "(\\bon\\b)";
+	private final String PATTERN_BY = "(\\bby\\b)";
+	private final String PATTERN_BEFORE = "(\\bbefore\\b)";
+	private final String PATTERN_AFTER = "(\\bafter\\b)";
+	private final String PATTERN_NEXT = "(\\bnext\\b)";
+	private final String PATTERN_TODAY = "(\\btoday\\b)";
+	private final String PATTERN_TOMORROW = "(\\btomorrow\\b)";
+	private final String PATTERN_YESTERDAY = "(\\byesterday\\b)";
+	private final String PATTERN_TOD = "(\\btod\\b)";
+	private final String PATTERN_TOM = "(\\btom\\b)";
+	private final String PATTERN_YES = "(\\byes\\b)";
+	private final String PATTERN_ALL = "(\\b(on)\\b|\\b(at)\\b|\\b(by)\\b|\\b(from)\\b)";
 
 	private final String TIME_BEFORE_MIDNIGHT = "23:59";
 	private final String ERROR_DATE_FORMAT = "The input date format is not supported";
 
 	public Command parseCommand(String input){
 		Command cmdInterface = null;
-		main.Event event;
+		main.Event event = new main.Event();
 		
 		String command = getFirstWord(input);
 		CommandType tempCmd = getCommandType(command);
 
 		if (tempCmd == CommandType.INVALID){
-
+			event = null;
+			oldEvent = null;
 		} else if(tempCmd == CommandType.ADD){
 			event = executeAdd(removeFirstWord(input));
 			oldEvent = event;
@@ -68,11 +69,11 @@ public class Parser {
 			oldEvent = null;
 		} else if(tempCmd == CommandType.DELETE){
 			event = executeDelete(removeFirstWord(input));
-			oldEvent = event;
+			oldEvent = null;
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.EDIT){
-			event = oldEvent;
 			Event realOldEvent = new Event();
+			event = oldEvent;
 			realOldEvent.setName(oldEvent.getName());
 			realOldEvent.setDescription(oldEvent.getDescription());
 			realOldEvent.setCategory(oldEvent.getCategory());
@@ -111,10 +112,20 @@ public class Parser {
 			oldEvent = null;
 			return executeDelete(removeFirstWord(input));
 		} else if(tempCmd == CommandType.EDIT){
-			main.Event task = oldEvent;
+			main.Event task = new main.Event();
+			main.Event oldTask = new main.Event();
+			oldTask = oldEvent;
+			task.setName(oldEvent.getName());
+			task.setDescription(oldEvent.getDescription());
+			task.setCategory(oldEvent.getCategory());
+			task.setEndTime(oldEvent.getEndTime());
+			task.setStartTime(oldEvent.getStartTime());
+			task.setLocation(oldEvent.getLocation());
+			task.setStatus(oldEvent.getStatus());
 			String remainingInput = extractDescription(task, removeFirstWord(input));
-			main.Event newEvent = executeEdit(task, remainingInput);
-			return newEvent;
+			task =	executeEdit(task, remainingInput);
+			oldEvent = task;
+			return task;
 		}
 		return null;
 	}
@@ -279,17 +290,19 @@ public class Parser {
 			return task;
 		}
 		
-		int[] index = matchPatterOfFirstOccurrence( PATTERN_ALL, input);
-		
-		if(index[INDEX_START] == 0){
-			task = decodeDataFromInput(task, PATTERN_ON, input, isAdd, isEdit);
-			return task;
-		}
-		
+		//int[] index = matchPatterOfFirstOccurrence( PATTERN_ALL, input);
+		/*
 		if(index[INDEX_START] != index[INDEX_END]){
 			task.setName(input.substring(INDEX_START, index[INDEX_START]).trim());
 			input = input.substring(index[INDEX_START], input.length()).trim();
-		}
+		}*/
+		
+		/*if(index[INDEX_START] == 0){
+			task = decodeDataFromInput(task, PATTERN_ON, input, isAdd, isEdit);
+			return task;
+		}*/
+		
+		
 		task = decodeDataFromInput(task, PATTERN_ON, input, isAdd, isEdit);
 		return task;
 	}
@@ -348,6 +361,10 @@ public class Parser {
 
 			if(matchedDate[INDEX_END] > 0 && isEdit){
 				startIndex = matchedDate[INDEX_END] + 1;
+				if(startIndex > input.length())
+				{
+					return null;
+				}
 			} else if(matchedDate[INDEX_END] > 0){
 				endIndex = matchedDate[INDEX_START];
 				task.setName(input.substring(startIndex, endIndex).trim());
@@ -389,6 +406,10 @@ public class Parser {
 				startIndex = matchedDueDate[INDEX_END] + 1;
 				isDeadline = true;
 			}
+			
+			if(startIndex > input.length()){
+				return null;
+			}
 
 		case PATTERN_AT:
 			int[] matchedData = matchPatternOfLastOccurrence(PATTERN_AT,  input);
@@ -415,6 +436,9 @@ public class Parser {
 				}
 				endIndex = input.length();
 				startIndex = matchedData[INDEX_END] + 1;
+				if(startIndex > endIndex){
+					return null;
+				}
 			}else{
 				endIndex = input.length();
 				if((endIndex - startIndex) == input.length()){
@@ -430,9 +454,12 @@ public class Parser {
 					break;
 				} else if(tempDate.isEmpty()){
 					tempDate = input.substring(startIndex, endIndex).trim();
-					String[] dateTime = extractTimeFromDate(PATTERN_SPACE, tempDate);
-
-					task = setTaskCategory(task, dateTime[0], dateTime[1], isDeadline);
+					if(DateChecker.validateDate(tempDate) != null){	
+						String[] dateTime = extractTimeFromDate(PATTERN_SPACE, tempDate);
+						task = setTaskCategory(task, dateTime[0], dateTime[1], isDeadline);
+					} else{
+						return null;
+					}
 					startIndex = endIndex;
 					break;
 				}else{

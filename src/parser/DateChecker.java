@@ -65,7 +65,7 @@ public class DateChecker {
 				inputDate = format.parse(stringDateInput);
 				break;
 			} catch (ParseException e) {
-				System.out.println(e.toString());
+				//System.out.println(e.toString());
 			}
 
 		}
