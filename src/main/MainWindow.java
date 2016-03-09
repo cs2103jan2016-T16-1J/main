@@ -24,6 +24,7 @@ import java.awt.Container;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
@@ -34,6 +35,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import command.*;
+
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
@@ -41,6 +43,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+
 import java.awt.Font;
 
 
@@ -64,9 +67,9 @@ public class MainWindow {
 	private static Color backgroundColor;
 	private static Color buttonColor;
 	private static Color darkGreen;
-	private static Color fontColor;
-	private static Color lightGray;
-	private static Color borderColor;
+	public static Color fontColor;
+	public static Color lightGray;
+	public static Color borderColor;
 	
 	private Controller mainController;
 	private State currentState;
@@ -172,7 +175,7 @@ public class MainWindow {
 		
 		intializeState();
 		
-		initColors();
+		initializeColors();
 		
 		initializeMainWindow();
 		
@@ -197,7 +200,7 @@ public class MainWindow {
 		currentState = new State();
 	}
 	
-	private void initColors() {
+	private void initializeColors() {
 		navbarColor = new Color(55, 71, 79);
 		backgroundColor = new Color(243, 243, 244);
 		buttonColor = new Color(28, 192, 159);
@@ -309,7 +312,7 @@ public class MainWindow {
 	
 	private void initializeMainTab() {
 		mainTab = new JPanel();
-		mainTab.setBackground(backgroundColor);
+		mainTab.setBackground(Color.WHITE);
 		mainTab.setLayout(null);
 		mainTab.setBounds(402, 0, 782, 761);
 		frame.getContentPane().add(mainTab);
@@ -388,15 +391,18 @@ public class MainWindow {
 	}
 	
 	private void initiliazeCalendarComponents() {
-		lblMonth = new JLabel();
-		refreshMonth();
 		mtblCalendar = getDefaultTableModel();
 		tblCalendar = new JTable(mtblCalendar); //Table using the above model
+		tblCalendar.setGridColor(borderColor);
 		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table
+		stblCalendar.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
+		stblCalendar.setBackground(Color.WHITE);
 		stblCalendar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		calendarPanel = new JPanel();
-		calendarPanel.setBackground(backgroundColor);
+		calendarPanel.setBackground(Color.WHITE);
+		calendarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 		rowHeaderTable = new RowNumberTable(tblCalendar);
+		rowHeaderTable.setGridColor(borderColor);
 	}
 	
 	private void refreshMonth() {
@@ -415,11 +421,17 @@ public class MainWindow {
 	}
 	
 	private void addCalendarComponents() {
-		calendarPanel.setBorder(BorderFactory.createTitledBorder("Calendar"));
 		mainTab.add(calendarPanel);
 		calendarPanel.setLayout(null);
+		lblMonth = new JLabel();
+		lblMonth.setBounds(0, 0, 782, 45);
 		calendarPanel.add(lblMonth);
+		lblMonth.setForeground(fontColor);
+		lblMonth.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblMonth.setHorizontalAlignment(SwingConstants.CENTER);
+		lblMonth.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 		calendarPanel.add(stblCalendar);
+		refreshMonth();
 	}
 	
 	private void createDeadlineEvent(Event deadline) {
@@ -446,7 +458,7 @@ public class MainWindow {
 		double eventWidth = getDeadlineWidth();
 		int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 		int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
-		int xOffset = (int) eventWidth * dayDifference + dayDifference;
+		int xOffset = (int) eventWidth * dayDifference;
 		int yOffset = (int) eventHeight * hour;
 		
 		JTextField currentEvent = new JTextField(deadline.getName());
@@ -470,21 +482,25 @@ public class MainWindow {
 	}
 	
 	private void setBoundsCalendarComponents() {
-		calendarPanel.setBounds(10, 0, 761, 519);
-		lblMonth.setBounds(348, 85, 107, 14);
+		calendarPanel.setBounds(0, 0, 782, 467);
 		tblCalendar.setSize(100, 100);
-		stblCalendar.setBounds(10, 110, 751, 402);
+		stblCalendar.setBounds(10, 54, 762, 402);
 	}
 	
 	private void setCalendarHeaders() {
 		SimpleDateFormat format = getHeaderTableFormat();
 		String formatted = format.format(calendarInstance.getTime());
 		Calendar calendarClone = (Calendar) calendarInstance.clone();
+		
 		for (int i=0; i < DISPLAYED_DAYS_NUM; i++) {
 			formatted = format.format(calendarClone.getTime());
 			calendarClone.set(Calendar.DAY_OF_MONTH, calendarClone.get(Calendar.DAY_OF_MONTH) + 1);
         	mtblCalendar.addColumn(formatted);
         }
+		JTableHeader header = tblCalendar.getTableHeader();
+		header.setBackground(Color.WHITE);
+		header.setForeground(fontColor);
+		header.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, borderColor));
 	}
 	
 	private SimpleDateFormat getHeaderTableFormat() {
@@ -501,7 +517,7 @@ public class MainWindow {
 		mtblCalendar.setRowCount(24);
 		rowHeaderTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		rowHeaderTable.setRowSelectionAllowed(true);
-		rowHeaderTable.setRowHeight(38);
+		rowHeaderTable.setRowHeight(12);
 		rowHeaderTable.setColumnSelectionAllowed(true);
 		stblCalendar.setRowHeaderView(rowHeaderTable);
 	}
