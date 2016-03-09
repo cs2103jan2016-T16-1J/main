@@ -14,4 +14,5 @@ public class Constant {
 	public static final String CATEGORY_DEADLINE = "DEADLINE";
 	public static final String CATEGORY_FLOATING = "FLOATING";
 	public static final String CATEGORY_UNDETERMINED = "UNDETERMINED";
+	public static final String CATEGORY_ALL = "ALL";
 }
