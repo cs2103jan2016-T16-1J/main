@@ -75,6 +75,8 @@ public class MainWindow {
 	private Controller mainController;
 	private State currentState;
 	private Calendar calendarInstance;
+	private Calendar startCalendar;
+	private Calendar endCalendar;
 	
 	static JLabel lblMonth;
 	static JTable tblCalendar;
@@ -373,8 +375,10 @@ public class MainWindow {
 	    	String category = event.getCategory();
 	    	if (category == "DEADLINE") {
 	    		createDeadlineEvent(event);
-	    		displayEventDetails(event);
+	    	} else if (category == "EVENT") {
+	    		createSpecificEvent(event);
 	    	}
+	    	displayEventDetails(event);
     	}
 	}
 	
@@ -450,27 +454,35 @@ public class MainWindow {
 	}
 	
 	private void createDeadlineEvent(Event deadline) {
-		Calendar startCalendar = (Calendar) calendarInstance.clone();
+		updateStartCalendar();
+		updateEndCalendar();
+		
 		Date startDate = startCalendar.getTime();
-		
-		Calendar endCalendar = (Calendar) calendarInstance.clone();
-		endCalendar.set(Calendar.DAY_OF_MONTH, calendarInstance.get(Calendar.DAY_OF_MONTH) + DISPLAYED_DAYS_NUM);
-		endCalendar.set(Calendar.HOUR_OF_DAY, 0);
-		endCalendar.set(Calendar.MINUTE, 0);
 		Date endDate = endCalendar.getTime();
-		
 		Date deadlineDate = deadline.getEndTime();
+		
 		Calendar deadlineCalendar = (Calendar) calendarInstance.clone();
 		deadlineCalendar.setTime(deadlineDate);
-
+		
 		if (deadlineDate.after(startDate) && deadlineDate.before(endDate)) {
 			addDeadlineEvent(deadline, deadlineCalendar, startCalendar);
 		}
 	}
 	
+	private void updateStartCalendar() {
+		startCalendar = (Calendar) calendarInstance.clone();
+	}
+	
+	private void updateEndCalendar() {
+		endCalendar = (Calendar) calendarInstance.clone();
+		endCalendar.set(Calendar.DAY_OF_MONTH, calendarInstance.get(Calendar.DAY_OF_MONTH) + DISPLAYED_DAYS_NUM);
+		endCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		endCalendar.set(Calendar.MINUTE, 0);
+	}
+	
 	private void addDeadlineEvent(Event deadline, Calendar deadlineCalendar, Calendar startCalendar) {
-		double eventHeight = getDeadlineHeight();
-		double eventWidth = getDeadlineWidth();
+		double eventHeight = getEventHeight();
+		double eventWidth = getEventWidth();
 		int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 		int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
 		int xOffset = (int) eventWidth * dayDifference;
@@ -486,14 +498,57 @@ public class MainWindow {
 		tblCalendar.add(currentEvent);
 	}
 	
-	private double getDeadlineHeight() {
+	private double getEventHeight() {
 		double height = tblCalendar.getHeight() / (double) 24;
 		return height;
 	}
 	
-	private double getDeadlineWidth() {
+	private double getEventWidth() {
 		double width = tblCalendar.getWidth() / (double) DISPLAYED_DAYS_NUM;
 		return width;
+	}
+	
+	private void createSpecificEvent(Event specificEvent) {
+		updateStartCalendar();
+		updateEndCalendar();
+		
+		Date startDate = startCalendar.getTime();
+		Date endDate = endCalendar.getTime();
+		Date startDateEvent = specificEvent.getStartTime();
+		Date endDateEvent = specificEvent.getEndTime();
+
+		Calendar startEventCalendar = (Calendar) calendarInstance.clone();
+		startEventCalendar.setTime(startDateEvent);
+		Calendar endEventCalendar = (Calendar) calendarInstance.clone();
+		endEventCalendar.setTime(endDateEvent);
+		
+		addSpecificEvent(specificEvent, startEventCalendar, endEventCalendar);
+	}
+	
+	private void addSpecificEvent(Event specificEvent, Calendar startEventCalendar, Calendar endEventCalendar) {
+		double eventHeight = getEventHeight();
+		double eventWidth = getEventWidth();
+		int dayDifference = endEventCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
+		int hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
+		int xOffset = (int) eventWidth * dayDifference;
+		int yOffset = (int) eventHeight * hour;
+		double yMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
+				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
+		eventHeight *= yMultiplier;
+		
+		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight);
+		tblCalendar.add(currentEvent);
+	}
+	
+	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight) {
+		JTextField currentEvent = new JTextField(name);
+		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
+		currentEvent.setBackground(darkGreen);
+		currentEvent.setBorder(null);
+		currentEvent.setEditable(false);
+		currentEvent.setHorizontalAlignment(JTextField.CENTER);
+		currentEvent.setForeground(Color.WHITE);
+		return currentEvent;
 	}
 	
 	private void setBoundsCalendarComponents() {
