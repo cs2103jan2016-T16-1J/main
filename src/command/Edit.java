@@ -18,8 +18,7 @@ public class Edit implements Command{
 	 * @param originalEvent the original event located in completeState
 	 * @param editedEvent new information in the form of an Event object that will replace the original event
 	 */
-	public Edit(Event originalEvent, Event editedEvent){
-		this.originalEvent = originalEvent;
+	public Edit(Event editedEvent){
 		this.editedEvent = editedEvent;
 		
 	}
@@ -31,6 +30,7 @@ public class Edit implements Command{
 	 */
 	public State execute(State completeState){
 		this.completeState = completeState;
+		this.originalEvent = completeState.selectedEvent;
 		int index = findIndexOfEvent();
 		
 		if(index == -1){
