@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import controller.Controller;
 import json.JSONException;
+import storage.Storage;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -99,11 +100,15 @@ public class MainWindow {
 	 */
 	public static void main(String[] args) throws IOException, JSONException {
 
+		Storage.createFile();
+		
+		
 		/*_________ Testing ADD ______________*/
 		//Creating object manually
 		Controller controller = new Controller();
 		State completeState = new State();
 		Event testNewEvent = new Event();
+		Event testNewEvent2 = new Event();
 		String result = new String();
 		final String finalResult;
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
@@ -116,7 +121,6 @@ public class MainWindow {
 			e1.printStackTrace();
 		}
 		
-		storage.Storage.createFile();
 		
 		testNewEvent.setName("TEST EVENT NAME");
 		testNewEvent.setDescription("This is a test event created in main");
@@ -124,10 +128,19 @@ public class MainWindow {
 		testNewEvent.setStatus(Event.Status.COMPLETE);
 		testNewEvent.setStartTime(aTime);
 		testNewEvent.setEndTime(aTime);
+		
+		testNewEvent2.setName("brunch");
+		testNewEvent2.setDescription("with supa fire");
+		testNewEvent2.setLocation("Supahotfire's house");
+		testNewEvent2.setStatus(Event.Status.INCOMPLETE);
+		testNewEvent2.setStartTime(aTime);
+		testNewEvent2.setEndTime(aTime);
+		
 		Command adding = new Add(testNewEvent);
+		Command adding2 = new Add(testNewEvent2);
 		//Add twice to test delete once
 		completeState = adding.execute(completeState);
-		completeState = adding.execute(completeState);
+		completeState = adding2.execute(completeState);
 		
 		Command deleting = new Delete(testNewEvent);
 		completeState = deleting.execute(completeState);
