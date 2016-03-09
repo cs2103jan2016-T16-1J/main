@@ -72,9 +72,17 @@ public class Parser {
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.EDIT){
 			event = oldEvent;
+			Event realOldEvent = new Event();
+			realOldEvent.setName(oldEvent.getName());
+			realOldEvent.setDescription(oldEvent.getDescription());
+			realOldEvent.setCategory(oldEvent.getCategory());
+			realOldEvent.setEndTime(oldEvent.getEndTime());
+			realOldEvent.setStartTime(oldEvent.getStartTime());
+			realOldEvent.setLocation(oldEvent.getLocation());
+			realOldEvent.setStatus(oldEvent.getStatus());
 			String remainingInput = extractDescription(event, removeFirstWord(input));
 			event = executeEdit(event , remainingInput);
-			cmdInterface = new Edit(oldEvent, event);
+			cmdInterface = new Edit(realOldEvent, event);
 			oldEvent = event;
 		}
 		return cmdInterface;
