@@ -40,6 +40,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import java.awt.Font;
 
 
 public class MainWindow {
@@ -62,6 +64,7 @@ public class MainWindow {
 	private static Color backgroundColor;
 	private static Color buttonColor;
 	private static Color darkGreen;
+	private static Color fontColor;
 	private static Color lightGray;
 	private static Color borderColor;
 	
@@ -82,6 +85,8 @@ public class MainWindow {
 	private JLabel lblInfoEventStartTime;
 	private JLabel lblInfoEventEndTime;
 	private JLabel lblInfoEventCategory;
+	private JLabel lblInfoEventName;
+	private JLabel lblInfoEventLocation;
 
 
 	/**
@@ -199,6 +204,7 @@ public class MainWindow {
 		darkGreen = new Color(23, 152, 126);
 		lightGray = new Color(244, 246, 250);
 		borderColor = new Color(231, 234, 236);
+		fontColor = new Color(103, 106, 108);
 	}
 	
 	private void initializeMainWindow() {
@@ -240,31 +246,65 @@ public class MainWindow {
 		infoPanel.setBounds(119, 0, 286, 761);
 		infoPanel.setBackground(lightGray);
 		frame.getContentPane().add(infoPanel);
-		infoPanel.setLayout(null);
 		
-		JLabel lblInfoEventName = new JLabel("New label");
-		lblInfoEventName.setBounds(97, 11, 46, 14);
+		lblInfoEventName = new JLabel("PLACEHOLDER");
+		lblInfoEventName.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblInfoEventName.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventName.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
+		lblInfoEventName.setBounds(0, 0, 286, 45);
+		lblInfoEventName.setForeground(fontColor);
 		infoPanel.add(lblInfoEventName);
 		
-		lblInfoEventDescription = new JLabel("New label");
-		lblInfoEventDescription.setBounds(97, 48, 46, 14);
+		lblInfoEventDescription = new JLabel("PLACEHOLDER");
+		lblInfoEventDescription.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventDescription.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventDescription.setBounds(0, 54, 286, 40);
+		lblInfoEventDescription.setForeground(fontColor);
 		infoPanel.add(lblInfoEventDescription);
 		
-		JLabel lblInfoEventLocation = new JLabel("New label");
-		lblInfoEventLocation.setBounds(97, 88, 46, 14);
+		lblInfoEventLocation = new JLabel("PLACEHOLDER");
+		lblInfoEventLocation.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventLocation.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventLocation.setBounds(0, 100, 286, 14);
+		lblInfoEventLocation.setForeground(fontColor);
 		infoPanel.add(lblInfoEventLocation);
 		
-		lblInfoEventStartTime = new JLabel("New label");
-		lblInfoEventStartTime.setBounds(97, 138, 46, 14);
+		lblInfoEventStartTime = new JLabel("PLACEHOLDER");
+		lblInfoEventStartTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventStartTime.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventStartTime.setBounds(0, 120, 286, 14);
+		lblInfoEventStartTime.setForeground(fontColor);
 		infoPanel.add(lblInfoEventStartTime);
 		
-		lblInfoEventEndTime = new JLabel("New label");
-		lblInfoEventEndTime.setBounds(97, 186, 46, 14);
+		lblInfoEventEndTime = new JLabel("PLACEHOLDER");
+		lblInfoEventEndTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventEndTime.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventEndTime.setBounds(0, 140, 286, 14);
+		lblInfoEventEndTime.setForeground(fontColor);
 		infoPanel.add(lblInfoEventEndTime);
 		
-		lblInfoEventCategory = new JLabel("New label");
-		lblInfoEventCategory.setBounds(97, 228, 46, 14);
+		lblInfoEventCategory = new JLabel("PLACEHOLDER");
+		lblInfoEventCategory.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventCategory.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventCategory.setBounds(0, 160, 286, 14);
+		lblInfoEventCategory.setForeground(fontColor);
 		infoPanel.add(lblInfoEventCategory);
+		
+		infoPanel.setLayout(null);		
+	}
+	
+	private void displayEventDetails(Event currentEvent) {
+		lblInfoEventName.setText(currentEvent.getName());
+		
+		lblInfoEventDescription.setText(currentEvent.getDescription());
+		
+		lblInfoEventLocation.setText(currentEvent.getLocation());
+		
+		lblInfoEventStartTime.setText(currentEvent.getStartTime().toString());
+		
+		lblInfoEventEndTime.setText(currentEvent.getEndTime().toString());
+		
+		lblInfoEventCategory.setText(currentEvent.getCategory());
 	}
 	
 	private void initializeMainTab() {
@@ -315,6 +355,7 @@ public class MainWindow {
 	    	String category = event.getCategory();
 	    	if (category == "DEADLINE") {
 	    		createDeadlineEvent(event);
+	    		displayEventDetails(event);
 	    	}
     	}
 	}
