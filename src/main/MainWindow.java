@@ -108,7 +108,7 @@ public class MainWindow {
 		Controller controller = new Controller();
 		State completeState = new State();
 		Event testNewEvent = new Event();
-		Event testNewEvent2 = new Event();
+		Event brunch = new Event();
 		String result = new String();
 		final String finalResult;
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
@@ -129,20 +129,22 @@ public class MainWindow {
 		testNewEvent.setStartTime(aTime);
 		testNewEvent.setEndTime(aTime);
 		
-		testNewEvent2.setName("brunch");
-		testNewEvent2.setDescription("with supa fire");
-		testNewEvent2.setLocation("Supahotfire's house");
-		testNewEvent2.setStatus(Event.Status.INCOMPLETE);
-		testNewEvent2.setStartTime(aTime);
-		testNewEvent2.setEndTime(aTime);
+		brunch.setName("brunch");
+		brunch.setDescription("with supa fire");
+		brunch.setLocation("Supahotfire's house");
+		brunch.setStatus(Event.Status.INCOMPLETE);
+		brunch.setStartTime(aTime);
+		brunch.setEndTime(aTime);
 		
 		Command adding = new Add(testNewEvent);
-		Command adding2 = new Add(testNewEvent2);
-		//Add twice to test delete once
+		Command adding2 = new Add(testNewEvent);
+		Command adding3 = new Add(brunch);
+		//Add event, event, brunch to test delete event
 		completeState = adding.execute(completeState);
 		completeState = adding2.execute(completeState);
+		completeState = adding3.execute(completeState);
 		
-		Command deleting = new Delete(testNewEvent);
+		Command deleting = new Delete(brunch);
 		completeState = deleting.execute(completeState);
 		
 		for(Event e: completeState.displayedEvents){

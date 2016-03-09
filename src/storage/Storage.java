@@ -54,43 +54,23 @@ public class Storage {
 			FileReader fr = new FileReader(fileName);
 			BufferedReader br =  new BufferedReader(fr);
 			
-			JSONObject removedJsonObj = castEventToJSONObj(event);
-			
 			while ((line = br.readLine()) != null){
 				JSONObject jsonObj = new JSONObject(line);
 				
-				/*
-				System.out.println(jsonObj.get("name"));
-				System.out.println(removedJsonObj.get("name"));
-				System.out.println(jsonObj.get("location"));
-				System.out.println(removedJsonObj.get("location"));
-				System.out.println(jsonObj.get("startTime"));
-				System.out.println(removedJsonObj.get("startTime"));
-				System.out.println(jsonObj.get("endTime"));
-				System.out.println(removedJsonObj.get("endTime"));
-				System.out.println(jsonObj.get("category"));
-				System.out.println(removedJsonObj.get("category"));
-				System.out.println(jsonObj.get("description"));
-				System.out.println(removedJsonObj.get("description"));
-				System.out.println(jsonObj.get("status"));
-				System.out.println(removedJsonObj.get("status"));
-				System.out.println(jsonObj.get("startTime"));
-				System.out.println(removedJsonObj.get("startTime"));*/
-				//System.out.println(isSameJSONObj(jsonObj,removedJsonObj));
-				
-				if (!isSameJSONObj(jsonObj, removedJsonObj)){
+				if (!isSameObject(jsonObj, event)){
 					pw.println(line);
 					pw.flush();
 				}
 			}
+				
 			br.close();
 			pw.close();
 			fr.close();
 			
-			
 			if (!tempFile.renameTo(file)){
                 System.out.println("Could not rename file");
             }
+			
 		} catch(FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + fileName + "'");                
         } catch(IOException ex) {
@@ -156,53 +136,19 @@ public class Storage {
 		return event;
 	}
 	
-	
-	public static boolean isSameJSONObj (JSONObject js1, JSONObject js2) throws JSONException {
-		if (js1.get("name").equals(js2.get("name")) && 
-				js1.get("category").equals(js2.get("category")) && 
-				js1.get("description").equals(js2.get("description")) &&
-				js1.get("location").equals(js2.get("location"))){
+	public static boolean isSameObject (JSONObject js1, Event e) throws JSONException {
+		if (js1.get("name").equals(e.getName()) && 
+				js1.get("category").equals(e.getCategory()) && 
+				js1.get("description").equals(e.getDescription()) &&
+				js1.get("location").equals(e.getLocation()) && 
+				js1.get("status").equals(e.getStatus().toString()) && 
+				js1.get("startTime").equals(e.getStartTime().toString()) && 
+				js1.get("endTime").equals(e.getEndTime().toString())){
 			return true;
 		}
 		
 		return false;
 	}
-	
-	/*
-	public static boolean isSameJSONObj (JSONObject js1, JSONObject js2) throws JSONException {
-	    if (js1 == null || js2 == null) {
-	        return (js1 == js2);
-	    }
-
-	    List<String> l1 =  Arrays.asList(JSONObject.getNames(js1));
-	    Collections.sort(l1);
-	    List<String> l2 =  Arrays.asList(JSONObject.getNames(js2));
-	    Collections.sort(l2);
-	    
-	    if (!l1.equals(l2)) { return true;}
-	    
-	    for (String key : l1) {
-	        Object val1 = js1.get(key);
-	        Object val2 = js2.get(key);
-	        if (val1 instanceof JSONObject) {
-	            if (!(val2 instanceof JSONObject)) {
-	                return true;
-	            }
-	            if (!isSameJSONObj((JSONObject)val1, (JSONObject)val2)) {
-	                return true;
-	            }
-	        }
-
-	        if (val1 == null) {
-	            if (val2 != null) {
-	                return true;
-	            }
-	        }  else if (!val1.equals(val2)) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}*/
 	
 	
 }
