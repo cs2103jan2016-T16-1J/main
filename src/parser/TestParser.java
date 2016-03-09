@@ -17,7 +17,7 @@ public class TestParser {
 		main.Event task = new Event();
 		main.Event expected = new Event();
 		
-		task = parse.testingParseCommand("add watch dance on the moon on Sun 11 am // don't forget your GF");
+		task = parse.testingParseCommand("add watch dance on the moon on Sun at 11 am // don't forget your GF");
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		expected.setName("watch dance on the moon");
 		expected.setStartTime(format.parse("13/3/2016 11:00"));
@@ -90,15 +90,16 @@ public class TestParser {
 
 		oldTask = parser.testingParseCommand("add submit thesis on Sunday at 11 pm");
 
-		task = parser.testingParseCommand("edit submit report on Sat by 10 pm at IVLE // reference");
+		task = parser.testingParseCommand("edit on Sat by 10 pm at IVLE // reference");
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		expected.setName("submit report");
+		expected.setName("submit thesis");
 		expected.setStartTime(Constant.MIN_DATE);
 		expected.setEndTime(format.parse("12/3/2016 22:00"));
 		expected.setCategory(Constant.CATEGORY_DEADLINE);
 		expected.setStatus(main.Event.Status.INCOMPLETE);
 		expected.setDescription("reference");
 		expected.setLocation("IVLE");
+		
 		assertEquals(expected.getName(), task.getName());
 		assertEquals(expected.getStartTime(), task.getStartTime());
 		assertEquals(expected.getEndTime(), task.getEndTime());
@@ -108,7 +109,7 @@ public class TestParser {
 		assertEquals(expected.getLocation(), task.getLocation());
 		
 		assertEquals(expected.getName(), oldTask.getName());
-		assertEquals(expected.getStartTime(), oldTask.getStartTime());
+		assertNotSame(expected.getStartTime(), oldTask.getStartTime());
 		assertNotSame(expected.getEndTime(), oldTask.getEndTime());
 		assertEquals(expected.getCategory(), oldTask.getCategory());
 		assertEquals(expected.getStatus(), oldTask.getStatus());
