@@ -21,6 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 
 import java.awt.Container;
+import java.awt.Dimension;
 
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
@@ -84,6 +85,7 @@ public class MainWindow {
 	static Container pane;
 	static DefaultTableModel mtblCalendar; //Table model
 	static JScrollPane stblCalendar; //The scrollpane
+	static JScrollPane areaScrollPane;	//text area scrollpane
 	static JPanel pnlCalendar; //The panel
 	static int realDay, realMonth, realYear, currentMonth, currentYear;
 	private JTable rowHeaderTable;
@@ -395,7 +397,13 @@ public class MainWindow {
 		actionsTextArea.setBounds(10, 478, 761, 253);
 		actionsTextArea.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		actionsTextArea.setEditable(false);
-		mainTab.add(actionsTextArea);
+		
+		areaScrollPane = new JScrollPane(actionsTextArea);
+		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		areaScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
+		areaScrollPane.setBounds(10, 478, 761, 253);
+	    
+		mainTab.add(areaScrollPane);
 	}
 	
 	private void initializeCalendar() {
@@ -425,7 +433,7 @@ public class MainWindow {
 		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table
 		stblCalendar.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		stblCalendar.setBackground(Color.WHITE);
-		stblCalendar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		stblCalendar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		calendarPanel = new JPanel();
 		calendarPanel.setBackground(Color.WHITE);
 		calendarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
