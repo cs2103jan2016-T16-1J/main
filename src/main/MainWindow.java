@@ -453,6 +453,7 @@ public class MainWindow {
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
 		currentEvent.setBackground(darkGreen);
 		currentEvent.setBorder(null);
+		currentEvent.setEditable(false);
 		currentEvent.setHorizontalAlignment(JTextField.CENTER);
 		currentEvent.setForeground(Color.WHITE);
 		tblCalendar.add(currentEvent);
