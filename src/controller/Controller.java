@@ -1,9 +1,12 @@
 package controller;
 
+import java.io.IOException;
 import java.text.ParseException;
 import main.State;
 import parser.Parser;
 import command.Command;
+import json.JSONException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,11 +45,14 @@ public class Controller{
 	 * It calls the parser and receives a Command object in return.
 	 * The Command is then executed
 	 * @param commandText
+	 * @throws JSONException 
+	 * @throws IOException 
 	 */
-	public void executeCommand(String commandText){
+	public State executeCommand(String commandText) throws IOException, JSONException{
 		Command userCommand;
-		State newState = new State();
 		userCommand = parser.parseCommand(commandText); //parser should return Command
-		userCommand.execute(newState);
+		userCommand.execute(completeState);
+		
+		return completeState;
 	}
 }

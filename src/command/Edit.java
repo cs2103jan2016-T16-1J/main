@@ -31,6 +31,7 @@ public class Edit implements Command{
 	 */
 	public State execute(State completeState){
 		this.completeState = completeState;
+		this.originalEvent = completeState.selectedEvent;
 		int index = findIndexOfEvent();
 		
 		if(index == -1){

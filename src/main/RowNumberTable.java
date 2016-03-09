@@ -34,7 +34,7 @@ public class RowNumberTable extends JTable
 
 
 		TableColumn column = new TableColumn();
-		column.setHeaderValue(" ");
+		column.setHeaderValue("");
 		addColumn( column );
 		column.setCellRenderer(new RowNumberRenderer());
 
@@ -167,8 +167,9 @@ public class RowNumberTable extends JTable
 
 				if (header != null)
 				{
-					setForeground(header.getForeground());
-					setBackground(header.getBackground());
+					Color fontColor = new Color(103, 106, 108);
+					setForeground(fontColor);
+					setBackground(Color.WHITE);
 					setFont(header.getFont());
 				}
 			}
@@ -193,7 +194,8 @@ public class RowNumberTable extends JTable
 				
 				setText(formatted);
 			}
-			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+			Color borderColor = new Color(231, 234, 236);
+			setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, borderColor));
 
 			return this;
 		}

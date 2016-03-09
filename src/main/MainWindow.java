@@ -1,10 +1,16 @@
 package main;
 
+import java.awt.Color;
 import java.awt.EventQueue;
+
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JPanel;
+
 import controller.Controller;
+import json.JSONException;
+import storage.Storage;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -13,16 +19,33 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+
 import java.awt.Container;
+
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import command.*;
+
+import javax.swing.border.TitledBorder;
+import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+
+import java.awt.Font;
 
 
 public class MainWindow {
@@ -30,6 +53,7 @@ public class MainWindow {
 	private String NEW_LINE = "\n";
 	private JFrame frame;
 	private JPanel mainTab;
+	private int DISPLAYED_DAYS_NUM = 7;
 	private int WINDOW_X = 100;
 	private int WINDOW_Y = 100;
 	private int WINDOW_WIDTH = 1200;
@@ -37,10 +61,22 @@ public class MainWindow {
 	private JTextField textField;
 	private JTable calendarTable;
 	private JPanel calendarPanel;
+	private JPanel infoPanel;
 	private static JTextArea actionsTextArea;
 	
+	private static Color navbarColor;
+	private static Color backgroundColor;
+	private static Color buttonColor;
+	private static Color darkGreen;
+	public static Color fontColor;
+	public static Color lightGray;
+	public static Color borderColor;
+	
+	private Controller mainController;
+	private State currentState;
+	private Calendar calendarInstance;
+	
 	static JLabel lblMonth;
-	static JButton btnPrev, btnNext;
 	static JTable tblCalendar;
 	static JFrame frmMain;
 	static Container pane;
@@ -49,19 +85,30 @@ public class MainWindow {
 	static JPanel pnlCalendar; //The panel
 	static int realDay, realMonth, realYear, currentMonth, currentYear;
 	private JTable rowHeaderTable;
+	private JLabel lblInfoEventDescription;
+	private JLabel lblInfoEventStartTime;
+	private JLabel lblInfoEventEndTime;
+	private JLabel lblInfoEventCategory;
+	private JLabel lblInfoEventName;
+	private JLabel lblInfoEventLocation;
 
 
 	/**
 	 * Launch the application.
-	 * @throws FileNotFoundException 
+	 * @throws JSONException 
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws IOException, JSONException {
 
+		Storage.createFile();
+		
+		
 		/*_________ Testing ADD ______________*/
 		//Creating object manually
 		Controller controller = new Controller();
 		State completeState = new State();
 		Event testNewEvent = new Event();
+		Event brunch = new Event();
 		String result = new String();
 		final String finalResult;
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
@@ -74,7 +121,6 @@ public class MainWindow {
 			e1.printStackTrace();
 		}
 		
-		storage.Storage.createFile();
 		
 		testNewEvent.setName("TEST EVENT NAME");
 		testNewEvent.setDescription("This is a test event created in main");
@@ -82,12 +128,23 @@ public class MainWindow {
 		testNewEvent.setStatus(Event.Status.COMPLETE);
 		testNewEvent.setStartTime(aTime);
 		testNewEvent.setEndTime(aTime);
-		Command adding = new Add(testNewEvent);
-		//Add twice to test delete once
-		completeState = adding.execute(completeState);
-		completeState = adding.execute(completeState);
 		
-		Command deleting = new Delete(testNewEvent);
+		brunch.setName("brunch");
+		brunch.setDescription("with supa fire");
+		brunch.setLocation("Supahotfire's house");
+		brunch.setStatus(Event.Status.INCOMPLETE);
+		brunch.setStartTime(aTime);
+		brunch.setEndTime(aTime);
+		
+		Command adding = new Add(testNewEvent);
+		Command adding2 = new Add(testNewEvent);
+		Command adding3 = new Add(brunch);
+		//Add event, event, brunch to test delete event
+		completeState = adding.execute(completeState);
+		completeState = adding2.execute(completeState);
+		completeState = adding3.execute(completeState);
+		
+		Command deleting = new Delete(brunch);
 		completeState = deleting.execute(completeState);
 		
 		for(Event e: completeState.displayedEvents){
@@ -107,7 +164,7 @@ public class MainWindow {
 					MainWindow window = new MainWindow();
 					
 					//for Testing Purposes
-					actionsTextArea.append(finalResult);
+					//actionsTextArea.append(finalResult);
 
 					window.frame.setVisible(true);
 				} catch (Exception e) {
@@ -129,14 +186,20 @@ public class MainWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		initializeController();
+		
+		intializeState();
+		
+		initializeColors();
+		
 		initializeMainWindow();
 		
 		initializeTabButtons();
 		
+		initializeInfoSection();
+		
 		initializeMainTab();
-		
-		initializeDetailScrollbar();
-		
+				
 		initializeInputField();
 		
 		initializeOutputField();
@@ -144,8 +207,29 @@ public class MainWindow {
 		initializeCalendar();
 	}
 	
+	private void initializeController() {
+		mainController = new Controller();
+	}
+	
+	private void intializeState() {
+		currentState = new State();
+	}
+	
+	private void initializeColors() {
+		navbarColor = new Color(55, 71, 79);
+		backgroundColor = new Color(243, 243, 244);
+		buttonColor = new Color(28, 192, 159);
+		darkGreen = new Color(23, 152, 126);
+		lightGray = new Color(244, 246, 250);
+		borderColor = new Color(231, 234, 236);
+		fontColor = new Color(103, 106, 108);
+	}
+	
 	private void initializeMainWindow() {
+		navbarColor = new Color(55, 71, 79);
 		frame = new JFrame();
+		frame.getContentPane().setBackground(navbarColor);
+		frame.setBackground(navbarColor);
 		frame.setBounds(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -153,38 +237,110 @@ public class MainWindow {
 	
 	private void initializeTabButtons() {
 		JToggleButton tglbtnNewToggleButton = new JToggleButton("Today");
-		tglbtnNewToggleButton.setBounds(0, 68, 119, 23);
+		tglbtnNewToggleButton.setForeground(Color.WHITE);
+		tglbtnNewToggleButton.setBorder(null);
+		tglbtnNewToggleButton.setBackground(buttonColor);
+		tglbtnNewToggleButton.setBounds(0, 68, 119, 34);
 		frame.getContentPane().add(tglbtnNewToggleButton);
 		
 		JToggleButton tglbtnNewToggleButton_1 = new JToggleButton("Undetermined");
-		tglbtnNewToggleButton_1.setBounds(0, 0, 119, 23);
+		tglbtnNewToggleButton_1.setForeground(Color.WHITE);
+		tglbtnNewToggleButton_1.setBorder(null);
+		tglbtnNewToggleButton_1.setBackground(buttonColor);
+		tglbtnNewToggleButton_1.setBounds(0, 0, 119, 34);
 		frame.getContentPane().add(tglbtnNewToggleButton_1);
 		
 		JToggleButton tglbtnNewToggleButton_2 = new JToggleButton("Completed");
-		tglbtnNewToggleButton_2.setBounds(0, 34, 119, 23);
+		tglbtnNewToggleButton_2.setForeground(Color.WHITE);
+		tglbtnNewToggleButton_2.setBorder(null);
+		tglbtnNewToggleButton_2.setBackground(buttonColor);
+		tglbtnNewToggleButton_2.setBounds(0, 34, 119, 34);
 		frame.getContentPane().add(tglbtnNewToggleButton_2);
+	}
+	
+	private void initializeInfoSection() {
+		infoPanel = new JPanel();
+		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
+		infoPanel.setBounds(119, 0, 286, 761);
+		infoPanel.setBackground(lightGray);
+		frame.getContentPane().add(infoPanel);
+		
+		lblInfoEventName = new JLabel("PLACEHOLDER");
+		lblInfoEventName.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblInfoEventName.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventName.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
+		lblInfoEventName.setBounds(0, 0, 286, 45);
+		lblInfoEventName.setForeground(fontColor);
+		infoPanel.add(lblInfoEventName);
+		
+		lblInfoEventDescription = new JLabel("PLACEHOLDER");
+		lblInfoEventDescription.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventDescription.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventDescription.setBounds(0, 54, 286, 40);
+		lblInfoEventDescription.setForeground(fontColor);
+		infoPanel.add(lblInfoEventDescription);
+		
+		lblInfoEventLocation = new JLabel("PLACEHOLDER");
+		lblInfoEventLocation.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventLocation.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventLocation.setBounds(0, 100, 286, 14);
+		lblInfoEventLocation.setForeground(fontColor);
+		infoPanel.add(lblInfoEventLocation);
+		
+		lblInfoEventStartTime = new JLabel("PLACEHOLDER");
+		lblInfoEventStartTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventStartTime.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventStartTime.setBounds(0, 120, 286, 14);
+		lblInfoEventStartTime.setForeground(fontColor);
+		infoPanel.add(lblInfoEventStartTime);
+		
+		lblInfoEventEndTime = new JLabel("PLACEHOLDER");
+		lblInfoEventEndTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventEndTime.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventEndTime.setBounds(0, 140, 286, 14);
+		lblInfoEventEndTime.setForeground(fontColor);
+		infoPanel.add(lblInfoEventEndTime);
+		
+		lblInfoEventCategory = new JLabel("PLACEHOLDER");
+		lblInfoEventCategory.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventCategory.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventCategory.setBounds(0, 160, 286, 14);
+		lblInfoEventCategory.setForeground(fontColor);
+		infoPanel.add(lblInfoEventCategory);
+		
+		infoPanel.setLayout(null);		
+	}
+	
+	private void displayEventDetails(Event currentEvent) {
+		lblInfoEventName.setText(currentEvent.getName());
+		
+		lblInfoEventDescription.setText(currentEvent.getDescription());
+		
+		lblInfoEventLocation.setText(currentEvent.getLocation());
+		
+		lblInfoEventStartTime.setText(currentEvent.getStartTime().toString());
+		
+		lblInfoEventEndTime.setText(currentEvent.getEndTime().toString());
+		
+		lblInfoEventCategory.setText(currentEvent.getCategory());
 	}
 	
 	private void initializeMainTab() {
 		mainTab = new JPanel();
+		mainTab.setBackground(Color.WHITE);
 		mainTab.setLayout(null);
-		mainTab.setBounds(118, 0, 1056, 750);
+		mainTab.setBounds(402, 0, 782, 761);
 		frame.getContentPane().add(mainTab);
-	}
-	
-	private void initializeDetailScrollbar() {
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 0, 265, 719);
-		mainTab.add(scrollPane);
 	}
 	
 	private void initializeInputField() {
 		textField = new JTextField();
+		textField.setBorder(new LineBorder(Color.GRAY));
 		
 		Action inputAction = getInputAction();
 		textField.addActionListener(inputAction);
 		textField.setColumns(10);
-		textField.setBounds(0, 730, 1046, 20);
+		textField.setBounds(10, 730, 761, 20);
 		mainTab.add(textField);
 	}
 	
@@ -198,20 +354,40 @@ public class MainWindow {
 		    	textField.setText(EMPTY_STRING);
 		    	actionsTextArea.append(inputString);
 		    	
-		        System.out.println("");
+		    	//calling controller
+		    	try {
+					currentState = mainController.executeCommand(inputString);
+				} catch (IOException | JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		    	renderCalendar();
 		    }
 		};
 		return action;
 	}
 	
+	private void renderCalendar() {
+		for (Event event : currentState.displayedEvents){
+	    	actionsTextArea.append(event.printEvent());
+	    	String category = event.getCategory();
+	    	if (category == "DEADLINE") {
+	    		createDeadlineEvent(event);
+	    		displayEventDetails(event);
+	    	}
+    	}
+	}
+	
 	private void initializeOutputField() {
 		actionsTextArea = new JTextArea("BRUH");
-		actionsTextArea.setBounds(275, 531, 771, 188);
+		actionsTextArea.setBounds(10, 531, 761, 188);
 		actionsTextArea.setEditable(false);
 		mainTab.add(actionsTextArea);
 	}
 	
 	private void initializeCalendar() {
+		initializeCalendarInstance();
+		
 		initiliazeCalendarComponents();
 		
 		addCalendarComponents();
@@ -225,15 +401,29 @@ public class MainWindow {
         setSingleCellSelection();
 	}
 	
+	private void initializeCalendarInstance() {
+		calendarInstance = Calendar.getInstance();
+	}
+	
 	private void initiliazeCalendarComponents() {
-		lblMonth = new JLabel ("January");
-		btnPrev = new JButton ("<<");
-		btnNext = new JButton (">>");
 		mtblCalendar = getDefaultTableModel();
 		tblCalendar = new JTable(mtblCalendar); //Table using the above model
+		tblCalendar.setGridColor(borderColor);
 		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table
+		stblCalendar.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
+		stblCalendar.setBackground(Color.WHITE);
+		stblCalendar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		calendarPanel = new JPanel();
+		calendarPanel.setBackground(Color.WHITE);
+		calendarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 		rowHeaderTable = new RowNumberTable(tblCalendar);
+		rowHeaderTable.setGridColor(borderColor);
+	}
+	
+	private void refreshMonth() {
+		Date currentDate = calendarInstance.getTime();
+		SimpleDateFormat format = getHeaderFormat();
+		lblMonth.setText(format.format(currentDate));
 	}
 	
 	private DefaultTableModel getDefaultTableModel() {
@@ -246,36 +436,103 @@ public class MainWindow {
 	}
 	
 	private void addCalendarComponents() {
-		calendarPanel.setBorder(BorderFactory.createTitledBorder("Calendar"));
 		mainTab.add(calendarPanel);
 		calendarPanel.setLayout(null);
-		calendarPanel.add(btnPrev);
+		lblMonth = new JLabel();
+		lblMonth.setBounds(0, 0, 782, 45);
 		calendarPanel.add(lblMonth);
-		calendarPanel.add(btnNext);
+		lblMonth.setForeground(fontColor);
+		lblMonth.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblMonth.setHorizontalAlignment(SwingConstants.CENTER);
+		lblMonth.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 		calendarPanel.add(stblCalendar);
+		refreshMonth();
+	}
+	
+	private void createDeadlineEvent(Event deadline) {
+		Calendar startCalendar = (Calendar) calendarInstance.clone();
+		Date startDate = startCalendar.getTime();
+		
+		Calendar endCalendar = (Calendar) calendarInstance.clone();
+		endCalendar.set(Calendar.DAY_OF_MONTH, calendarInstance.get(Calendar.DAY_OF_MONTH) + DISPLAYED_DAYS_NUM);
+		endCalendar.set(Calendar.HOUR_OF_DAY, 0);
+		endCalendar.set(Calendar.MINUTE, 0);
+		Date endDate = endCalendar.getTime();
+		
+		Date deadlineDate = deadline.getEndTime();
+		Calendar deadlineCalendar = (Calendar) calendarInstance.clone();
+		deadlineCalendar.setTime(deadlineDate);
+
+		if (deadlineDate.after(startDate) && deadlineDate.before(endDate)) {
+			addDeadlineEvent(deadline, deadlineCalendar, startCalendar);
+		}
+	}
+	
+	private void addDeadlineEvent(Event deadline, Calendar deadlineCalendar, Calendar startCalendar) {
+		double eventHeight = getDeadlineHeight();
+		double eventWidth = getDeadlineWidth();
+		int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
+		int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
+		int xOffset = (int) eventWidth * dayDifference;
+		int yOffset = (int) eventHeight * hour;
+		
+		JTextField currentEvent = new JTextField(deadline.getName());
+		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
+		currentEvent.setBackground(darkGreen);
+		currentEvent.setBorder(null);
+		currentEvent.setEditable(false);
+		currentEvent.setHorizontalAlignment(JTextField.CENTER);
+		currentEvent.setForeground(Color.WHITE);
+		tblCalendar.add(currentEvent);
+	}
+	
+	private double getDeadlineHeight() {
+		double height = tblCalendar.getHeight() / (double) 24;
+		return height;
+	}
+	
+	private double getDeadlineWidth() {
+		double width = tblCalendar.getWidth() / (double) DISPLAYED_DAYS_NUM;
+		return width;
 	}
 	
 	private void setBoundsCalendarComponents() {
-		calendarPanel.setBounds(275, 0, 771, 519);
-		lblMonth.setBounds(348, 85, 49, 14);
-		btnPrev.setBounds(289, 81, 49, 23);
-		btnNext.setBounds(407, 81, 49, 23);
+		calendarPanel.setBounds(0, 0, 782, 467);
 		tblCalendar.setSize(100, 100);
-		stblCalendar.setBounds(10, 110, 751, 402);
+		stblCalendar.setBounds(10, 54, 762, 402);
 	}
 	
 	private void setCalendarHeaders() {
-		String[] headers = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; //All headers
-		for (int i=0; i < 7; i++) {
-        	mtblCalendar.addColumn(headers[i]);
-        }	
+		SimpleDateFormat format = getHeaderTableFormat();
+		String formatted = format.format(calendarInstance.getTime());
+		Calendar calendarClone = (Calendar) calendarInstance.clone();
+		
+		for (int i=0; i < DISPLAYED_DAYS_NUM; i++) {
+			formatted = format.format(calendarClone.getTime());
+			calendarClone.set(Calendar.DAY_OF_MONTH, calendarClone.get(Calendar.DAY_OF_MONTH) + 1);
+        	mtblCalendar.addColumn(formatted);
+        }
+		JTableHeader header = tblCalendar.getTableHeader();
+		header.setBackground(Color.WHITE);
+		header.setForeground(fontColor);
+		header.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, borderColor));
+	}
+	
+	private SimpleDateFormat getHeaderTableFormat() {
+		SimpleDateFormat format = new SimpleDateFormat("E (d)");
+		return format;
+	}
+	
+	private SimpleDateFormat getHeaderFormat() {
+		SimpleDateFormat format = new SimpleDateFormat("MMMM / yyyy");
+		return format;
 	}
 	
 	private void setCalendarRows() {
 		mtblCalendar.setRowCount(24);
 		rowHeaderTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		rowHeaderTable.setRowSelectionAllowed(true);
-		rowHeaderTable.setRowHeight(38);
+		rowHeaderTable.setRowHeight(12);
 		rowHeaderTable.setColumnSelectionAllowed(true);
 		stblCalendar.setRowHeaderView(rowHeaderTable);
 	}

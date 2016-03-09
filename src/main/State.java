@@ -1,9 +1,12 @@
 package main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import main.Event;;
+import json.JSONException;
+import main.Event;
+import storage.Storage;;
 
 public class State {
 
@@ -49,6 +52,22 @@ public class State {
 	
 	public static void addToFloatingList(Event event){
 		floatingEvents.add(event);
+	}
+	
+	public static void stateToStorage() throws IOException, JSONException {
+		for (Event e: completedEvents){
+			Storage.addToStorage(e);
+		}
+		for (Event e: incompletedEvents){
+			Storage.addToStorage(e);
+		}
+		for (Event e: floatingEvents){
+			Storage.addToStorage(e);
+		}
+	}
+	
+	public static void storageToState() throws JSONException {
+		Storage.readStorage();
 	}
 	
 	

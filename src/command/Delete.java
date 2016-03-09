@@ -1,7 +1,9 @@
 package command;
 
+import json.JSONException;
 import main.Event;
 import main.State;
+import storage.Storage;
 
 /**
  * Delete class must be instantiated with an Event object to delete
@@ -25,20 +27,24 @@ public class Delete implements Command{
 	 * execute will delete the event from its corresponding list based on status
 	 * If two identical instances of the class are found in the list, only one is deleted
 	 * @param completeState the state of all the tasks in the program
+	 * @throws JSONException 
 	 */
-	public State execute(State completeState){
+	public State execute(State completeState) throws JSONException{
 		boolean successfullyDeleted = false;
 		this.completeState = completeState;
 		
 		switch(modifiedEvent.getStatus()){
 		case COMPLETE:
 			successfullyDeleted = deleteFromCompleteList();
+			Storage.removeFromStorage(modifiedEvent);
 			break;
 		case INCOMPLETE:
 			successfullyDeleted = deleteFromIncompleteList();
+			Storage.removeFromStorage(modifiedEvent);
 			break;
 		case FLOATING:
 			successfullyDeleted = deleteFromFloatingList();
+			Storage.removeFromStorage(modifiedEvent);
 			break;
 				
 		}
