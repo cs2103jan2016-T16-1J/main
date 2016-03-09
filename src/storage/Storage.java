@@ -59,15 +59,34 @@ public class Storage {
 			while ((line = br.readLine()) != null){
 				JSONObject jsonObj = new JSONObject(line);
 				
+				/*
+				System.out.println(jsonObj.get("name"));
+				System.out.println(removedJsonObj.get("name"));
+				System.out.println(jsonObj.get("location"));
+				System.out.println(removedJsonObj.get("location"));
+				System.out.println(jsonObj.get("startTime"));
+				System.out.println(removedJsonObj.get("startTime"));
+				System.out.println(jsonObj.get("endTime"));
+				System.out.println(removedJsonObj.get("endTime"));
+				System.out.println(jsonObj.get("category"));
+				System.out.println(removedJsonObj.get("category"));
+				System.out.println(jsonObj.get("description"));
+				System.out.println(removedJsonObj.get("description"));
+				System.out.println(jsonObj.get("status"));
+				System.out.println(removedJsonObj.get("status"));
+				System.out.println(jsonObj.get("startTime"));
+				System.out.println(removedJsonObj.get("startTime"));*/
+				//System.out.println(isSameJSONObj(jsonObj,removedJsonObj));
+				
 				if (!isSameJSONObj(jsonObj, removedJsonObj)){
 					pw.println(line);
 					pw.flush();
 				}
 			}
-			
 			br.close();
 			pw.close();
 			fr.close();
+			
 			
 			if (!tempFile.renameTo(file)){
                 System.out.println("Could not rename file");
@@ -127,7 +146,7 @@ public class Storage {
 		Event event = new Event();
 		
 		event.setName(jsonObj.getString("name"));
-		event.setCategory(jsonObj.getString("category"));
+		event.setDescription(jsonObj.getString("description"));
 		event.setCategory(jsonObj.getString("category"));
 		event.setStartTime((Date) jsonObj.get("startTime"));
 		event.setEndTime((Date) jsonObj.get("endTime"));
@@ -139,6 +158,18 @@ public class Storage {
 	
 	
 	public static boolean isSameJSONObj (JSONObject js1, JSONObject js2) throws JSONException {
+		if (js1.get("name").equals(js2.get("name")) && 
+				js1.get("category").equals(js2.get("category")) && 
+				js1.get("description").equals(js2.get("description")) &&
+				js1.get("location").equals(js2.get("location"))){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/*
+	public static boolean isSameJSONObj (JSONObject js1, JSONObject js2) throws JSONException {
 	    if (js1 == null || js2 == null) {
 	        return (js1 == js2);
 	    }
@@ -148,30 +179,30 @@ public class Storage {
 	    List<String> l2 =  Arrays.asList(JSONObject.getNames(js2));
 	    Collections.sort(l2);
 	    
-	    if (!l1.equals(l2)) { return false;}
+	    if (!l1.equals(l2)) { return true;}
 	    
 	    for (String key : l1) {
 	        Object val1 = js1.get(key);
 	        Object val2 = js2.get(key);
 	        if (val1 instanceof JSONObject) {
 	            if (!(val2 instanceof JSONObject)) {
-	                return false;
+	                return true;
 	            }
 	            if (!isSameJSONObj((JSONObject)val1, (JSONObject)val2)) {
-	                return false;
+	                return true;
 	            }
 	        }
 
 	        if (val1 == null) {
 	            if (val2 != null) {
-	                return false;
+	                return true;
 	            }
 	        }  else if (!val1.equals(val2)) {
-	            return false;
+	            return true;
 	        }
 	    }
-	    return true;
-	}
+	    return false;
+	}*/
 	
 	
 }
