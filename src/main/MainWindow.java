@@ -93,6 +93,7 @@ public class MainWindow {
 	private JLabel lblInfoEventCategory;
 	private JLabel lblInfoEventName;
 	private JLabel lblInfoEventLocation;
+	private JToggleButton toggleButton;
 
 
 	/**
@@ -336,13 +337,20 @@ public class MainWindow {
 	}
 	
 	private void initializeInputField() {
+		toggleButton = new JToggleButton("GO");
+		toggleButton.setForeground(Color.WHITE);
+		toggleButton.setBorder(null);
+		toggleButton.setBackground(new Color(28, 192, 159));
+		toggleButton.setBounds(707, 730, 64, 20);
+		mainTab.add(toggleButton);
+		
 		textField = new JTextField();
-		textField.setBorder(new LineBorder(Color.GRAY));
+		textField.setBorder(new LineBorder(borderColor));
 		
 		Action inputAction = getInputAction();
 		textField.addActionListener(inputAction);
 		textField.setColumns(10);
-		textField.setBounds(10, 730, 761, 20);
+		textField.setBounds(10, 730, 698, 20);
 		mainTab.add(textField);
 	}
 	
@@ -384,7 +392,8 @@ public class MainWindow {
 	
 	private void initializeOutputField() {
 		actionsTextArea = new JTextArea("BRUH");
-		actionsTextArea.setBounds(10, 531, 761, 188);
+		actionsTextArea.setBounds(10, 478, 761, 253);
+		actionsTextArea.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		actionsTextArea.setEditable(false);
 		mainTab.add(actionsTextArea);
 	}
@@ -450,6 +459,8 @@ public class MainWindow {
 		lblMonth.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMonth.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 		calendarPanel.add(stblCalendar);
+		
+
 		refreshMonth();
 	}
 	
