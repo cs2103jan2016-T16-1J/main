@@ -55,11 +55,16 @@ public class MainWindow {
 	private JTextField textField;
 	private JTable calendarTable;
 	private JPanel calendarPanel;
+	private JPanel infoPanel;
 	private static JTextArea actionsTextArea;
+	
 	private static Color navbarColor;
 	private static Color backgroundColor;
 	private static Color buttonColor;
 	private static Color darkGreen;
+	private static Color lightGray;
+	private static Color borderColor;
+	
 	private Controller mainController;
 	private State currentState;
 	private Calendar calendarInstance;
@@ -73,6 +78,10 @@ public class MainWindow {
 	static JPanel pnlCalendar; //The panel
 	static int realDay, realMonth, realYear, currentMonth, currentYear;
 	private JTable rowHeaderTable;
+	private JLabel lblInfoEventDescription;
+	private JLabel lblInfoEventStartTime;
+	private JLabel lblInfoEventEndTime;
+	private JLabel lblInfoEventCategory;
 
 
 	/**
@@ -188,6 +197,8 @@ public class MainWindow {
 		backgroundColor = new Color(243, 243, 244);
 		buttonColor = new Color(28, 192, 159);
 		darkGreen = new Color(23, 152, 126);
+		lightGray = new Color(244, 246, 250);
+		borderColor = new Color(231, 234, 236);
 	}
 	
 	private void initializeMainWindow() {
@@ -224,11 +235,36 @@ public class MainWindow {
 	}
 	
 	private void initializeInfoSection() {
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBorder(null);
-		scrollPane.setBounds(119, 0, 286, 761);
-		scrollPane.setBackground(navbarColor);
-		frame.getContentPane().add(scrollPane);
+		infoPanel = new JPanel();
+		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
+		infoPanel.setBounds(119, 0, 286, 761);
+		infoPanel.setBackground(lightGray);
+		frame.getContentPane().add(infoPanel);
+		infoPanel.setLayout(null);
+		
+		JLabel lblInfoEventName = new JLabel("New label");
+		lblInfoEventName.setBounds(97, 11, 46, 14);
+		infoPanel.add(lblInfoEventName);
+		
+		lblInfoEventDescription = new JLabel("New label");
+		lblInfoEventDescription.setBounds(97, 48, 46, 14);
+		infoPanel.add(lblInfoEventDescription);
+		
+		JLabel lblInfoEventLocation = new JLabel("New label");
+		lblInfoEventLocation.setBounds(97, 88, 46, 14);
+		infoPanel.add(lblInfoEventLocation);
+		
+		lblInfoEventStartTime = new JLabel("New label");
+		lblInfoEventStartTime.setBounds(97, 138, 46, 14);
+		infoPanel.add(lblInfoEventStartTime);
+		
+		lblInfoEventEndTime = new JLabel("New label");
+		lblInfoEventEndTime.setBounds(97, 186, 46, 14);
+		infoPanel.add(lblInfoEventEndTime);
+		
+		lblInfoEventCategory = new JLabel("New label");
+		lblInfoEventCategory.setBounds(97, 228, 46, 14);
+		infoPanel.add(lblInfoEventCategory);
 	}
 	
 	private void initializeMainTab() {
