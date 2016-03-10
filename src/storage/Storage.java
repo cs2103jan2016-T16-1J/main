@@ -2,9 +2,11 @@ package storage;
 
 import java.io.BufferedReader;
 import java.io.File;
+
 import main.Event;
 import main.Event.Status;
 import main.State;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 import json.*;
 
 
@@ -44,7 +47,7 @@ public class Storage {
 		
 	}
 	
-	public static void removeFromStorage(Event event) throws JSONException {
+	public static void removeFromStorage(Event event)  {
 		String line = null;
 		
 		try {
@@ -55,11 +58,22 @@ public class Storage {
 			BufferedReader br =  new BufferedReader(fr);
 			
 			while ((line = br.readLine()) != null){
-				JSONObject jsonObj = new JSONObject(line);
+				JSONObject jsonObj = new JSONObject();
+				try {
+					jsonObj = new JSONObject(line);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
-				if (!isSameObject(jsonObj, event)){
-					pw.println(line);
-					pw.flush();
+				try {
+					if (!isSameObject(jsonObj, event)){
+						pw.println(line);
+						pw.flush();
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 				
@@ -79,23 +93,35 @@ public class Storage {
 	}
 	
 	
-	public static void readStorage() throws JSONException{
+	public static State readStorage() {
 		String line = null;
+		State state = new State();
 		
 		try {
 			FileReader fr = new FileReader(fileName);
 			BufferedReader br = new BufferedReader(fr);
 			
-			while ( (line = br.readLine()) != null){
-				JSONObject jsonObj = new JSONObject(line);
-				Event event = castJSONObjToEvent(jsonObj);
-				
+			while ( (line = br.readLine()) != null) {
+				JSONObject jsonObj = new JSONObject();
+				try {
+					jsonObj = new JSONObject(line);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				Event event = new Event();
+				try {
+					event = castJSONObjToEvent(jsonObj);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 					if (event.getStatus() == Status.COMPLETE){
-						State.addToCompletedList(event);
+						state.addToCompletedList(event);
 					} else if (event.getStatus() == Status.INCOMPLETE){
-						State.addToIncompletedList(event);
+						state.addToIncompletedList(event);
 					} else if (event.getStatus() == Status.FLOATING){
-						State.addToFloatingList(event);
+						state.addToFloatingList(event);
 					}
 			}
 			
@@ -104,6 +130,8 @@ public class Storage {
         } catch(IOException ex) {
                 ex.printStackTrace();
         }
+		
+		return state;
 	}
 	
 	

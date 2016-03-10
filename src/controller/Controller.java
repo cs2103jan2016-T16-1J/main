@@ -2,8 +2,10 @@ package controller;
 
 import java.io.IOException;
 import java.text.ParseException;
+
 import main.State;
 import parser.Parser;
+import storage.Storage;
 import command.Command;
 import json.JSONException;
 
@@ -20,14 +22,19 @@ public class Controller{
 	
 	public static State completeState;
 	Parser parser;
+	Storage storage;
 
 	/**
 	 * default constructor
 	 * called if there is no information in storage- ie no tasks preloaded into program
 	 */
-	public Controller(){
+	public Controller() {
 		completeState = new State();
 		parser = new Parser();
+		storage = new Storage();
+		completeState = storage.readStorage();
+		//TODO: load event lists from storage
+		
 	}
 	
 	/**
@@ -38,6 +45,8 @@ public class Controller{
 	public Controller(String placeHolderForDataFromStorageFile){
 		completeState = new State();
 		parser = new Parser();
+		storage = new Storage();
+
 	}
 
 	/**
@@ -52,6 +61,7 @@ public class Controller{
 		Command userCommand;
 		userCommand = parser.parseCommand(commandText); //parser should return Command
 		userCommand.execute(completeState);
+		//TODO: write to storage
 		
 		return completeState;
 	}
