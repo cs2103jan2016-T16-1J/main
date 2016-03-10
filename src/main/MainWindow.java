@@ -380,6 +380,7 @@ public class MainWindow {
 	}
 	
 	private void renderCalendar() {
+		tblCalendar.removeAll();
 		Event e = currentState.displayedEvents.get(currentState.displayedEvents.size()-1);
 		actionsTextArea.append(e.printEvent());
 		
@@ -470,7 +471,6 @@ public class MainWindow {
 		lblMonth.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMonth.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 		calendarPanel.add(stblCalendar);
-		
 
 		refreshMonth();
 	}
