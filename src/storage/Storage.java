@@ -12,10 +12,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import json.*;
 
@@ -152,16 +156,47 @@ public class Storage {
 	
 	public static Event castJSONObjToEvent(JSONObject jsonObj) throws JSONException{
 		Event event = new Event();
+		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+		String startTime = jsonObj.get("startTime").toString();
+		System.out.println(startTime);
+		String endTime = jsonObj.get("endTime").toString();
+		//System.out.println(df.parse(endTime));
+		
+		
 		
 		event.setName(jsonObj.getString("name"));
 		event.setDescription(jsonObj.getString("description"));
 		event.setCategory(jsonObj.getString("category"));
-		event.setStartTime((Date) jsonObj.get("startTime"));
-		event.setEndTime((Date) jsonObj.get("endTime"));
-		event.setStatus((Status) jsonObj.get("status"));
+		try {
+			event.setStartTime(df.parse(startTime));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			event.setEndTime(df.parse(endTime));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		event.setStatus(decideStatus(jsonObj));
 		event.setLocation(jsonObj.getString("location"));
 		
 		return event;
+	}
+	
+	private static  Event.Status decideStatus(JSONObject jsonObj) throws JSONException{
+		if (jsonObj.get("status") == "COMPLETE"){
+			return Event.Status.COMPLETE;
+		} else if (jsonObj.get("status") == "INCOMPLETE"){
+			return Event.Status.INCOMPLETE;
+		} else if (jsonObj.get("status") == "BLOCKED"){
+			return Event.Status.BLOCKED;
+		} else if (jsonObj.get("status") == "OVERDUE"){
+			return Event.Status.OVERDUE;
+		} else {
+			return Event.Status.FLOATING;
+		}
 	}
 	
 	public static boolean isSameObject (JSONObject js1, Event e) throws JSONException {
