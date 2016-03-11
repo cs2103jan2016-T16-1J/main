@@ -25,7 +25,7 @@ public class Event {
 		location = Constant.EMPTY_LOCATION;
 		description = Constant.EMPTY_DESCRIPTION;
 		category = constant.Constant.CATEGORY_FLOATING;
-		startTime = Constant.MIN_DATE;
+		startTime = Constant.MIN_DATE; 
 		endTime = Constant.MAX_DATE;
 		status = Status.INCOMPLETE;
 	}
