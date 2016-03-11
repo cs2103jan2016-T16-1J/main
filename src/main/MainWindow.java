@@ -97,21 +97,22 @@ public class MainWindow {
 	private JLabel lblInfoEventLocation;
 	private JToggleButton toggleButton;
 
+	public static Storage storage;
 
 	/**
 	 * Launch the application.
 	 * @throws JSONException 
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException, JSONException {
-
-		Storage.createFile();
+	public static void main(String[] args) {
+		
 		
 		
 		/*_________ Testing ADD ______________*/
 		//Creating object manually
-		Controller controller = new Controller();
-		State completeState = new State();
+		//Controller controller = new Controller();
+		//State completeState = new State();
+		/*
 		Event testNewEvent = new Event();
 		Event brunch = new Event();
 		String result = new String();
@@ -141,23 +142,28 @@ public class MainWindow {
 		brunch.setStartTime(aTime);
 		brunch.setEndTime(aTime);
 		
+		
 		Command adding = new Add(testNewEvent);
+		completeState = adding.execute(completeState);
+		/*
 		Command adding2 = new Add(testNewEvent);
 		Command adding3 = new Add(brunch);
 		//Add event, event, brunch to test delete event
-		completeState = adding.execute(completeState);
+		
 		completeState = adding2.execute(completeState);
 		completeState = adding3.execute(completeState);
 		
 		Command deleting = new Delete(brunch);
 		completeState = deleting.execute(completeState);
 		
+		
 		for(Event e: completeState.displayedEvents){
 			result = result + e.printEvent();
 			System.out.println(result);
+			
 		}
 	
-		finalResult = result;
+		finalResult = result;*/
 		
 		/*_________ Testing ADD ______________*/
 		
@@ -195,6 +201,8 @@ public class MainWindow {
 		
 		intializeState();
 		
+		initializeStorage();
+		
 		initializeColors();
 		
 		initializeMainWindow();
@@ -210,8 +218,23 @@ public class MainWindow {
 		initializeOutputField();
 		
 		initializeCalendar();
+		
+		
 	}
 	
+	private void initializeStorage() {
+		storage = new Storage();
+		
+		try {
+			storage.createFile();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		currentState = storage.readStorage();
+	}
+
 	private void initializeController() {
 		mainController = new Controller();
 	}
@@ -386,6 +409,7 @@ public class MainWindow {
 		
 		for (Event event : currentState.displayedEvents){
 	    	//actionsTextArea.append(event.printEvent());
+			
 	    	String category = event.getCategory();
 	    	if (category == "DEADLINE") {
 	    		createDeadlineEvent(event);
@@ -424,6 +448,27 @@ public class MainWindow {
 		setCalendarRows();
 		
         setSingleCellSelection();
+        
+        readIntoCalendar();
+	}
+	
+	public void readIntoCalendar(){
+		tblCalendar.removeAll();
+		//System.out.println("currentState size is " + currentState.displayedEvents.size());
+		
+		if (!currentState.displayedEvents.isEmpty()){
+			for (Event event : currentState.displayedEvents){
+				
+				//System.out.println(event.getName());
+				
+		    	String category = event.getCategory();
+		    	if (category.equals("DEADLINE")) {
+		    		createDeadlineEvent(event);
+		    	} else if (category.equals("EVENT")) {
+		    		createSpecificEvent(event);
+		    	}
+	    	}
+		}
 	}
 	
 	private void initializeCalendarInstance() {
