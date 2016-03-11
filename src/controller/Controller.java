@@ -31,9 +31,19 @@ public class Controller{
 	public Controller() {
 		completeState = new State();
 		parser = new Parser();
-		storage = new Storage();
-		completeState = storage.readStorage();
+		//storage = new Storage();
+		//completeState = storage.readStorage();
+		
+		/*
+		//---------for testing if read into the state class successfully
+		
+		System.out.println("items in completed list: " +completeState.completedEvents.size());
+		System.out.println("items in incompleted list: " + completeState.incompletedEvents.size());
+		System.out.println("items in floating list: " + completeState.floatingEvents.size());
+		System.out.println("items in displayed list: " + completeState.displayedEvents.size());
 		//TODO: load event lists from storage
+		*/
+		 
 		
 	}
 	
@@ -46,7 +56,7 @@ public class Controller{
 		completeState = new State();
 		parser = new Parser();
 		storage = new Storage();
-
+		completeState = storage.readStorage();
 	}
 
 	/**
