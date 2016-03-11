@@ -29,7 +29,7 @@ public class Storage {
 	public static final String fileName =  ("./storage.txt");
 	public static final String tempFileName = ("temp.txt");
 	
-	public static void createFile() throws FileNotFoundException {
+	public void createFile() throws FileNotFoundException {
 		File file = new File(fileName);
 		if (!file.exists()){
 			 PrintWriter writer = new PrintWriter(fileName);
@@ -97,7 +97,7 @@ public class Storage {
 	}
 	
 	
-	public static State readStorage() {
+	public State readStorage() {
 		String line = null;
 		State state = new State();
 		
@@ -106,27 +106,34 @@ public class Storage {
 			BufferedReader br = new BufferedReader(fr);
 			
 			while ( (line = br.readLine()) != null) {
-				JSONObject jsonObj = new JSONObject();
+				JSONObject jsonObj ;
+				Event event = new Event();
+				
 				try {
 					jsonObj = new JSONObject(line);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Event event = new Event();
-				try {
 					event = castJSONObjToEvent(jsonObj);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				
+				//System.out.println(event.getStartTime());
+				
 					if (event.getStatus() == Status.COMPLETE){
 						state.addToCompletedList(event);
+						//System.out.println(state.completedEvents.size());
+						//System.out.println("add to complete list");
 					} else if (event.getStatus() == Status.INCOMPLETE){
 						state.addToIncompletedList(event);
+						//System.out.println(state.incompletedEvents.size());
+						//System.out.println("add to incomplete list");
 					} else if (event.getStatus() == Status.FLOATING){
 						state.addToFloatingList(event);
+						//System.out.println("add to floating list");
 					}
+					
+					updatedDisplayedEvents(state);
 			}
 			
 		} catch(FileNotFoundException ex) {
@@ -157,47 +164,73 @@ public class Storage {
 	public static Event castJSONObjToEvent(JSONObject jsonObj) throws JSONException{
 		Event event = new Event();
 		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
 		String startTime = jsonObj.get("startTime").toString();
-		System.out.println(startTime);
+		//System.out.println(startTime);
 		String endTime = jsonObj.get("endTime").toString();
 		//System.out.println(df.parse(endTime));
-		
-		
 		
 		event.setName(jsonObj.getString("name"));
 		event.setDescription(jsonObj.getString("description"));
 		event.setCategory(jsonObj.getString("category"));
-		try {
-			event.setStartTime(df.parse(startTime));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			event.setEndTime(df.parse(endTime));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		event.setStatus(decideStatus(jsonObj));
 		event.setLocation(jsonObj.getString("location"));
+		
+		if (jsonObj.getString("category").equals("DEADLINE")){
+				
+			try {
+				event.setStartTime(dfDeadline.parse(startTime));
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			try {
+				event.setEndTime(df.parse(endTime));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				event.setStartTime(df.parse(startTime));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				event.setEndTime(df.parse(endTime));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
 		
 		return event;
 	}
 	
 	private static  Event.Status decideStatus(JSONObject jsonObj) throws JSONException{
-		if (jsonObj.get("status") == "COMPLETE"){
+		if (jsonObj.get("status").equals("COMPLETE")){
 			return Event.Status.COMPLETE;
-		} else if (jsonObj.get("status") == "INCOMPLETE"){
+		} else if (jsonObj.get("status").equals("INCOMPLETE")){
 			return Event.Status.INCOMPLETE;
-		} else if (jsonObj.get("status") == "BLOCKED"){
+		} else if (jsonObj.get("status").equals("BLOCKED")){
 			return Event.Status.BLOCKED;
-		} else if (jsonObj.get("status") == "OVERDUE"){
+		} else if (jsonObj.get("status").equals("OVERDUE")){
 			return Event.Status.OVERDUE;
 		} else {
 			return Event.Status.FLOATING;
 		}
 	}
+	
+	/*
+	private static String decideCategory (String category) {
+		if (category.equals("DEADLINE")){
+			return
+		}
+	}*/
 	
 	public static boolean isSameObject (JSONObject js1, Event e) throws JSONException {
 		if (js1.get("name").equals(e.getName()) && 
@@ -213,5 +246,12 @@ public class Storage {
 		return false;
 	}
 	
+	
+	private void updatedDisplayedEvents(State completeState){
+		completeState.displayedEvents.clear();
+		completeState.displayedEvents.addAll(completeState.completedEvents);
+		completeState.displayedEvents.addAll(completeState.incompletedEvents);
+		completeState.displayedEvents.addAll(completeState.floatingEvents);		
+	}
 	
 }
