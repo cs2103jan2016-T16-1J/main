@@ -89,6 +89,21 @@ public class Event {
 	/**
 	 * Print Event for Debugging purposes
 	 */
+	
+	public boolean isDeadline() {
+		if (this.category.compareToIgnoreCase("deadline") == 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isEvent() {
+		if (this.category.compareToIgnoreCase("event") == 0) {
+			return true;
+		}
+		return false;
+	}
+	
 	public String printEvent(){
 		String result = new String("\n" + "Event name: " + this.name + "\n");
 		result = result + "\t " + description + "\n";

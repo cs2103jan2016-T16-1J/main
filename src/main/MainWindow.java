@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import controller.Controller;
 import json.JSONException;
-import storage.Storage;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -97,7 +96,6 @@ public class MainWindow {
 	private JLabel lblInfoEventLocation;
 	private JToggleButton toggleButton;
 
-	public static Storage storage;
 
 	/**
 	 * Launch the application.
@@ -178,6 +176,7 @@ public class MainWindow {
 					//actionsTextArea.append(finalResult);
 
 					window.frame.setVisible(true);
+					window.renderCalendar();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -200,9 +199,7 @@ public class MainWindow {
 		initializeController();
 		
 		intializeState();
-		
-		initializeStorage();
-		
+				
 		initializeColors();
 		
 		initializeMainWindow();
@@ -221,19 +218,6 @@ public class MainWindow {
 		
 		
 	}
-	
-	private void initializeStorage() {
-		storage = new Storage();
-		
-		try {
-			storage.createFile();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		currentState = storage.readStorage();
-	}
 
 	private void initializeController() {
 		mainController = new Controller();
@@ -241,6 +225,7 @@ public class MainWindow {
 	
 	private void intializeState() {
 		currentState = new State();
+		currentState = mainController.getCompleteState();
 	}
 	
 	private void initializeColors() {
@@ -404,16 +389,13 @@ public class MainWindow {
 	
 	private void renderCalendar() {
 		tblCalendar.removeAll();
-		Event e = currentState.displayedEvents.get(currentState.displayedEvents.size()-1);
-		actionsTextArea.append(e.printEvent());
 		
 		for (Event event : currentState.displayedEvents){
 	    	//actionsTextArea.append(event.printEvent());
 			
-	    	String category = event.getCategory();
-	    	if (category == "DEADLINE") {
+	    	if (event.isDeadline()) {
 	    		createDeadlineEvent(event);
-	    	} else if (category == "EVENT") {
+	    	} else if (event.isEvent()) {
 	    		createSpecificEvent(event);
 	    	}
 	    	displayEventDetails(event);
@@ -448,27 +430,6 @@ public class MainWindow {
 		setCalendarRows();
 		
         setSingleCellSelection();
-        
-        readIntoCalendar();
-	}
-	
-	public void readIntoCalendar(){
-		tblCalendar.removeAll();
-		//System.out.println("currentState size is " + currentState.displayedEvents.size());
-		
-		if (!currentState.displayedEvents.isEmpty()){
-			for (Event event : currentState.displayedEvents){
-				
-				//System.out.println(event.getName());
-				
-		    	String category = event.getCategory();
-		    	if (category.equals("DEADLINE")) {
-		    		createDeadlineEvent(event);
-		    	} else if (category.equals("EVENT")) {
-		    		createSpecificEvent(event);
-		    	}
-	    	}
-		}
 	}
 	
 	private void initializeCalendarInstance() {

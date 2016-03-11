@@ -20,17 +20,18 @@ import java.util.Date;
  */
 public class Controller{
 	
-	public static State completeState;
-	Parser parser;
-	Storage storage;
+	private State completeState;
+	private Parser parser;
+	private Storage storage;
 
 	/**
 	 * default constructor
 	 * called if there is no information in storage- ie no tasks preloaded into program
 	 */
 	public Controller() {
-		completeState = new State();
 		parser = new Parser();
+		storage = new Storage();
+		completeState = storage.readStorage();
 		//storage = new Storage();
 		//completeState = storage.readStorage();
 		
@@ -57,6 +58,10 @@ public class Controller{
 		parser = new Parser();
 		storage = new Storage();
 		completeState = storage.readStorage();
+	}
+	
+	public State getCompleteState() {
+		return completeState;
 	}
 
 	/**
