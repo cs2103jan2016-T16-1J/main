@@ -42,15 +42,15 @@ public class State {
 		return this.statusMessage;
 	}
 	
-	public static void addToCompletedList(Event event){
+	public  void addToCompletedList(Event event){
 		completedEvents.add(event);
 	}
 	
-	public static void addToIncompletedList(Event event){
+	public  void addToIncompletedList(Event event){
 		incompletedEvents.add(event);
 	}
 	
-	public static void addToFloatingList(Event event){
+	public  void addToFloatingList(Event event){
 		floatingEvents.add(event);
 	}
 	
@@ -66,9 +66,6 @@ public class State {
 		}
 	}
 	
-	public static void storageToState() throws JSONException {
-		Storage.readStorage();
-	}
 	
 	
 }
