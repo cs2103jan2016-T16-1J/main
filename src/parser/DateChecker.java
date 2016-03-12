@@ -192,7 +192,9 @@ public class DateChecker {
 		return todayDate;
 	}
 
-	private static Date findDate(int interval){
+	public static Date findDate(int interval){
+		Initialization();
+
 		calendar.add(Calendar.DATE, interval);
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
 		String newDate = dateFormat.format(calendar.getTime());
