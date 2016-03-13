@@ -207,20 +207,6 @@ public class Parser {
 		if(input.isEmpty()){
 			return task;
 		}
-
-		//int[] index = matchPatterOfFirstOccurrence( PATTERN_ALL, input);
-		/*
-		if(index[INDEX_START] != index[INDEX_END]){
-			task.setName(input.substring(INDEX_START, index[INDEX_START]).trim());
-			input = input.substring(index[INDEX_START], input.length()).trim();
-		}*/
-
-		/*if(index[INDEX_START] == 0){
-			task = decodeDataFromInput(task, PATTERN_ON, input, isAdd, isEdit);
-			return task;
-		}*/
-
-
 		task = decodeDataFromInput(task, input);
 		return task;
 	}
@@ -530,8 +516,10 @@ public class Parser {
 			/*check for dd/MM/yyyy or dd MMM yyyy format without HH:mm to replace the originally written time*/
 			if(DateChecker.validateSpecificDate(stringDate) != null){
 				task.setStartTime(DateChecker.writeTime(stringDate,TIME_MIDNIGHT));
+				task.setCategory(Constant.CATEGORY_EVENT);
 			} else if(inputDate != null){
 					task.setStartTime(inputDate);
+					task.setCategory(Constant.CATEGORY_EVENT);
 			} else{
 				String[] dateTime = extractTimeFromDate(stringDate);
 				time = DateChecker.convertAmPmToTime(dateTime[1]);
@@ -579,12 +567,13 @@ public class Parser {
 			dateTime[0] = date;
 			return dateTime;
 		}
-
+		date.trim();
 		int[] matchedData = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, date);
+		int[] matchedSpace = matchPatternOfFirstOccurrence(PATTERN_SPACE, date);
 
 		if(matchedData[0] > 0){
-			dateTime[0] = date.substring(0, matchedData[0]-3).trim();
-			dateTime[1] = date.substring(matchedData[0]-3, date.length()).trim();
+			dateTime[0] = date.substring(0, matchedSpace[0]).trim();
+			dateTime[1] = date.substring(matchedSpace[0], date.length()).trim();
 		} else{
 			dateTime[0] = date;
 			dateTime[1] = null;
