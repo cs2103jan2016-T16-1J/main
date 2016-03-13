@@ -32,7 +32,9 @@ public class DateChecker {
 	private static final int DAYS_IN_WEEK = 7;
 
 	private static ArrayList<SimpleDateFormat> supportedDateFormats;
-
+	private static ArrayList<SimpleDateFormat> supportedTimeFormats;
+	private static ArrayList<SimpleDateFormat> specificDateFormats;
+	
 	private static Calendar calendar;
 	private static Date dateToday;
 	private static int intToday;
@@ -43,12 +45,12 @@ public class DateChecker {
 	 * @return the converted Date 
 	 */
 	public static Date validateDate(String stringDateInput){		
-		String date = null;
 		Date inputDate = null;
 	
 		Initialization();
 		
 		inputDate = parseInputDate(stringDateInput);
+		//inputDate = parseInputTime(stringDateInput);
 
 		if (inputDate == null) {
 			inputDate = convertDayToDate(stringDateInput);
@@ -56,7 +58,57 @@ public class DateChecker {
 		
 		return inputDate;
 	}
+	
+	public static Date validateTime(String stringTimeInput){
+		Date inputTime = null;
+		
+		Initialization();
+		
+		inputTime = parseInputTime(stringTimeInput);
+		
+		return inputTime;
+	}
 
+	public static Date validateSpecificDate(String stringDateInput){
+		Date inputDate = null;
+		
+		Initialization();
+		
+		inputDate = parseSpecificDate(stringDateInput);
+		
+		return inputDate;
+	}
+	
+	private static String checkTimeMentioned(String strDate){
+		Date time = null;
+		String strTime = null;
+		if(strDate.indexOf(" ") >= 0){
+			strTime = strDate.substring(strDate.indexOf(" "), strDate.length()).trim();
+			time = DateChecker.validateTime(strTime);
+		}
+		
+		if(time != null){
+			return strTime;
+		}
+		
+		return strTime;
+	}
+	
+	private static Date parseSpecificDate(String stringDateInput){
+		Date inputDate = null;
+		for(SimpleDateFormat format : specificDateFormats){
+			format.setLenient(false);
+			
+			try {
+				inputDate = format.parse(stringDateInput);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+		}
+		return inputDate;
+	}
+	
 	private static Date parseInputDate(String stringDateInput){
 		Date inputDate = null;
 		for (SimpleDateFormat format : supportedDateFormats){
@@ -71,6 +123,20 @@ public class DateChecker {
 		}
 		return inputDate;
 	}
+	
+	private static Date parseInputTime(String stringTimeInput){
+		Date inputTime = null;
+		for(SimpleDateFormat format : supportedTimeFormats){
+			format.setLenient(false);
+			try {
+				inputTime = format.parse(stringTimeInput);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+		}
+		return inputTime;
+	}
 
 	private static void Initialization(){
 		calendar = Calendar.getInstance();
@@ -81,12 +147,25 @@ public class DateChecker {
 		supportedDateFormats = new ArrayList<>();
 		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy HH:mm"));		
 		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy HH:mm"));
-		//supportedDateFormats.add(new SimpleDateFormat("HH:mm dd/MM/yyyy"));		
-		//supportedDateFormats.add(new SimpleDateFormat("HH:mm dd MMM yyyy"));
+		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd/MM/yy"));		
+		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd MMM yy"));
+		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd/MM/yyyy"));		
+		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd MMM yyyy"));
 		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy"));
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yyyy"));
 		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy"));
-		supportedDateFormats.add(new SimpleDateFormat("hh:mm a"));
-		supportedDateFormats.add(new SimpleDateFormat("hh a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yyyy"));
+
+		supportedTimeFormats = new ArrayList<>();
+		supportedTimeFormats.add(new SimpleDateFormat("hh:mm a"));
+		supportedTimeFormats.add(new SimpleDateFormat("hh a"));
+		supportedTimeFormats.add(new SimpleDateFormat("HH:mm"));
+		
+		specificDateFormats = new ArrayList<>();
+		specificDateFormats.add(new SimpleDateFormat("dd/MM/yy"));
+		specificDateFormats.add(new SimpleDateFormat("dd/MM/yyyy"));
+		specificDateFormats.add(new SimpleDateFormat("dd MMM yy"));
+		specificDateFormats.add(new SimpleDateFormat("dd MMM yyyy"));
 	}
 
 
@@ -199,5 +278,51 @@ public class DateChecker {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
 		String newDate = dateFormat.format(calendar.getTime());
 		return (parseInputDate(newDate));
+	}
+	
+	/**
+	 * This method replaces the hour and minutes of the DateTime with the specified time
+	 * @param date
+	 * @param setTime 
+	 * @return
+	 */
+	public static Date writeTime(String date, String setTime){
+		if(setTime == null){
+			return null;
+		}
+		Format formatter = new SimpleDateFormat("dd/MM/yy HH:mm");
+		date = formatter.format(validateDate(date));
+		if(date.indexOf("00:00") >= 0){
+			date = date.replace("00:00", setTime);
+		} else if(date.indexOf("23:59") >= 0){
+			date = date.replace("23:59", setTime);
+		}
+		return (validateDate(date));
+	}
+	
+	/**
+	 * Converts time which is in AM or PM format to 24 hour time format
+	 * @param timeInput
+	 * @return time in 24 hour format e.g. 23:59
+	 */
+	public static String convertAmPmToTime(String timeInput){
+		SimpleDateFormat formatterInput;
+		SimpleDateFormat formatterOutput = new SimpleDateFormat("HH:mm");
+		String time = null;
+		try {
+			formatterInput = new SimpleDateFormat("hh a");
+			time = formatterOutput.format(formatterInput.parse(timeInput));
+		} catch (ParseException e) {
+			//e.printStackTrace();
+		}
+
+		try{
+			formatterInput = new SimpleDateFormat("hh:mm a");
+			time = formatterOutput.format(formatterInput.parse(timeInput));
+		} catch (ParseException e){
+			//e.printStackTrace();
+		}
+
+		return time;
 	}
 }
