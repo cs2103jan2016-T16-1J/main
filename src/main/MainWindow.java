@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import controller.Controller;
 import json.JSONException;
-import storage.Storage;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -103,15 +102,15 @@ public class MainWindow {
 	 * @throws JSONException 
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException, JSONException {
-
-		Storage.createFile();
+	public static void main(String[] args) {
+		
 		
 		
 		/*_________ Testing ADD ______________*/
 		//Creating object manually
-		Controller controller = new Controller();
-		State completeState = new State();
+		//Controller controller = new Controller();
+		//State completeState = new State();
+		/*
 		Event testNewEvent = new Event();
 		Event brunch = new Event();
 		String result = new String();
@@ -141,23 +140,28 @@ public class MainWindow {
 		brunch.setStartTime(aTime);
 		brunch.setEndTime(aTime);
 		
+		
 		Command adding = new Add(testNewEvent);
+		completeState = adding.execute(completeState);
+		/*
 		Command adding2 = new Add(testNewEvent);
 		Command adding3 = new Add(brunch);
 		//Add event, event, brunch to test delete event
-		completeState = adding.execute(completeState);
+		
 		completeState = adding2.execute(completeState);
 		completeState = adding3.execute(completeState);
 		
 		Command deleting = new Delete(brunch);
 		completeState = deleting.execute(completeState);
 		
+		
 		for(Event e: completeState.displayedEvents){
 			result = result + e.printEvent();
 			System.out.println(result);
+			
 		}
 	
-		finalResult = result;
+		finalResult = result;*/
 		
 		/*_________ Testing ADD ______________*/
 		
@@ -172,6 +176,7 @@ public class MainWindow {
 					//actionsTextArea.append(finalResult);
 
 					window.frame.setVisible(true);
+					window.renderCalendar();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -194,7 +199,7 @@ public class MainWindow {
 		initializeController();
 		
 		intializeState();
-		
+				
 		initializeColors();
 		
 		initializeMainWindow();
@@ -210,14 +215,17 @@ public class MainWindow {
 		initializeOutputField();
 		
 		initializeCalendar();
+		
+		
 	}
-	
+
 	private void initializeController() {
 		mainController = new Controller();
 	}
 	
 	private void intializeState() {
 		currentState = new State();
+		currentState = mainController.getCompleteState();
 	}
 	
 	private void initializeColors() {
@@ -380,15 +388,14 @@ public class MainWindow {
 	}
 	
 	private void renderCalendar() {
-		Event e = currentState.displayedEvents.get(currentState.displayedEvents.size()-1);
-		actionsTextArea.append(e.printEvent());
+		tblCalendar.removeAll();
 		
 		for (Event event : currentState.displayedEvents){
 	    	//actionsTextArea.append(event.printEvent());
-	    	String category = event.getCategory();
-	    	if (category == "DEADLINE") {
+			
+	    	if (event.isDeadline()) {
 	    		createDeadlineEvent(event);
-	    	} else if (category == "EVENT") {
+	    	} else if (event.isEvent()) {
 	    		createSpecificEvent(event);
 	    	}
 	    	displayEventDetails(event);
@@ -470,7 +477,6 @@ public class MainWindow {
 		lblMonth.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMonth.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 		calendarPanel.add(stblCalendar);
-		
 
 		refreshMonth();
 	}

@@ -2,18 +2,25 @@ package storage;
 
 import java.io.BufferedReader;
 import java.io.File;
+
 import main.Event;
 import main.Event.Status;
 import main.State;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import json.*;
 
 
@@ -22,7 +29,7 @@ public class Storage {
 	public static final String fileName =  ("./storage.txt");
 	public static final String tempFileName = ("temp.txt");
 	
-	public static void createFile() throws FileNotFoundException {
+	public void createFile() throws FileNotFoundException {
 		File file = new File(fileName);
 		if (!file.exists()){
 			 PrintWriter writer = new PrintWriter(fileName);
@@ -44,7 +51,7 @@ public class Storage {
 		
 	}
 	
-	public static void removeFromStorage(Event event) throws JSONException {
+	public static void removeFromStorage(Event event)  {
 		String line = null;
 		
 		try {
@@ -55,11 +62,22 @@ public class Storage {
 			BufferedReader br =  new BufferedReader(fr);
 			
 			while ((line = br.readLine()) != null){
-				JSONObject jsonObj = new JSONObject(line);
+				JSONObject jsonObj = new JSONObject();
+				try {
+					jsonObj = new JSONObject(line);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
-				if (!isSameObject(jsonObj, event)){
-					pw.println(line);
-					pw.flush();
+				try {
+					if (!isSameObject(jsonObj, event)){
+						pw.println(line);
+						pw.flush();
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 				
@@ -79,24 +97,43 @@ public class Storage {
 	}
 	
 	
-	public static void readStorage() throws JSONException{
+	public State readStorage() {
 		String line = null;
+		State state = new State();
 		
 		try {
 			FileReader fr = new FileReader(fileName);
 			BufferedReader br = new BufferedReader(fr);
 			
-			while ( (line = br.readLine()) != null){
-				JSONObject jsonObj = new JSONObject(line);
-				Event event = castJSONObjToEvent(jsonObj);
+			while ( (line = br.readLine()) != null) {
+				JSONObject jsonObj ;
+				Event event = new Event();
+				
+				try {
+					jsonObj = new JSONObject(line);
+					event = castJSONObjToEvent(jsonObj);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				//System.out.println(event.getStartTime());
 				
 					if (event.getStatus() == Status.COMPLETE){
-						State.addToCompletedList(event);
+						state.addToCompletedList(event);
+						//System.out.println(state.completedEvents.size());
+						//System.out.println("add to complete list");
 					} else if (event.getStatus() == Status.INCOMPLETE){
-						State.addToIncompletedList(event);
+						state.addToIncompletedList(event);
+						//System.out.println(state.incompletedEvents.size());
+						//System.out.println("add to incomplete list");
 					} else if (event.getStatus() == Status.FLOATING){
-						State.addToFloatingList(event);
+						state.addToFloatingList(event);
+						//System.out.println("add to floating list");
 					}
+					
+					updatedDisplayedEvents(state);
 			}
 			
 		} catch(FileNotFoundException ex) {
@@ -104,6 +141,8 @@ public class Storage {
         } catch(IOException ex) {
                 ex.printStackTrace();
         }
+		
+		return state;
 	}
 	
 	
@@ -124,17 +163,74 @@ public class Storage {
 	
 	public static Event castJSONObjToEvent(JSONObject jsonObj) throws JSONException{
 		Event event = new Event();
+		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
+		String startTime = jsonObj.get("startTime").toString();
+		//System.out.println(startTime);
+		String endTime = jsonObj.get("endTime").toString();
+		//System.out.println(df.parse(endTime));
 		
 		event.setName(jsonObj.getString("name"));
 		event.setDescription(jsonObj.getString("description"));
 		event.setCategory(jsonObj.getString("category"));
-		event.setStartTime((Date) jsonObj.get("startTime"));
-		event.setEndTime((Date) jsonObj.get("endTime"));
-		event.setStatus((Status) jsonObj.get("status"));
+		event.setStatus(decideStatus(jsonObj));
 		event.setLocation(jsonObj.getString("location"));
+		
+		if (jsonObj.getString("category").equals("DEADLINE")){
+				
+			try {
+				event.setStartTime(dfDeadline.parse(startTime));
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			try {
+				event.setEndTime(df.parse(endTime));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				event.setStartTime(df.parse(startTime));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				event.setEndTime(df.parse(endTime));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
 		
 		return event;
 	}
+	
+	private static  Event.Status decideStatus(JSONObject jsonObj) throws JSONException{
+		if (jsonObj.get("status").equals("COMPLETE")){
+			return Event.Status.COMPLETE;
+		} else if (jsonObj.get("status").equals("INCOMPLETE")){
+			return Event.Status.INCOMPLETE;
+		} else if (jsonObj.get("status").equals("BLOCKED")){
+			return Event.Status.BLOCKED;
+		} else if (jsonObj.get("status").equals("OVERDUE")){
+			return Event.Status.OVERDUE;
+		} else {
+			return Event.Status.FLOATING;
+		}
+	}
+	
+	/*
+	private static String decideCategory (String category) {
+		if (category.equals("DEADLINE")){
+			return
+		}
+	}*/
 	
 	public static boolean isSameObject (JSONObject js1, Event e) throws JSONException {
 		if (js1.get("name").equals(e.getName()) && 
@@ -150,5 +246,12 @@ public class Storage {
 		return false;
 	}
 	
+	
+	private void updatedDisplayedEvents(State completeState){
+		completeState.displayedEvents.clear();
+		completeState.displayedEvents.addAll(completeState.completedEvents);
+		completeState.displayedEvents.addAll(completeState.incompletedEvents);
+		completeState.displayedEvents.addAll(completeState.floatingEvents);		
+	}
 	
 }
