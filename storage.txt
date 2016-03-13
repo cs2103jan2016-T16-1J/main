@@ -60,3 +60,6 @@
 {"startTime":"Tue Aug 31 10:20:56 SGT 1982","category":"FLOATING","location":"Supahotfire's house","status":"COMPLETE","description":"This is a test event created in main","name":"TEST EVENT NAME","endTime":"Tue Aug 31 10:20:56 SGT 1982"}
 {"startTime":"Tue Aug 31 10:20:56 SGT 1982","category":"FLOATING","location":"Supahotfire's house","status":"COMPLETE","description":"This is a test event created in main","name":"TEST EVENT NAME","endTime":"Tue Aug 31 10:20:56 SGT 1982"}
 {"startTime":"1970-01-01","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"whatever","endTime":"Fri Mar 11 02:00:00 SGT 2016"}
+{"startTime":"Tue Aug 31 10:20:56 SGT 1982","category":"FLOATING","location":"Supahotfire's house","status":"COMPLETE","description":"This is a test event created in main","name":"TEST EVENT NAME","endTime":"Tue Aug 31 10:20:56 SGT 1982"}
+{"startTime":"Tue Aug 31 10:20:56 SGT 1982","category":"FLOATING","location":"Supahotfire's house","status":"COMPLETE","description":"This is a test event created in main","name":"TEST EVENT NAME","endTime":"Tue Aug 31 10:20:56 SGT 1982"}
+{"startTime":"Tue Aug 31 10:20:56 SGT 1982","category":"FLOATING","location":"Supahotfire's house","status":"INCOMPLETE","description":"with supa fire","name":"brunch","endTime":"Tue Aug 31 10:20:56 SGT 1982"}
