@@ -36,15 +36,12 @@ public class Delete implements Command{
 		switch(modifiedEvent.getStatus()){
 		case COMPLETE:
 			successfullyDeleted = deleteFromCompleteList();
-			Storage.removeFromStorage(modifiedEvent);
 			break;
 		case INCOMPLETE:
 			successfullyDeleted = deleteFromIncompleteList();
-			Storage.removeFromStorage(modifiedEvent);
 			break;
 		case FLOATING:
 			successfullyDeleted = deleteFromFloatingList();
-			Storage.removeFromStorage(modifiedEvent);
 			break;
 				
 		}

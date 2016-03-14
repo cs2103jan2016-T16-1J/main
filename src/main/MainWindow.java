@@ -224,7 +224,7 @@ public class MainWindow {
 	}
 	
 	private void intializeState() {
-		currentState = new State();
+		//currentState = new State();
 		currentState = mainController.getCompleteState();
 	}
 	

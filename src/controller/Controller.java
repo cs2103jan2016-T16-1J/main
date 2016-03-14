@@ -35,7 +35,7 @@ public class Controller{
 		//storage = new Storage();
 		//completeState = storage.readStorage();
 		
-		/*
+		
 		//---------for testing if read into the state class successfully
 		
 		System.out.println("items in completed list: " +completeState.completedEvents.size());
@@ -43,7 +43,7 @@ public class Controller{
 		System.out.println("items in floating list: " + completeState.floatingEvents.size());
 		System.out.println("items in displayed list: " + completeState.displayedEvents.size());
 		//TODO: load event lists from storage
-		*/
+		
 		 
 		
 	}
@@ -75,9 +75,10 @@ public class Controller{
 	public State executeCommand(String commandText) throws IOException, JSONException{
 		Command userCommand;
 		userCommand = parser.parseCommand(commandText); //parser should return Command
+		System.out.println(completeState.incompletedEvents.size());
 		userCommand.execute(completeState);
-		//TODO: write to storage
-		
+		Storage.clearStorage();
+		completeState.stateToStorage();
 		return completeState;
 	}
 }

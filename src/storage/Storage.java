@@ -51,6 +51,17 @@ public class Storage {
 		
 	}
 	
+	public static void clearStorage(){
+		try {
+			PrintWriter writer = new PrintWriter(fileName);
+			writer.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
+	}
+	
 	public static void removeFromStorage(Event event)  {
 		String line = null;
 		
@@ -122,15 +133,15 @@ public class Storage {
 				
 					if (event.getStatus() == Status.COMPLETE){
 						state.addToCompletedList(event);
-						//System.out.println(state.completedEvents.size());
+						System.out.println("complete list" + state.completedEvents.size());
 						//System.out.println("add to complete list");
 					} else if (event.getStatus() == Status.INCOMPLETE){
 						state.addToIncompletedList(event);
-						//System.out.println(state.incompletedEvents.size());
+						System.out.println("incomplete list" + state.incompletedEvents.size());
 						//System.out.println("add to incomplete list");
 					} else if (event.getStatus() == Status.FLOATING){
 						state.addToFloatingList(event);
-						//System.out.println("add to floating list");
+						System.out.println("add to floating list");
 					}
 					
 					updatedDisplayedEvents(state);

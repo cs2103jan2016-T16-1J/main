@@ -1,2 +1,4 @@
-{"startTime":"Tue Mar 15 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"brunch","endTime":"Tue Mar 15 23:59:00 SGT 2016"}
-{"startTime":"1970-01-01","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"something","endTime":"Sun Mar 13 03:00:00 SGT 2016"}
+{"startTime":"Fri Mar 18 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"haha","endTime":"Fri Mar 18 23:59:00 SGT 2016"}
+{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"work!!!","endTime":"Tue Mar 15 03:00:00 SGT 2016"}
+{"startTime":"Sun Mar 20 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"fix","endTime":"Sun Mar 20 23:59:00 SGT 2016"}
+{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"end","endTime":"Wed Mar 16 05:00:00 SGT 2016"}
