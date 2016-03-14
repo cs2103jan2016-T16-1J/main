@@ -32,19 +32,6 @@ public class Controller{
 		parser = new Parser();
 		storage = new Storage();
 		completeState = storage.readStorage();
-		//storage = new Storage();
-		//completeState = storage.readStorage();
-		
-		
-		//---------for testing if read into the state class successfully
-		
-		System.out.println("items in completed list: " +completeState.completedEvents.size());
-		System.out.println("items in incompleted list: " + completeState.incompletedEvents.size());
-		System.out.println("items in floating list: " + completeState.floatingEvents.size());
-		System.out.println("items in displayed list: " + completeState.displayedEvents.size());
-		//TODO: load event lists from storage
-		
-		 
 		
 	}
 	
@@ -77,8 +64,8 @@ public class Controller{
 		userCommand = parser.parseCommand(commandText); //parser should return Command
 		System.out.println(completeState.incompletedEvents.size());
 		userCommand.execute(completeState);
-		Storage.clearStorage();
-		completeState.stateToStorage();
+		storage.clearFile();
+		storage.stateToStorage(completeState);
 		return completeState;
 	}
 }

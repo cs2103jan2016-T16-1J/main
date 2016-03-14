@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import controller.Controller;
 import json.JSONException;
+import storage.Storage;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -196,6 +197,8 @@ public class MainWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		initializeFile();
+		
 		initializeController();
 		
 		intializeState();
@@ -217,6 +220,11 @@ public class MainWindow {
 		initializeCalendar();
 		
 		
+	}
+
+	private void initializeFile() {
+		Storage storage = new Storage();
+		storage.createFile();
 	}
 
 	private void initializeController() {
