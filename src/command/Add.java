@@ -49,6 +49,7 @@ public class Add implements Command{
 			addToFloatingList();
 			Storage.addToStorage(modifiedEvent);
 			break;
+			
 		}
 
 		updatedDisplayedEvents();

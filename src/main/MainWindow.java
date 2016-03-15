@@ -360,7 +360,7 @@ public class MainWindow {
 		Action inputAction = getInputAction();
 		textField.addActionListener(inputAction);
 		textField.setColumns(10);
-		textField.setBounds(10, 730, 698, 20);
+		textField.setBounds(10, 500, 698, 20);
 		mainTab.add(textField);
 	}
 	

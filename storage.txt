@@ -1,2 +1,7 @@
 {"startTime":"Tue Mar 15 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"brunch","endTime":"Tue Mar 15 23:59:00 SGT 2016"}
-{"startTime":"1970-01-01","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"something","endTime":"Sun Mar 13 03:00:00 SGT 2016"}
+{"startTime":"1970-01-01","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"something","endTime":"Sun Mar 13 03:00:00 SGT 2016"}{"startTime":"Thu Mar 17 07:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"that thing","endTime":"Thu Mar 17 07:00:00 SGT 2016"}
+{"startTime":"Thu Mar 17 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"something","endTime":"Thu Mar 17 23:59:00 SGT 2016"}
+{"startTime":"1970-01-01","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"whatever","endTime":"Wed Mar 16 11:00:00 SGT 2016"}
+{"startTime":"Mon Mar 21 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"something","endTime":"Mon Mar 21 23:59:00 SGT 2016"}
+{"startTime":"1970-01-01","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"submit report","endTime":"Sun Mar 20 23:59:00 SGT 2016"}
+{"startTime":"Fri Mar 18 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"from clementi to dover","endTime":"Fri Mar 18 23:59:00 SGT 2016"}
