@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import controller.Controller;
 import json.JSONException;
+import storage.Storage;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -26,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
 
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
@@ -196,6 +198,8 @@ public class MainWindow {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		initializeFile();
+		
 		initializeController();
 		
 		intializeState();
@@ -219,12 +223,17 @@ public class MainWindow {
 		
 	}
 
+	private void initializeFile() {
+		Storage storage = new Storage();
+		storage.createFile();
+	}
+
 	private void initializeController() {
 		mainController = new Controller();
 	}
 	
 	private void intializeState() {
-		currentState = new State();
+		//currentState = new State();
 		currentState = mainController.getCompleteState();
 	}
 	
@@ -447,7 +456,7 @@ public class MainWindow {
 		calendarPanel = new JPanel();
 		calendarPanel.setBackground(Color.WHITE);
 		calendarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
-		rowHeaderTable = new RowNumberTable(tblCalendar);
+		rowHeaderTable = new RowNumberTable(tblCalendar, calendarInstance, this.DISPLAYED_DAYS_NUM);
 		rowHeaderTable.setGridColor(borderColor);
 	}
 	
@@ -508,13 +517,13 @@ public class MainWindow {
 		endCalendar.set(Calendar.MINUTE, 0);
 	}
 	
-	private void addDeadlineEvent(Event deadline, Calendar deadlineCalendar, Calendar startCalendar) {
+	private void addDeadlineEvent(Event deadline, Calendar deadlineCalendar, Calendar startCalendar) {		
 		double eventHeight = getEventHeight();
 		double eventWidth = getEventWidth();
 		int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 		int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
-		int xOffset = (int) eventWidth * dayDifference;
-		int yOffset = (int) eventHeight * hour;
+		int xOffset = (int) eventWidth * hour;
+		int yOffset = (int) eventHeight * dayDifference ;
 		
 		JTextField currentEvent = new JTextField(deadline.getName());
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
@@ -527,12 +536,12 @@ public class MainWindow {
 	}
 	
 	private double getEventHeight() {
-		double height = tblCalendar.getHeight() / (double) 24;
+		double height = tblCalendar.getHeight() / (double) DISPLAYED_DAYS_NUM;
 		return height;
 	}
 	
 	private double getEventWidth() {
-		double width = tblCalendar.getWidth() / (double) DISPLAYED_DAYS_NUM;
+		double width = tblCalendar.getWidth() / (double) 24;
 		return width;
 	}
 	
@@ -558,11 +567,11 @@ public class MainWindow {
 		double eventWidth = getEventWidth();
 		int dayDifference = endEventCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 		int hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
-		int xOffset = (int) eventWidth * dayDifference;
-		int yOffset = (int) eventHeight * hour;
-		double yMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
+		int yOffset = (int) eventHeight * dayDifference;
+		int xOffset = (int) eventWidth * hour;
+		double xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
-		eventHeight *= yMultiplier;
+		eventWidth *= xMultiplier;
 		
 		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight);
 		tblCalendar.add(currentEvent);
@@ -587,12 +596,17 @@ public class MainWindow {
 	
 	private void setCalendarHeaders() {
 		SimpleDateFormat format = getHeaderTableFormat();
-		String formatted = format.format(calendarInstance.getTime());
+		String formatted = EMPTY_STRING;
 		Calendar calendarClone = (Calendar) calendarInstance.clone();
 		
-		for (int i=0; i < DISPLAYED_DAYS_NUM; i++) {
+		for (int i=0; i < 24; i++) {
 			formatted = format.format(calendarClone.getTime());
-			calendarClone.set(Calendar.DAY_OF_MONTH, calendarClone.get(Calendar.DAY_OF_MONTH) + 1);
+			calendarClone.set(Calendar.HOUR_OF_DAY, i);
+			calendarClone.set(Calendar.MINUTE, 0);
+			calendarClone.set(Calendar.SECOND, 0);
+			
+			formatted = format.format(calendarClone.getTime());
+						
         	mtblCalendar.addColumn(formatted);
         }
 		JTableHeader header = tblCalendar.getTableHeader();
@@ -602,7 +616,7 @@ public class MainWindow {
 	}
 	
 	private SimpleDateFormat getHeaderTableFormat() {
-		SimpleDateFormat format = new SimpleDateFormat("E (d)");
+		SimpleDateFormat format = new SimpleDateFormat("H:mm");
 		return format;
 	}
 	
@@ -612,10 +626,9 @@ public class MainWindow {
 	}
 	
 	private void setCalendarRows() {
-		mtblCalendar.setRowCount(24);
+		mtblCalendar.setRowCount(DISPLAYED_DAYS_NUM);
 		rowHeaderTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		rowHeaderTable.setRowSelectionAllowed(true);
-		rowHeaderTable.setRowHeight(12);
 		rowHeaderTable.setColumnSelectionAllowed(true);
 		stblCalendar.setRowHeaderView(rowHeaderTable);
 	}
@@ -624,6 +637,6 @@ public class MainWindow {
         tblCalendar.setColumnSelectionAllowed(true);
         tblCalendar.setRowSelectionAllowed(true);
         tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tblCalendar.setRowHeight(38);
+        tblCalendar.setRowHeight((stblCalendar.getHeight() - 20) / DISPLAYED_DAYS_NUM);
 	}
 }

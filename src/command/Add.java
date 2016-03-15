@@ -39,15 +39,12 @@ public class Add implements Command{
 		switch (modifiedEvent.getStatus()){
 		case COMPLETE:
 			addToCompleteList();
-			Storage.addToStorage(modifiedEvent);
 			break;
 		case INCOMPLETE:
 			addToIncompleteList();
-			Storage.addToStorage(modifiedEvent);
 			break;
 		case FLOATING:
 			addToFloatingList();
-			Storage.addToStorage(modifiedEvent);
 			break;
 			
 		}

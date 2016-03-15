@@ -54,18 +54,4 @@ public class State {
 		floatingEvents.add(event);
 	}
 	
-	public static void stateToStorage() throws IOException, JSONException {
-		for (Event e: completedEvents){
-			Storage.addToStorage(e);
-		}
-		for (Event e: incompletedEvents){
-			Storage.addToStorage(e);
-		}
-		for (Event e: floatingEvents){
-			Storage.addToStorage(e);
-		}
-	}
-	
-	
-	
 }
