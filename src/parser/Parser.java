@@ -17,7 +17,7 @@ import java.util.Date;
 import constant.CommandType;
 import constant.Constant;
 import main.Event;
-import main.State;
+import main.Event.Category;
 
 public class Parser {
 
@@ -81,6 +81,27 @@ public class Parser {
 			event = decodeEditData(event , remainingInput);
 			cmdInterface = new Edit(realOldEvent, event);
 			oldEvent = event;
+		} else if(tempCmd == CommandType.SELECT){
+			
+		} else if(tempCmd == CommandType.BLOCK){
+			event = decodeAddData(event, removeFirstWord(input));
+			event.setCategory(Constant.CATEGORY_UNDETERMINED);
+			oldEvent = event;
+			cmdInterface = new Add(event);
+		} else if(tempCmd == CommandType.UNBLOCK){
+			event = decodeDeleteData(event, removeFirstWord(input));
+			event.setCategory(Constant.CATEGORY_UNDETERMINED);
+			oldEvent = event;
+			cmdInterface = new Delete(event);
+		} else if(tempCmd == CommandType.UNDO){
+			
+		} else if(tempCmd == CommandType.REDO){
+			
+		} else if(tempCmd == CommandType.CONFIRM){
+			event = determineQuotedInput(event, removeFirstWord(input));
+			event = determineCategory(event);
+			oldEvent = event;
+			
 		}
 		return cmdInterface;
 
@@ -122,6 +143,16 @@ public class Parser {
 			task =	decodeEditData(task, remainingInput);
 			oldEvent = task;
 			return task;
+		} else if(tempCmd == CommandType.BLOCK){
+			Event event = new Event();
+			event = decodeAddData(event, removeFirstWord(input));
+			event.setCategory(Constant.CATEGORY_UNDETERMINED);
+			oldEvent = event;
+			return event;
+		} else if(tempCmd == CommandType.UNBLOCK){
+			
+		} else if(tempCmd == CommandType.SELECT){
+			
 		}
 		return null;
 	}
@@ -174,13 +205,24 @@ public class Parser {
 	}
 
 	
-
+	/**
+	 * Decodes the user input for Adding new task
+	 * @param task
+	 * @param input
+	 * @return Event object with updated values
+	 */
 	private Event decodeAddData(Event task, String input){
 		String remainingInput = extractDescription(task, input);
 		return determineQuotedInput(task, remainingInput);
 	}
 
-	private main.Event decodeDeleteData(Event task, String input){
+	/**
+	 * Decodes the user input for Deleting a task by name
+	 * @param task
+	 * @param input
+	 * @return Event object with updated name field to be checked, other fields are initialized as default values
+	 */
+	private Event decodeDeleteData(Event task, String input){
 		final int offset = 1;
 		int startIndex = 0;
 		int endIndex = startIndex;
@@ -198,22 +240,23 @@ public class Parser {
 		return task;
 	}
 
+	/**
+	 * Decodes the user input for Editing task either by name or date time or location or note
+	 * @param task
+	 * @param input
+	 * @return Event object with updated field of which the user choose to edit, other fields that are not
+	 * 			edited remain as initial values
+	 */
 	private Event decodeEditData(Event task, String input){
-		final int INDEX_START = 0;
-		final int INDEX_END = 1;
-		boolean isAdd = false;
-		boolean isEdit = true;
-
 		if(input.isEmpty()){
 			return task;
 		}
-		task = decodeDataFromInput(task, input);
+		task = determineQuotedInput(task, input);
 		return task;
 	}
 
 	private Event decodeDisplayData(Event task, String input){		
-		boolean isAdd = false;
-		boolean isEdit = false;
+
 		input = input.toUpperCase();
 
 		if (input.startsWith(Constant.CATEGORY_DEADLINE) && input.endsWith(Constant.CATEGORY_DEADLINE)){
@@ -236,10 +279,10 @@ public class Parser {
 	}
 
 	/**
-	 * Check the input task name from having quotations
+	 * Check the input task name for having quotations and extract the data out
 	 * @param task
 	 * @param input
-	 * @return
+	 * @return 
 	 */
 	private Event determineQuotedInput(Event task, String input){
 		boolean isDoubleQuoted = false;
@@ -277,6 +320,12 @@ public class Parser {
 		return task;
 	}
 
+	/**
+	 * Extract information out from user input based on the structure of the input
+	 * @param task
+	 * @param input
+	 * @return Event object with updated fields
+	 */
 	private Event decodeDataFromInput(Event task, String input){
 		String preposition = "";
 		boolean isFound = false;
@@ -590,7 +639,7 @@ public class Parser {
 	 * @param input
 	 * @return the remaining String input which are left to be processed 
 	 */
-	private String extractDescription(main.Event event, String input){
+	private String extractDescription(Event event, String input){
 		int startIndex = input.indexOf("//");
 		int offset = 2;
 
@@ -604,6 +653,23 @@ public class Parser {
 		event.setDescription(description);
 
 		return (input.substring(0,startIndex).trim());
+	}
+	
+	/**
+	 * 
+	 * @param event
+	 * @return Event object with updated Category field 
+	 */
+	private Event determineCategory(Event event){
+		if(event.getStartTime() == Constant.MIN_DATE && event.getEndTime() == Constant.MAX_DATE){
+			event.setCategory(Constant.CATEGORY_FLOATING);
+		} else if(event.getStartTime() == Constant.MIN_DATE && event.getEndTime() != Constant.MAX_DATE){
+			event.setCategory(Constant.CATEGORY_DEADLINE);
+		} else if(event.getStartTime() != Constant.MIN_DATE && event.getEndTime() != Constant.MAX_DATE){
+			event.setCategory(Constant.CATEGORY_EVENT);
+		}
+		
+		return event;
 	}
 
 
