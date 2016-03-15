@@ -9,7 +9,7 @@ public class Event {
 	};
 	
 	public enum Category {
-		DEADLINE, EVENT, FLOATING
+		DEADLINE, EVENT, FLOATING, UNDETERMINED
 	};
 	
 	private String name;

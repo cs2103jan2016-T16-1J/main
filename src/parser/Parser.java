@@ -21,8 +21,8 @@ import main.Event.Category;
 
 public class Parser {
 
-	public static main.Event oldEvent;
-
+	private static Event oldEvent;
+	private boolean isEdit = false;
 	private final String PATTERN_SPACE = "(\\s)";
 	private final String PATTERN_AM_OR_PM = "(\\b(am)\\b|\\b(pm)\\b)";
 	private final String PATTERN_AT = "(\\bat\\b)";
@@ -77,8 +77,9 @@ public class Parser {
 			realOldEvent.setStartTime(oldEvent.getStartTime());
 			realOldEvent.setLocation(oldEvent.getLocation());
 			realOldEvent.setStatus(oldEvent.getStatus());
-			String remainingInput = extractDescription(event, removeFirstWord(input));
-			event = decodeEditData(event , remainingInput);
+			
+			isEdit = true;
+			event = decodeEditData(event , input);
 			cmdInterface = new Edit(realOldEvent, event);
 			oldEvent = event;
 		} else if(tempCmd == CommandType.SELECT){
@@ -139,8 +140,8 @@ public class Parser {
 			task.setStartTime(oldEvent.getStartTime());
 			task.setLocation(oldEvent.getLocation());
 			task.setStatus(oldEvent.getStatus());
-			String remainingInput = extractDescription(task, removeFirstWord(input));
-			task =	decodeEditData(task, remainingInput);
+			isEdit = true;
+			task = decodeEditData(task , input);
 			oldEvent = task;
 			return task;
 		} else if(tempCmd == CommandType.BLOCK){
@@ -248,10 +249,11 @@ public class Parser {
 	 * 			edited remain as initial values
 	 */
 	private Event decodeEditData(Event task, String input){
-		if(input.isEmpty()){
+		String remainingInput = extractDescription(task, removeFirstWord(input));
+		if(remainingInput.isEmpty()){
 			return task;
 		}
-		task = determineQuotedInput(task, input);
+		task = determineQuotedInput(task, remainingInput);
 		return task;
 	}
 
@@ -306,16 +308,19 @@ public class Parser {
 			}
 		}
 
+		int[] indexes = matchPatternOfFirstOccurrence(PATTERN_ALL, input);
+		
 		if(isSingleQuoted || isDoubleQuoted){
 			if(endIndex != input.length()-1){
 				int startIndex = endIndex + 1;
 				endIndex = input.length();
 				input = input.substring(startIndex, endIndex).trim();
-				task = decodeDataFromInput(task, input);
 			}
-		}else{
-			task = decodeDataFromInput(task, input);
+		}else if (isEdit && indexes[0] != 0){
+			task.setName(input.substring(0, indexes[0]).trim());
 		}
+
+		task = decodeDataFromInput(task, input);
 
 		return task;
 	}
@@ -479,8 +484,10 @@ public class Parser {
 				String writtenDate = formatToString.format(task.getEndTime());
 
 				if(task.getCategory() != Constant.CATEGORY_DEADLINE){
-					task.setStartTime(DateChecker.writeTime(writtenDate, time));
-					task.setCategory(Constant.CATEGORY_EVENT);
+					//task.setStartTime(DateChecker.writeTime(writtenDate, time));
+					//task.setCategory(Constant.CATEGORY_EVENT);
+					task.setStartTime(Constant.MIN_DATE);
+					task.setCategory(Constant.CATEGORY_DEADLINE);
 				}
 				task.setEndTime(DateChecker.writeTime(writtenDate, time));
 			} else{ 
@@ -690,7 +697,7 @@ public class Parser {
 			return CommandType.EXPORT;
 		}else if (command.equalsIgnoreCase("block")){
 			return CommandType.BLOCK;
-		}else if (command.equalsIgnoreCase("unblock")){
+		}else if (command.equalsIgnoreCase("unblock") || command.equalsIgnoreCase("release")){
 			return CommandType.UNBLOCK;
 		}else if (command.equalsIgnoreCase("confirm")){
 			return CommandType.CONFIRM;
