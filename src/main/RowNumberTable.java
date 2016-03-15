@@ -21,10 +21,10 @@ public class RowNumberTable extends JTable
 	implements ChangeListener, PropertyChangeListener, TableModelListener
 {
 	private JTable main;
-
-	public RowNumberTable(JTable table)
+	
+	public RowNumberTable(JTable table, Calendar calendarInstance, int numberOfDays)
 	{
-		main = table;
+		this.main = table;
 		main.addPropertyChangeListener( this );
 		main.getModel().addTableModelListener( this );
 
@@ -36,12 +36,13 @@ public class RowNumberTable extends JTable
 		TableColumn column = new TableColumn();
 		column.setHeaderValue("");
 		addColumn( column );
-		column.setCellRenderer(new RowNumberRenderer());
+		column.setCellRenderer(new RowNumberRenderer(calendarInstance, numberOfDays));
 
 		getColumnModel().getColumn(0).setPreferredWidth(50);
 		setPreferredScrollableViewportSize(getPreferredSize());
 	}
-
+	
+	
 	@Override
 	public void addNotify()
 	{
@@ -153,9 +154,23 @@ public class RowNumberTable extends JTable
 	 */
 	private static class RowNumberRenderer extends DefaultTableCellRenderer
 	{
-		public RowNumberRenderer()
+		private Calendar calendarInstance;
+		private int numberOfDays;
+		public RowNumberRenderer(Calendar calendarInstance, int numberOfDays)
 		{
+			this.calendarInstance = calendarInstance;
+			this.numberOfDays = numberOfDays;
 			setHorizontalAlignment(JLabel.CENTER);
+		}
+		
+		private SimpleDateFormat getHeaderTableFormat() {
+			SimpleDateFormat format = new SimpleDateFormat("E (d)");
+			return format;
+		}
+		
+		private SimpleDateFormat getHeaderFormat() {
+			SimpleDateFormat format = new SimpleDateFormat("MMMM / yyyy");
+			return format;
 		}
 
 		public Component getTableCellRendererComponent(
@@ -182,17 +197,14 @@ public class RowNumberTable extends JTable
 			if (value == null) {
 				setText("");
 			} else {
-				int hour = Integer.parseInt(value.toString()) -1;
-				Calendar c = Calendar.getInstance();
-				c.set(Calendar.HOUR_OF_DAY, hour);
-				c.set(Calendar.MINUTE, 0);
-				c.set(Calendar.SECOND, 0);
-				
-				SimpleDateFormat format = new SimpleDateFormat("H:mm");
-				
-				String formatted = format.format(c.getTime());
-				
-				setText(formatted);
+				SimpleDateFormat format = getHeaderTableFormat();
+				String formatted = format.format(calendarInstance.getTime());
+				Calendar calendarClone = (Calendar) calendarInstance.clone();
+			
+				calendarClone.set(Calendar.DAY_OF_MONTH, calendarClone.get(Calendar.DAY_OF_MONTH) + row);
+				formatted = format.format(calendarClone.getTime());
+	        	setText(formatted);
+		        
 			}
 			Color borderColor = new Color(231, 234, 236);
 			setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, borderColor));
