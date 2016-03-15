@@ -517,13 +517,13 @@ public class MainWindow {
 		endCalendar.set(Calendar.MINUTE, 0);
 	}
 	
-	private void addDeadlineEvent(Event deadline, Calendar deadlineCalendar, Calendar startCalendar) {
+	private void addDeadlineEvent(Event deadline, Calendar deadlineCalendar, Calendar startCalendar) {		
 		double eventHeight = getEventHeight();
 		double eventWidth = getEventWidth();
 		int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 		int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
-		int xOffset = (int) eventWidth * dayDifference;
-		int yOffset = (int) eventHeight * hour;
+		int xOffset = (int) eventWidth * hour;
+		int yOffset = (int) eventHeight * dayDifference ;
 		
 		JTextField currentEvent = new JTextField(deadline.getName());
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
@@ -605,7 +605,6 @@ public class MainWindow {
 			calendarClone.set(Calendar.MINUTE, 0);
 			calendarClone.set(Calendar.SECOND, 0);
 			
-			
 			formatted = format.format(calendarClone.getTime());
 						
         	mtblCalendar.addColumn(formatted);
@@ -638,6 +637,6 @@ public class MainWindow {
         tblCalendar.setColumnSelectionAllowed(true);
         tblCalendar.setRowSelectionAllowed(true);
         tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tblCalendar.setRowHeight(38);
+        tblCalendar.setRowHeight((stblCalendar.getHeight() - 20) / DISPLAYED_DAYS_NUM);
 	}
 }
