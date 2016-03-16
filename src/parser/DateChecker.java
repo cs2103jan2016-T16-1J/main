@@ -9,9 +9,6 @@ import java.util.Date;
 
 public class DateChecker {
 
-	private static final int INDEX_START = 0;
-	private static final int INDEX_END = 1;
-
 	private static final String TOM = "tom";
 	private static final String TOD = "tod";
 	private static final String MON = "mon";
@@ -160,6 +157,7 @@ public class DateChecker {
 		supportedTimeFormats.add(new SimpleDateFormat("hh:mm a"));
 		supportedTimeFormats.add(new SimpleDateFormat("hh a"));
 		supportedTimeFormats.add(new SimpleDateFormat("HH:mm"));
+		supportedTimeFormats.add(new SimpleDateFormat("HH"));
 		
 		specificDateFormats = new ArrayList<>();
 		specificDateFormats.add(new SimpleDateFormat("dd/MM/yy"));

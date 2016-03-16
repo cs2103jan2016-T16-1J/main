@@ -164,7 +164,7 @@ public class Parser {
 	 * @return an integer array which contains indexes of the first occurrence of the desired word
 	 * 			[0] - start index  , [1] - end index
 	 */
-	public int[] matchPatternOfFirstOccurrence(String desiredPattern, String input){
+	private int[] matchPatternOfFirstOccurrence(String desiredPattern, String input){
 		int startIndex = 0;
 		int endIndex = 0;
 
@@ -188,7 +188,7 @@ public class Parser {
 	 * @return an integer array which contains indexes of the last occurrence of the desired word
 	 * 			[0] - start index  , [1] - end index
 	 */
-	public static int[] matchPatternOfLastOccurrence(String desiredPattern, String input){
+	private static int[] matchPatternOfLastOccurrence(String desiredPattern, String input){
 		int startIndex = 0;
 		int endIndex = 0;
 
@@ -407,9 +407,11 @@ public class Parser {
 				task.setCategory(Constant.CATEGORY_EVENT);
 				return task;
 			}  else if(dateTime[1] != null){ /*check date time in dd/MM/yy (HH:mm) or dd MMM yy (HH:mm) format*/
-				task.setStartTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
+				//task.setStartTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
+				task.setStartTime(Constant.MIN_DATE);
 				task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
-				task.setCategory(Constant.CATEGORY_EVENT);
+				task.setCategory(Constant.CATEGORY_DEADLINE);
+				//task.setCategory(Constant.CATEGORY_EVENT);
 				return task;
 			}	else if(inputDate != null){ 	
 				task.setStartTime(inputDate);
@@ -569,21 +571,24 @@ public class Parser {
 			stringDate = input.substring(newStartIndex, newEndIndex).trim();
 			inputDate = DateChecker.validateDate(stringDate);
 			
-			/*check for dd/MM/yyyy or dd MMM yyyy format without HH:mm to replace the originally written time*/
+			if(inputDate != null){
+				task.setStartTime(inputDate);
+				task.setCategory(Constant.CATEGORY_EVENT);
+			}
+			/*check for dd/MM/yyyy or dd MMM yyyy format without HH:mm to replace the originally written time
 			if(DateChecker.validateSpecificDate(stringDate) != null){
 				task.setStartTime(DateChecker.writeTime(stringDate,TIME_MIDNIGHT));
 				task.setCategory(Constant.CATEGORY_EVENT);
-			} else if(inputDate != null){
-					task.setStartTime(inputDate);
-					task.setCategory(Constant.CATEGORY_EVENT);
-			} else{
-				String[] dateTime = extractTimeFromDate(stringDate);
-				time = DateChecker.convertAmPmToTime(dateTime[1]);
+			}  */
 				
-				if(time == null){
-					
-				}
+			String[] dateTime = extractTimeFromDate(stringDate);
+			
+			if(dateTime[1] != null){
+				time = DateChecker.convertAmPmToTime(dateTime[1]);
+				task.setStartTime(DateChecker.writeTime(stringDate, time));
+				task.setCategory(Constant.CATEGORY_EVENT);
 			}
+			
 			newStartIndex = matchPatternOfFirstOccurrence(PATTERN_TO, input)[1] + 1;
 			newEndIndex = matchPatternOfFirstOccurrence(PATTERN_AT, input)[0];
 			
@@ -592,19 +597,20 @@ public class Parser {
 			}
 			stringDate = input.substring(newStartIndex, newEndIndex).trim();
 			inputDate = DateChecker.validateDate(stringDate);
-			/*check for dd/MM/yyyy or dd MMM yyyy format without HH:mm to replace the originally written time*/
+			
+			if(inputDate != null){
+				task.setEndTime(inputDate);
+			} 
+		/*	check for dd/MM/yyyy or dd MMM yyyy format without HH:mm to replace the originally written time */
 			if(DateChecker.validateSpecificDate(stringDate) != null){
 				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
-			} else if(inputDate != null){
-					task.setEndTime(inputDate);
 			} else{
-				String[] dateTime = extractTimeFromDate(stringDate);
-				time = DateChecker.convertAmPmToTime(dateTime[1]);
-				
-				if(time == null){
-					
-				}
-			}
+				dateTime = extractTimeFromDate(stringDate);
+				if(dateTime[1] != null){
+					time = DateChecker.convertAmPmToTime(dateTime[1]);
+					task.setEndTime(DateChecker.writeTime(stringDate, time));
+				} 
+			}	
 		}
 
 		return task;
