@@ -16,6 +16,7 @@ public class State {
 	public static ArrayList<Event> floatingEvents;
 	
 	public ArrayList<Event> displayedEvents;
+	public ArrayList<Event> selectedEvents;
 	Stack<Event> eventHistory;
 	
 	public Event selectedEvent;
