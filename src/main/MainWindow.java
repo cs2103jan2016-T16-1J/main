@@ -420,7 +420,7 @@ public class MainWindow {
 		areaScrollPane = new JScrollPane(actionsTextArea);
 		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		areaScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, borderColor));
-		areaScrollPane.setBounds(10, 478, 1162, 252);
+		areaScrollPane.setBounds(10, 686, 1162, 44);
 	    
 		mainTab.add(areaScrollPane);
 	}
@@ -589,9 +589,9 @@ public class MainWindow {
 	}
 	
 	private void setBoundsCalendarComponents() {
-		calendarPanel.setBounds(0, 0, 1184, 467);
+		calendarPanel.setBounds(0, 0, 1184, 675);
 		tblCalendar.setSize(100, 100);
-		stblCalendar.setBounds(10, 54, 1164, 402);
+		stblCalendar.setBounds(10, 54, 1164, 610);
 	}
 	
 	private void setCalendarHeaders() {
