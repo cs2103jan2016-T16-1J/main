@@ -60,12 +60,28 @@ public class Controller{
 	 * @throws IOException 
 	 */
 	public State executeCommand(String commandText) throws IOException, JSONException{
+		completeState.setStatusMessage(null);
 		Command userCommand;
 		userCommand = parser.parseCommand(commandText); //parser should return Command
+		if(null == userCommand){
+			completeState.setStatusMessage(State.MESSAGE_PARSE_ERROR);
+		}
 		System.out.println(completeState.incompletedEvents.size());
 		userCommand.execute(completeState);
+		assert isValidCommand(userCommand);
+		assert false;
 		storage.clearFile();
 		storage.stateToStorage(completeState);
 		return completeState;
 	}
+	
+	private boolean isValidCommand(Command userCommand){
+		if((userCommand != null) && (completeState.getStatusMessage() != State.MESSAGE_PARSE_ERROR)){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
 }
