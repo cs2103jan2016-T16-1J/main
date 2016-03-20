@@ -35,18 +35,6 @@ public class Controller{
 		
 	}
 	
-	/**
-	 * constructor which accepts information from existing storage
-	 * Will receive info from storage then call parser to store into completeState
-	 * @param placeHolderForDataFromStorageFile
-	 */
-	public Controller(String placeHolderForDataFromStorageFile){
-		completeState = new State();
-		parser = new Parser();
-		storage = new Storage();
-		completeState = storage.readStorage();
-	}
-	
 	public State getCompleteState() {
 		return completeState;
 	}
