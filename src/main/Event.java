@@ -30,6 +30,17 @@ public class Event {
 		status = Status.INCOMPLETE;
 	}
 	
+	public Event(String name, String location, String description, String category, Date startTime, Date endTime, Status status){
+		this.name = name;
+		this.location = location;
+		this.description = description;
+		this.category = category;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.status = status;
+		
+	}
+	
 	public void setName(String name){
 		this.name = name;
 	}
@@ -85,6 +96,13 @@ public class Event {
 	public String getLocation(){
 		return this.location;
 	}
+
+	public Event getClone(){
+		Event clonedEvent = new Event(this.getName(), this.getLocation(), this.getDescription(), this.getCategory(), this.getStartTime(), this.getEndTime(), this.getStatus());
+		
+		return clonedEvent;
+	}
+	
 	
 	/**
 	 * Print Event for Debugging purposes

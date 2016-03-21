@@ -58,7 +58,7 @@ public class MainWindow {
 	private int DISPLAYED_DAYS_NUM = 7;
 	private int WINDOW_X = 100;
 	private int WINDOW_Y = 100;
-	private int WINDOW_WIDTH = 1200;
+	private int WINDOW_WIDTH = 1600;
 	private int WINDOW_HEIGHT = 800;
 	private JTextField textField;
 	private JTable calendarTable;
@@ -225,7 +225,7 @@ public class MainWindow {
 
 	private void initializeFile() {
 		Storage storage = new Storage();
-		storage.createFile();
+		storage.createFile(Storage.storageFile);
 	}
 
 	private void initializeController() {
@@ -351,7 +351,7 @@ public class MainWindow {
 		mainTab = new JPanel();
 		mainTab.setBackground(Color.WHITE);
 		mainTab.setLayout(null);
-		mainTab.setBounds(402, 0, 782, 761);
+		mainTab.setBounds(402, 0, 1182, 761);
 		frame.getContentPane().add(mainTab);
 	}
 	
@@ -360,7 +360,7 @@ public class MainWindow {
 		toggleButton.setForeground(Color.WHITE);
 		toggleButton.setBorder(null);
 		toggleButton.setBackground(new Color(28, 192, 159));
-		toggleButton.setBounds(707, 730, 64, 20);
+		toggleButton.setBounds(1109, 730, 64, 20);
 		mainTab.add(toggleButton);
 		
 		textField = new JTextField();
@@ -369,7 +369,7 @@ public class MainWindow {
 		Action inputAction = getInputAction();
 		textField.addActionListener(inputAction);
 		textField.setColumns(10);
-		textField.setBounds(10, 500, 698, 20);
+		textField.setBounds(10, 730, 1100, 20);
 		mainTab.add(textField);
 	}
 	
@@ -420,7 +420,7 @@ public class MainWindow {
 		areaScrollPane = new JScrollPane(actionsTextArea);
 		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		areaScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, borderColor));
-		areaScrollPane.setBounds(10, 478, 761, 252);
+		areaScrollPane.setBounds(10, 478, 1162, 252);
 	    
 		mainTab.add(areaScrollPane);
 	}
@@ -589,9 +589,9 @@ public class MainWindow {
 	}
 	
 	private void setBoundsCalendarComponents() {
-		calendarPanel.setBounds(0, 0, 782, 467);
+		calendarPanel.setBounds(0, 0, 1184, 467);
 		tblCalendar.setSize(100, 100);
-		stblCalendar.setBounds(10, 54, 762, 402);
+		stblCalendar.setBounds(10, 54, 1164, 402);
 	}
 	
 	private void setCalendarHeaders() {

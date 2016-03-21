@@ -31,20 +31,8 @@ public class Controller{
 	public Controller() {
 		parser = new Parser();
 		storage = new Storage();
-		completeState = storage.readStorage();
+		completeState = storage.readStorage(Storage.storageFile);
 		
-	}
-	
-	/**
-	 * constructor which accepts information from existing storage
-	 * Will receive info from storage then call parser to store into completeState
-	 * @param placeHolderForDataFromStorageFile
-	 */
-	public Controller(String placeHolderForDataFromStorageFile){
-		completeState = new State();
-		parser = new Parser();
-		storage = new Storage();
-		completeState = storage.readStorage();
 	}
 	
 	public State getCompleteState() {
@@ -60,12 +48,27 @@ public class Controller{
 	 * @throws IOException 
 	 */
 	public State executeCommand(String commandText) throws IOException, JSONException{
+		completeState.setStatusMessage(null);
 		Command userCommand;
 		userCommand = parser.parseCommand(commandText); //parser should return Command
+		if(null == userCommand){
+			completeState.setStatusMessage(State.MESSAGE_PARSE_ERROR);
+		}
 		System.out.println(completeState.incompletedEvents.size());
 		userCommand.execute(completeState);
-		storage.clearFile();
-		storage.stateToStorage(completeState);
+		assert isValidCommand(userCommand);
+		assert false;
+		storage.stateToStorage(completeState, Storage.storageFile);
 		return completeState;
 	}
+	
+	private boolean isValidCommand(Command userCommand){
+		if((userCommand != null) && (completeState.getStatusMessage() != State.MESSAGE_PARSE_ERROR)){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
 }

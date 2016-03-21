@@ -28,15 +28,16 @@ import json.*;
  * @author Claudia
  */
 
+
 public class Storage {
 	
-	public static final String fileName =  ("./storage.txt");
-	public static final String tempFileName = ("temp.txt");
+	public final static String storageFile =  ("./storage.txt");
+	public final static String tempFileName = ("temp.txt");
 	
 	/** 
 	 * Check if the file is exist. If not, create a new file
 	 */
-	public void createFile()  {
+	public void createFile(String fileName)  {
 		File file = new File(fileName);
 		if (!file.exists()){
 			 PrintWriter writer;
@@ -53,7 +54,7 @@ public class Storage {
 	/** 
 	 * Clean up every content in file
 	 */
-	public void clearFile(){
+	public void clearFile(String fileName){
 		try {
 			PrintWriter writer = new PrintWriter(fileName);
 			writer.close();
@@ -68,15 +69,16 @@ public class Storage {
 	 * Import all the events under every lists in state class into storage
 	 * @param completeState
 	 */
-	public void stateToStorage(State completeState){
+	public void stateToStorage(State completeState, String fileName){
+		clearFile(storageFile);
 		for (Event e: completeState.completedEvents){
-			addToStorage(e);
+			addToStorage(e, fileName);
 		}
 		for (Event e: completeState.incompletedEvents){
-			addToStorage(e);
+			addToStorage(e, fileName);
 		}
 		for (Event e: completeState.floatingEvents){
-			addToStorage(e);
+			addToStorage(e, fileName);
 		}
 	}
 	
@@ -84,7 +86,7 @@ public class Storage {
 	 * cast an event to JSONObject and then write to file
 	 * @param event
 	 */
-	public void addToStorage(Event event) {
+	public void addToStorage(Event event, String fileName) {
 		JSONObject jsonObj = castEventToJSONObj(event);
 		
 		try {
@@ -103,7 +105,7 @@ public class Storage {
 	 * in the state class
 	 * @return State
 	 */
-	public State readStorage() {
+	public State readStorage(String fileName) {
 		String line = null;
 		State state = new State();
 		

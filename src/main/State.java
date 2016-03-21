@@ -11,11 +11,13 @@ import storage.Storage;;
 public class State {
 
 	public static final String MESSAGE_EVENT_NOT_FOUND = "The request event was not found";
+	public static final String MESSAGE_PARSE_ERROR = "Unable to parse the requestd event";
 	public static ArrayList<Event> completedEvents;
 	public static ArrayList<Event> incompletedEvents;
 	public static ArrayList<Event> floatingEvents;
 	
 	public ArrayList<Event> displayedEvents;
+	public ArrayList<Event> selectedEvents;
 	Stack<Event> eventHistory;
 	
 	public Event selectedEvent;
@@ -40,6 +42,15 @@ public class State {
 	
 	public String getStatusMessage(){
 		return this.statusMessage;
+	}
+	
+	public ArrayList<Event> getAllEvents(){
+		ArrayList<Event> allEvents = new ArrayList<Event>();
+		allEvents.addAll(this.completedEvents);
+		allEvents.addAll(this.incompletedEvents);
+		allEvents.addAll(this.floatingEvents);	
+		
+		return allEvents;
 	}
 	
 	public  void addToCompletedList(Event event){
