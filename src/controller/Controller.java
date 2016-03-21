@@ -31,7 +31,7 @@ public class Controller{
 	public Controller() {
 		parser = new Parser();
 		storage = new Storage();
-		completeState = storage.readStorage();
+		completeState = storage.readStorage(Storage.storageFile);
 		
 	}
 	
@@ -58,8 +58,8 @@ public class Controller{
 		userCommand.execute(completeState);
 		assert isValidCommand(userCommand);
 		assert false;
-		storage.clearFile();
-		storage.stateToStorage(completeState);
+		storage.clearFile(Storage.storageFile);
+		storage.stateToStorage(completeState, Storage.storageFile);
 		return completeState;
 	}
 	
