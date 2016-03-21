@@ -70,6 +70,7 @@ public class Storage {
 	 * @param completeState
 	 */
 	public void stateToStorage(State completeState, String fileName){
+		clearFile(storageFile);
 		for (Event e: completeState.completedEvents){
 			addToStorage(e, fileName);
 		}

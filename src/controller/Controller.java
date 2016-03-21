@@ -58,7 +58,6 @@ public class Controller{
 		userCommand.execute(completeState);
 		assert isValidCommand(userCommand);
 		assert false;
-		storage.clearFile(Storage.storageFile);
 		storage.stateToStorage(completeState, Storage.storageFile);
 		return completeState;
 	}
