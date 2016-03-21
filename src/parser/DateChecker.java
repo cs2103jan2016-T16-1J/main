@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.*;
 
 public class DateChecker {
 
@@ -35,6 +36,8 @@ public class DateChecker {
 	private static Calendar calendar;
 	private static Date dateToday;
 	private static int intToday;
+	
+	private static Logger Log = Logger.getLogger("DATECHECKER");
 
 	/**
 	 * 
@@ -75,22 +78,7 @@ public class DateChecker {
 		
 		return inputDate;
 	}
-	
-	private static String checkTimeMentioned(String strDate){
-		Date time = null;
-		String strTime = null;
-		if(strDate.indexOf(" ") >= 0){
-			strTime = strDate.substring(strDate.indexOf(" "), strDate.length()).trim();
-			time = DateChecker.validateTime(strTime);
-		}
 		
-		if(time != null){
-			return strTime;
-		}
-		
-		return strTime;
-	}
-	
 	private static Date parseSpecificDate(String stringDateInput){
 		Date inputDate = null;
 		for(SimpleDateFormat format : specificDateFormats){
@@ -108,16 +96,20 @@ public class DateChecker {
 	
 	private static Date parseInputDate(String stringDateInput){
 		Date inputDate = null;
+		Log.log(Level.INFO, "start parse input date");
 		for (SimpleDateFormat format : supportedDateFormats){
 			format.setLenient(false);
 			try {
 				inputDate = format.parse(stringDateInput);
 				break;
 			} catch (ParseException e) {
+				Log.log(Level.WARNING, e.toString());
 				//System.out.println(e.toString());
 			}
 
 		}
+		Log.log(Level.INFO, "finish parse input date");
+
 		return inputDate;
 	}
 	
