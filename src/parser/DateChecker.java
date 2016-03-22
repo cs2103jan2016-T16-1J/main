@@ -9,7 +9,9 @@ import java.util.Date;
 import java.util.logging.*;
 
 public class DateChecker {
-
+	
+	public static boolean isDay = false;
+	
 	private static final String TOM = "tom";
 	private static final String TOD = "tod";
 	private static final String MON = "mon";
@@ -51,9 +53,11 @@ public class DateChecker {
 		
 		inputDate = parseInputDate(stringDateInput);
 		//inputDate = parseInputTime(stringDateInput);
-
+		isDay = false;
+		
 		if (inputDate == null) {
 			inputDate = convertDayToDate(stringDateInput);
+			isDay = true;
 		}
 		
 		return inputDate;
@@ -87,8 +91,7 @@ public class DateChecker {
 			try {
 				inputDate = format.parse(stringDateInput);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
+				System.out.println(e.toString());
 			}
 		}
 		return inputDate;
@@ -96,19 +99,15 @@ public class DateChecker {
 	
 	private static Date parseInputDate(String stringDateInput){
 		Date inputDate = null;
-		Log.log(Level.INFO, "start parse input date");
 		for (SimpleDateFormat format : supportedDateFormats){
 			format.setLenient(false);
 			try {
 				inputDate = format.parse(stringDateInput);
 				break;
 			} catch (ParseException e) {
-				Log.log(Level.WARNING, e.toString());
-				//System.out.println(e.toString());
+				System.out.println(e.toString());
 			}
-
 		}
-		Log.log(Level.INFO, "finish parse input date");
 
 		return inputDate;
 	}
@@ -135,7 +134,9 @@ public class DateChecker {
 
 		supportedDateFormats = new ArrayList<>();
 		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy HH:mm"));		
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yyyy HH:mm"));	
 		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy HH:mm"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yyyy HH:mm"));
 		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd/MM/yy"));		
 		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd MMM yy"));
 		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd/MM/yyyy"));		
@@ -302,17 +303,26 @@ public class DateChecker {
 		try {
 			formatterInput = new SimpleDateFormat("hh a");
 			time = formatterOutput.format(formatterInput.parse(timeInput));
+			return time;
 		} catch (ParseException e) {
-			//e.printStackTrace();
+			System.out.println(e.toString());
 		}
 
 		try{
 			formatterInput = new SimpleDateFormat("hh:mm a");
 			time = formatterOutput.format(formatterInput.parse(timeInput));
+			return time;
 		} catch (ParseException e){
-			//e.printStackTrace();
+			System.out.println(e.toString());
 		}
-
+		
+		try{
+			formatterInput = new SimpleDateFormat("HH:mm");
+			time = formatterOutput.format(formatterInput.parse(timeInput));
+			return time;
+		} catch(ParseException e){
+			System.out.println(e.toString());
+		}
 		return time;
 	}
 }
