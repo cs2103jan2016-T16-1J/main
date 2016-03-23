@@ -27,7 +27,7 @@ public class Select implements Command{
 		// TODO Auto-generated method stub
 		this.completeState = completeState;
 		
-		clearSelectedEvents();
+		completeState.clearSelections();
 		
 		ArrayList<Event> allEvents = completeState.getAllEvents();
 		///for each event in allEvents check if it matches selectedParameters
@@ -39,13 +39,6 @@ public class Select implements Command{
 		return null;
 	}
 
-	private void clearSelectedEvents(){
-		if(!completeState.selectedEvents.isEmpty()){
-			completeState.selectedEvents.clear();
-		}
-		completeState.selectedEvent = null;
-		completeState.setSelectionStatus(completeState.NO_EVENTS_SELECTED);;
-	}
 	
 	private void checkSelectionStatus(){
 		
@@ -94,6 +87,9 @@ public class Select implements Command{
 	}
 	
 	private boolean isStatusMatching(Status eventStatus, Status paramStatus){
+		if(paramStatus.equals(Constant.STATUS_NULL)){
+			return true;
+		}
 		return eventStatus == paramStatus;
 		
 	}

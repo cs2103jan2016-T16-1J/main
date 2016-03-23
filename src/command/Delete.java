@@ -7,6 +7,7 @@ import constant.Constant;
 import json.JSONException;
 import main.Event;
 import main.State;
+import main.Event.Category;
 import main.Event.Status;
 import storage.Storage;
 
@@ -38,6 +39,11 @@ public class Delete implements Command{
 		
 		this.completeState = completeState;
 		
+		if(!hasDeleteParameters()){
+			updatedDisplayedEvents();
+			return completeState;
+		}
+		
 		ArrayList<Event> allEvents = completeState.getAllEvents();
 		ArrayList<Event> eventsToDelete = getMatchingEvents(allEvents);
 		
@@ -50,6 +56,26 @@ public class Delete implements Command{
 		updatedDisplayedEvents();
 
 		return completeState;
+	}
+	
+	private boolean hasDeleteParameters(){
+		if(null == selectedParameters){
+			deleteStateSelectedEvent();
+			return false;
+			
+		}
+		
+		return true;
+	}
+	
+	private void deleteStateSelectedEvent(){
+		if(!completeState.hasSingleEventSelected()){
+			completeState.setStatusMessage(State.MESSAGE_NO_SELECTED_EVENT);
+		}
+		
+		deleteFromCorrespondingArray(completeState.getSingleSelectedEvent());
+		completeState.clearSelections();
+
 	}
 	
 	private void deleteMatchedEvents(ArrayList<Event> eventsToDelete){
@@ -119,7 +145,7 @@ public class Delete implements Command{
 				isStringMatching(currentEvent.getLocation(), selectedParameters.getLocation()) &&
 				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
 				&&
-				//isStringMatching(currentEvent.getCategory(), selectedParameters.getCategory()) &&
+				//isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory())&&
 				isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
 				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
 				;
@@ -131,8 +157,18 @@ public class Delete implements Command{
 	}
 	
 	private boolean isStatusMatching(Status eventStatus, Status paramStatus){
+		if(paramStatus.equals(Constant.STATUS_NULL)){
+			return true;
+		}
 		return eventStatus == paramStatus;
 		
+	}
+	
+	private boolean isCategoryMatching(String eventCategory, String paramCategory){
+		if(paramCategory.equals(Constant.CATEGORY_NULL)){
+			return true;
+		}
+		return eventCategory == paramCategory;
 	}
 	
 	private boolean isStringMatching(String eventString, String paramString){
