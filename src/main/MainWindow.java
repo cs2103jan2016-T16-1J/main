@@ -241,7 +241,7 @@ public class MainWindow {
 		navbarColor = new Color(55, 71, 79);
 		backgroundColor = new Color(243, 243, 244);
 		buttonColor = new Color(28, 192, 159);
-		darkGreen = new Color(23, 152, 126);
+		darkGreen = new Color(23, 152, 126, 170);
 		lightGray = new Color(244, 246, 250);
 		borderColor = new Color(231, 234, 236);
 		fontColor = new Color(103, 106, 108);
@@ -399,6 +399,8 @@ public class MainWindow {
 	private void renderCalendar() {
 		tblCalendar.removeAll();
 		
+		currentState.sortDisplayedEvents();
+		
 		for (Event event : currentState.displayedEvents){
 	    	//actionsTextArea.append(event.printEvent());
 			
@@ -522,7 +524,7 @@ public class MainWindow {
 		double eventWidth = getEventWidth();
 		int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 		int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
-		int xOffset = (int) (eventWidth * hour);
+		int xOffset = (int) (eventWidth * hour) + 1;
 		int yOffset = (int) eventHeight * dayDifference ;
 		
 		JTextField currentEvent = new JTextField(deadline.getName());

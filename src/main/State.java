@@ -2,6 +2,8 @@ package main;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Stack;
 
 import json.JSONException;
@@ -80,6 +82,17 @@ public class State {
 	
 	public  void addToFloatingList(Event event){
 		floatingEvents.add(event);
+	}
+	
+	public void sortDisplayedEvents() {
+		Collections.sort(this.displayedEvents, new CustomEndTimeComparator());
+	}
+	
+	private class CustomEndTimeComparator implements Comparator<Event> {
+	    @Override
+	    public int compare(Event o1, Event o2) {
+	        return o1.getEndTime().compareTo(o2.getEndTime());
+	    }
 	}
 	
 }
