@@ -1,4 +1,14 @@
-{"startTime":"Fri Mar 18 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"haha","endTime":"Fri Mar 18 23:59:00 SGT 2016"}
-{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"work!!!","endTime":"Tue Mar 15 03:00:00 SGT 2016"}
-{"startTime":"Sun Mar 20 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"fix","endTime":"Sun Mar 20 23:59:00 SGT 2016"}
-{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"end","endTime":"Wed Mar 16 05:00:00 SGT 2016"}
+{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"shit","endTime":"Fri Mar 25 02:00:00 SGT 2016"}
+{"startTime":"1970-01-01","category":"FLOATING","location":"","status":"INCOMPLETE","description":"","name":"some more shit monday 00:23 to 23:59","endTime":"\u0000994-08-17"}
+{"startTime":"1970-01-01","category":"FLOATING","location":"","status":"INCOMPLETE","description":"","name":"some more shit monday 00:23:00 to 23:59:00","endTime":"\u0000994-08-17"}
+{"startTime":"1970-01-01","category":"FLOATING","location":"","status":"INCOMPLETE","description":"","name":"some more shit monday 1:23 am to 11:59 pm","endTime":"\u0000994-08-17"}
+{"startTime":"1970-01-01","category":"FLOATING","location":"","status":"INCOMPLETE","description":"","name":"some more shit monday 1:23 am to monday 11:59 pm","endTime":"\u0000994-08-17"}
+{"startTime":"1970-01-01","category":"FLOATING","location":"","status":"INCOMPLETE","description":"","name":"some more shit mon 1:23 am to mon 11:59 pm","endTime":"\u0000994-08-17"}
+{"startTime":"Tue Mar 22 01:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"some shit","endTime":"Tue Mar 22 18:00:00 SGT 2016"}
+{"startTime":"1970-01-01","category":"FLOATING","location":"","status":"INCOMPLETE","description":"","name":"some more shit mon 1:23 to mon 23:59","endTime":"\u0000994-08-17"}
+{"startTime":"Fri Mar 18 11:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"some more more and more shit","endTime":"Fri Mar 18 13:00:00 SGT 2016"}
+{"startTime":"Sat Mar 19 11:23:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"some more more and more shit","endTime":"Sat Mar 19 13:49:00 SGT 2016"}
+{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"shit","endTime":"\u0000994-08-17"}
+{"startTime":"1970-01-01","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"more","endTime":"\u0000994-08-17"}
+{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"shit","endTime":"Fri Mar 25 02:00:00 SGT 2016"}
+{"startTime":"1970-01-01","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"crap","endTime":"Mon Mar 28 03:00:00 SGT 2016"}

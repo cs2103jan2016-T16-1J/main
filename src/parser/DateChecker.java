@@ -6,12 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.*;
 
 public class DateChecker {
-
-	private static final int INDEX_START = 0;
-	private static final int INDEX_END = 1;
-
+	
+	public static boolean isDay = false;
+	
 	private static final String TOM = "tom";
 	private static final String TOD = "tod";
 	private static final String MON = "mon";
@@ -38,6 +38,8 @@ public class DateChecker {
 	private static Calendar calendar;
 	private static Date dateToday;
 	private static int intToday;
+	
+	private static Logger Log = Logger.getLogger("DATECHECKER");
 
 	/**
 	 * 
@@ -51,9 +53,11 @@ public class DateChecker {
 		
 		inputDate = parseInputDate(stringDateInput);
 		//inputDate = parseInputTime(stringDateInput);
-
+		isDay = false;
+		
 		if (inputDate == null) {
 			inputDate = convertDayToDate(stringDateInput);
+			isDay = true;
 		}
 		
 		return inputDate;
@@ -78,22 +82,7 @@ public class DateChecker {
 		
 		return inputDate;
 	}
-	
-	private static String checkTimeMentioned(String strDate){
-		Date time = null;
-		String strTime = null;
-		if(strDate.indexOf(" ") >= 0){
-			strTime = strDate.substring(strDate.indexOf(" "), strDate.length()).trim();
-			time = DateChecker.validateTime(strTime);
-		}
 		
-		if(time != null){
-			return strTime;
-		}
-		
-		return strTime;
-	}
-	
 	private static Date parseSpecificDate(String stringDateInput){
 		Date inputDate = null;
 		for(SimpleDateFormat format : specificDateFormats){
@@ -102,8 +91,7 @@ public class DateChecker {
 			try {
 				inputDate = format.parse(stringDateInput);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
+				System.out.println(e.toString());
 			}
 		}
 		return inputDate;
@@ -117,10 +105,10 @@ public class DateChecker {
 				inputDate = format.parse(stringDateInput);
 				break;
 			} catch (ParseException e) {
-				//System.out.println(e.toString());
+				System.out.println(e.toString());
 			}
-
 		}
+
 		return inputDate;
 	}
 	
@@ -146,20 +134,32 @@ public class DateChecker {
 
 		supportedDateFormats = new ArrayList<>();
 		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy HH:mm"));		
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yyyy HH:mm"));	
 		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy HH:mm"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yyyy HH:mm"));
 		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd/MM/yy"));		
 		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd MMM yy"));
 		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd/MM/yyyy"));		
 		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd MMM yyyy"));
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy hh:mm a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy hh a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yyyy hh:mm a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yyyy hh a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy hh:mm a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy hh a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yyyy hh:mm a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yyyy hh a"));
 		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy"));
 		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yyyy"));
 		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy"));
 		supportedDateFormats.add(new SimpleDateFormat("dd MMM yyyy"));
 
+
 		supportedTimeFormats = new ArrayList<>();
 		supportedTimeFormats.add(new SimpleDateFormat("hh:mm a"));
 		supportedTimeFormats.add(new SimpleDateFormat("hh a"));
 		supportedTimeFormats.add(new SimpleDateFormat("HH:mm"));
+		supportedTimeFormats.add(new SimpleDateFormat("HH"));
 		
 		specificDateFormats = new ArrayList<>();
 		specificDateFormats.add(new SimpleDateFormat("dd/MM/yy"));
@@ -312,17 +312,26 @@ public class DateChecker {
 		try {
 			formatterInput = new SimpleDateFormat("hh a");
 			time = formatterOutput.format(formatterInput.parse(timeInput));
+			return time;
 		} catch (ParseException e) {
-			//e.printStackTrace();
+			//System.out.println(e.toString());
 		}
 
 		try{
 			formatterInput = new SimpleDateFormat("hh:mm a");
 			time = formatterOutput.format(formatterInput.parse(timeInput));
+			return time;
 		} catch (ParseException e){
-			//e.printStackTrace();
+			//System.out.println(e.toString());
 		}
-
+		
+		try{
+			formatterInput = new SimpleDateFormat("HH:mm");
+			time = formatterOutput.format(formatterInput.parse(timeInput));
+			return time;
+		} catch(ParseException e){
+			//System.out.println(e.toString());
+		}
 		return time;
 	}
 }

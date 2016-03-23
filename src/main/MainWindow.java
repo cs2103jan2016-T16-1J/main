@@ -225,7 +225,7 @@ public class MainWindow {
 
 	private void initializeFile() {
 		Storage storage = new Storage();
-		storage.createFile();
+		storage.createFile(Storage.storageFile);
 	}
 
 	private void initializeController() {
