@@ -21,11 +21,13 @@ import java.util.Vector;
 import constant.CommandType;
 import constant.Constant;
 import main.Event;
+import main.Event.Status;
 
 public class Parser {
 
 	private static Event oldEvent;
 	private boolean isNameDefined = true;
+	private boolean isBlock = false;
 	private boolean isEdit = false;
 	private final String PATTERN_SPACE = "(\\s)";
 	private final String PATTERN_AM_OR_PM = "(\\b(am)\\b|\\b(pm)\\b)";
@@ -93,6 +95,7 @@ public class Parser {
 		} else if(tempCmd == CommandType.BLOCK){
 			event = decodeAddData(event, removeFirstWord(input));
 			event.setCategory(Constant.CATEGORY_UNDETERMINED);
+			isBlock = true;
 			oldEvent = event;
 			cmdInterface = new Add(event);
 		} else if(tempCmd == CommandType.UNBLOCK){
@@ -153,6 +156,7 @@ public class Parser {
 		} else if(tempCmd == CommandType.BLOCK){
 			task = decodeAddData(task, removeFirstWord(input));
 			task.setCategory(Constant.CATEGORY_UNDETERMINED);
+			isBlock = true;
 			oldEvent = task;
 			return task;
 		} else if(tempCmd == CommandType.UNBLOCK){
@@ -213,7 +217,37 @@ public class Parser {
 		return resultedIndex;
 	}
 
+	private String classifyCategory(String userInput){
+		
+		if(userInput.equalsIgnoreCase(Constant.CATEGORY_DEADLINE)){
+			return Constant.CATEGORY_DEADLINE;
+		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_EVENT)){
+			return Constant.CATEGORY_EVENT;
+		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_FLOATING)){
+			return Constant.CATEGORY_FLOATING;
+		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_UNDETERMINED)){
+			return Constant.CATEGORY_UNDETERMINED;
+		} 
+		
+		return null;
+	}
 	
+	private Event.Status classifyStatus(String userInput){
+		
+		if(userInput.equalsIgnoreCase(Constant.STATUS_INCOMPLETE)){
+			return Event.Status.INCOMPLETE;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_COMPLETE)){
+			return Event.Status.COMPLETE;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_FLOATING)){
+			return Event.Status.FLOATING;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_BLOCKED)){
+			return Event.Status.BLOCKED;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_OVERDUE)){
+			return Event.Status.OVERDUE;
+		}
+		
+		return null;
+	}
 	/**
 	 * Decodes the user input for Adding new task
 	 * @param task
@@ -232,6 +266,7 @@ public class Parser {
 	 * @return
 	 */
 	private Event decodeSelectData(Event task, String input){
+		boolean flag = false;
 		int startIndex = 0;
 		int endIndex = startIndex;
 		
@@ -241,6 +276,27 @@ public class Parser {
 		
 		String remainingInput = extractDescription(task, input);
 
+		if(input.indexOf("--") >= 0){
+			startIndex = input.indexOf("--", startIndex) + 1;
+			endIndex = input.length();
+			
+			if(classifyCategory(input) == null){
+				task.setCategory(null);
+			} else {
+				task.setCategory(classifyCategory(remainingInput));
+			}
+			
+			if(classifyStatus(input) == null){
+				task.setStatus(null);
+			}else{
+				task.setStatus(classifyStatus(remainingInput));
+			}
+			
+			return task;
+		} else{
+			flag = true;
+		}
+		
 		if(input.indexOf("#") >= 0){
 			startIndex = input.indexOf("#",startIndex) + 1;
 			while(input.indexOf(",", startIndex) > 0){
@@ -252,12 +308,16 @@ public class Parser {
 					startIndex = input.indexOf("#",startIndex) + 1;
 				}
 			} 
-			
 			userChoice = Integer.parseInt(input.substring(startIndex));
 			indexes.add(userChoice);		
 			task.setSelection(indexes);
 		} else{
 			task = determineQuotedInput(task, remainingInput);
+		}
+		
+		if(flag){
+			task.setCategory(null);
+			task.setStatus(null);
 		}
 		return task;
 	}
@@ -269,13 +329,42 @@ public class Parser {
 	 * @return Event object with updated name field to be checked, other fields are initialized as default values
 	 */
 	private Event decodeDeleteData(Event task, String input){
+		boolean flag = false;
 		int startIndex = 0;
 		int endIndex = startIndex;
 		String remainingInput = extractDescription(task, input);
 		if(remainingInput.isEmpty()){
 			return null;
 		}
-		return determineQuotedInput(task, remainingInput);
+		
+		if(input.indexOf("--") >= 0){
+			startIndex = input.indexOf("--", startIndex) + 1;
+			endIndex = input.length();
+			
+			if(classifyCategory(input) == null){
+				task.setCategory(null);
+			} else {
+				task.setCategory(classifyCategory(remainingInput));
+			}
+			
+			if(classifyStatus(input) == null){
+				task.setStatus(null);
+			}else{
+				task.setStatus(classifyStatus(remainingInput));
+			}
+			
+			return task;
+		} else{
+			flag = true;
+		}
+		
+		task =  determineQuotedInput(task, remainingInput);
+		if(flag){
+			task.setCategory(null);
+			task.setStatus(null);
+		}
+		
+		return task;
 	}
 
 	/**
@@ -305,9 +394,6 @@ public class Parser {
 			return task;
 		} else if(input.startsWith(Constant.CATEGORY_FLOATING) && input.endsWith(Constant.CATEGORY_FLOATING)){
 			task.setCategory(Constant.CATEGORY_FLOATING);
-			return task;
-		} else if(input.startsWith(Constant.CATEGORY_ALL) && input.endsWith(Constant.CATEGORY_ALL)){
-			task.setCategory(Constant.CATEGORY_ALL);
 			return task;
 		} 
 		return decodeDataFromInput(task, input);
@@ -382,6 +468,8 @@ public class Parser {
 		
 		if(matchPattern[0] == 0){
 			isNameDefined = false;
+		} else{
+			isNameDefined = true;
 		}
 				
 		while(matcher.find()){
@@ -463,12 +551,6 @@ public class Parser {
 				task.setCategory(Constant.CATEGORY_DEADLINE);
 				return task;
 			}
-		/*	else if(inputDate != null){ 	
-				task.setStartTime(inputDate);
-				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
-				task.setCategory(Constant.CATEGORY_EVENT);
-				return task;
-			} */
 			
 			if(task.getStartTime() == null){
 				return null;
@@ -541,60 +623,7 @@ public class Parser {
 					}
 				}
 			}
-			/*there are both time and location*/
-			//if(newEndIndex != endIndex && newEndIndex != 0){
-				
-				
-				/*
-				if(DateChecker.validateTime(time) == null){
-					task.setLocation(time);
-					return task;
-				} else if(task.getStartTime() == null){
-					return null;
-				} else if(task.getStartTime() == Constant.MIN_DATE && task.getCategory() != Constant.CATEGORY_DEADLINE){
-					Calendar cal = Calendar.getInstance();
-					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-					String today = sdf.format(new Date());
-					Date userInputDate = DateChecker.writeTime(today, time);
-					if(cal.getTime().before(userInputDate)){
-						task.setStartTime(DateChecker.findDate(0));
-						task.setEndTime(DateChecker.findDate(0));
-					} else{
-						task.setStartTime(DateChecker.findDate(1));
-						task.setEndTime(DateChecker.findDate(1));
-					}
-				} 
-
-				String writtenDate = formatToString.format(task.getEndTime());
-
-				if(task.getCategory() != Constant.CATEGORY_DEADLINE){
-					//task.setStartTime(DateChecker.writeTime(writtenDate, time));
-					//task.setCategory(Constant.CATEGORY_EVENT);
-					task.setStartTime(Constant.MIN_DATE);
-					task.setCategory(Constant.CATEGORY_DEADLINE);
-				}
-				task.setEndTime(DateChecker.writeTime(writtenDate, time));
-				
-				} else{ 
-				String undetermined = input.substring(newStartIndex, input.length());
-				if(DateChecker.validateDate(undetermined) != null){
-					task.setStartTime(DateChecker.validateDate(undetermined));
-					task.setEndTime(DateChecker.validateDate(undetermined));
-					task.setCategory(Constant.CATEGORY_EVENT);
-				} else if(DateChecker.validateTime(undetermined) == null){
-					task.setLocation(undetermined);
-				} else{
-					String writtenDate = formatToString.format(task.getEndTime());
-					if(task.getCategory() == Constant.CATEGORY_DEADLINE){
-						task.setEndTime(DateChecker.writeTime(writtenDate, DateChecker.convertAmPmToTime(undetermined)));
-					} else{
-						task.setStartTime(DateChecker.writeTime(writtenDate, DateChecker.convertAmPmToTime(undetermined)));
-						task.setEndTime(DateChecker.writeTime(writtenDate, DateChecker.convertAmPmToTime(undetermined)));
-						task.setCategory(Constant.CATEGORY_EVENT);
-					}
-				}
-			}
-		*/
+		
 		} else if(preposition.equalsIgnoreCase("by")){
 			if(task.getName().isEmpty() && isNameDefined){
 				String name = input.substring(startIndex, endIndex).trim();

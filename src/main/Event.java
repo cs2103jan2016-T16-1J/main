@@ -8,7 +8,7 @@ import constant.Constant;
 
 public class Event {
 	public enum Status {
-		INCOMPLETE, OVERDUE, BLOCKED, FLOATING, COMPLETE
+		NULL, INCOMPLETE, OVERDUE, BLOCKED, FLOATING, COMPLETE
 	};
 	
 	public enum Category {
@@ -25,9 +25,9 @@ public class Event {
 	private List<Integer> selection;
 	
 	public Event(){
-		name = Constant.EMPTY_NAME;
-		location = Constant.EMPTY_LOCATION;
-		description = Constant.EMPTY_DESCRIPTION;
+		name = Constant.EMPTY_STRING;
+		location = Constant.EMPTY_STRING;
+		description = Constant.EMPTY_STRING;
 		category = constant.Constant.CATEGORY_FLOATING;
 		startTime = Constant.MIN_DATE; 
 		endTime = Constant.MAX_DATE;
