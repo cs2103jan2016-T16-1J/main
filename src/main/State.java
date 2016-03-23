@@ -103,7 +103,7 @@ public class State {
 	private class CustomEndTimeComparator implements Comparator<Event> {
 	    @Override
 	    public int compare(Event o1, Event o2) {
-	        return o2.getEndTime().compareTo(o1.getEndTime());
+	        return o1.getEndTime().compareTo(o2.getEndTime());
 	    }
 	}
 	
