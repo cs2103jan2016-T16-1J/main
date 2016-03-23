@@ -376,7 +376,7 @@ public class MainWindow {
 		Action inputAction = getInputAction();
 		textField.addActionListener(inputAction);
 		textField.setColumns(10);
-		textField.setBounds(10, 500, 1100, 20);
+		textField.setBounds(10, 730, 1100, 20);
 		mainTab.add(textField);
 	}
 	
