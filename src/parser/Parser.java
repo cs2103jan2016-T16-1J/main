@@ -50,6 +50,7 @@ public class Parser {
 	private final String PATTERN_ALL = "(\\b(on)\\b|\\b(by)\\b|\\b(from)\\b|\\b(at)\\b)";
 
 	private final String TIME_BEFORE_MIDNIGHT = "23:59";
+	private final String TIME_BEFORE_MIDNIGHT_SEC = "23:59:59";
 	private final String TIME_MIDNIGHT = "00:00";
 	private final String ERROR_DATE_FORMAT = "The input date format is not supported";
 
@@ -533,11 +534,9 @@ public class Parser {
 			String[] dateTime = extractTimeFromDate(stringDate);
 			if(DateChecker.isDay){
 				if(dateTime[1] != null){ /*check date time in dd/MM/yy (HH:mm) or dd MMM yy (HH:mm) format*/
-					//task.setStartTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
 					task.setStartTime(Constant.MIN_DATE);
 					task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
 					task.setCategory(Constant.CATEGORY_DEADLINE);
-					//task.setCategory(Constant.CATEGORY_EVENT);
 					return task;
 				}	
 			} else if(dateTime[0] == null && dateTime[1] != null){
@@ -638,12 +637,11 @@ public class Parser {
 				newEndIndex = input.length();
 			}
 
-			/*check date time in dd/MM/yy  (HH:mm) or dd MMM yy (HH:mm) format*/
 			stringDate = input.substring(newStartIndex, newEndIndex).trim();
 			inputDate = DateChecker.validateDate(stringDate);
 			if(inputDate != null){
 				task.setStartTime(Constant.MIN_DATE);
-				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
+				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
 				task.setCategory(Constant.CATEGORY_DEADLINE);
 			}
 			
@@ -686,8 +684,10 @@ public class Parser {
 			}
 
 			String[] dateTime = extractTimeFromDate(stringDate);
-			int[] matchAmPm = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, dateTime[1]);
-
+			int[] matchAmPm = {0,0};
+			if(dateTime[1] != null){
+				matchAmPm = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, dateTime[1]);
+			}
 			if(DateChecker.isDay){
 				if(dateTime[1] != null){
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
@@ -699,7 +699,6 @@ public class Parser {
 				
 			} else if(dateTime[0] != null && dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
 				task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
-				
 			}
 				
 			newStartIndex = matchPatternOfFirstOccurrence(PATTERN_TO, input)[1] + 1;
@@ -716,13 +715,19 @@ public class Parser {
 			} 
 			
 			dateTime = extractTimeFromDate(stringDate);
-			matchAmPm = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, dateTime[1]);
-		/*	check for dd/MM/yyyy or dd MMM yyyy format without HH:mm to replace the originally written time */
+			matchAmPm[0] = 0;
+			matchAmPm[1] = 0;
+			if(dateTime[1] != null){
+				matchAmPm = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, dateTime[1]);
+			}
+			
 			if(DateChecker.isDay){
-				if(dateTime[1] != null){
+				if(dateTime[1] != null){    		/*to friday 3 am or to friday 13:00*/
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
 					task.setEndTime(DateChecker.writeTime(stringDate, time));
-				} 
+				} else if(dateTime[1] == null){    /* to friday */
+					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
+				}
 			} else if (dateTime[1] == null){
 				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
 
@@ -738,7 +743,7 @@ public class Parser {
 	}
 
 	/**
-	 * 
+	 * extract time from date, the method looks for pattern such as 11 am, 11 pm, 23:00 
 	 * @param date - input date
 	 * @return string array of size 2 with date value at index 0 and time value at index 1 
 	 */

@@ -91,7 +91,7 @@ public class DateChecker {
 			try {
 				inputDate = format.parse(stringDateInput);
 			} catch (ParseException e) {
-				System.out.println(e.toString());
+				//System.out.println(e.toString());
 			}
 		}
 		return inputDate;
@@ -105,7 +105,7 @@ public class DateChecker {
 				inputDate = format.parse(stringDateInput);
 				break;
 			} catch (ParseException e) {
-				System.out.println(e.toString());
+				//System.out.println(e.toString());
 			}
 		}
 
@@ -133,6 +133,7 @@ public class DateChecker {
 		intToday = calendar.get(Calendar.DAY_OF_WEEK);
 
 		supportedDateFormats = new ArrayList<>();
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy HH:mm:ss"));
 		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy HH:mm"));		
 		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yyyy HH:mm"));	
 		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy HH:mm"));
@@ -181,7 +182,7 @@ public class DateChecker {
 		try {
 			todayDate = dateFormat.parse(stringToday);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		if (dayAbbreviation.equalsIgnoreCase(SUN)){
 			int interval;
