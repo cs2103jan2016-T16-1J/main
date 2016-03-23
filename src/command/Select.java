@@ -28,12 +28,9 @@ public class Select implements Command{
 		this.completeState = completeState;
 		ArrayList<Event> allEvents = completeState.getAllEvents();
 		///for each event in allEvents check if it matches selectedParameters
-		//if the event does, clone it and add it completeState.to selectedEvents
+		//if the event does, clone it and add it to completeState.selectedEvents
 		getMatchingEvents(allEvents);
-		
-		
-		
-		
+				
 		//new event list = eventlist.clone
 		//for each event in 
 		return null;
@@ -42,16 +39,13 @@ public class Select implements Command{
 	//getMatchingEvents
 	
 	public void getMatchingEvents(ArrayList<Event> allEvents){
-		
-		
+				
 		for(Event e: allEvents){
 			if(isMatchingEvent(e)){
 				completeState.selectedEvents.add(e);
 				
 			}
-		}
-		
-		
+		}	
 	}
 	
 	public boolean isMatchingEvent(Event currentEvent){
