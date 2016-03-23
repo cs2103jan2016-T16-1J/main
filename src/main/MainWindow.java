@@ -401,9 +401,9 @@ public class MainWindow {
 	}
 	
 	private void renderCalendar() {
+
 		tblCalendar.removeAll();
-		tblCalendar.getParent().repaint();
-		
+
 		currentState.sortDisplayedEvents();
 
 		ArrayList<Event> displayedEvents = currentState.displayedEvents;
@@ -415,6 +415,15 @@ public class MainWindow {
 	    		createSpecificEvent(event);
 	    	}
 		}
+		
+		tblCalendar.validate();
+		tblCalendar.repaint();
+		
+		stblCalendar.validate();
+		stblCalendar.repaint();
+		
+		calendarPanel.validate();
+		calendarPanel.repaint();
 		
     	displayEventDetails(currentState.selectedEvent);
 	}
