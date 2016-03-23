@@ -314,7 +314,7 @@ public class DateChecker {
 			time = formatterOutput.format(formatterInput.parse(timeInput));
 			return time;
 		} catch (ParseException e) {
-			System.out.println(e.toString());
+			//System.out.println(e.toString());
 		}
 
 		try{
@@ -322,7 +322,7 @@ public class DateChecker {
 			time = formatterOutput.format(formatterInput.parse(timeInput));
 			return time;
 		} catch (ParseException e){
-			System.out.println(e.toString());
+			//System.out.println(e.toString());
 		}
 		
 		try{
@@ -330,7 +330,7 @@ public class DateChecker {
 			time = formatterOutput.format(formatterInput.parse(timeInput));
 			return time;
 		} catch(ParseException e){
-			System.out.println(e.toString());
+			//System.out.println(e.toString());
 		}
 		return time;
 	}
