@@ -47,6 +47,18 @@ public class State {
 
 	}
 	
+	public boolean hasEventSelected () {
+		return selectionStatus != NO_EVENTS_SELECTED;
+	}
+	
+	public boolean hasSingleEventSelected () {
+		return selectionStatus == ONE_EVENT_SELECTED;
+	}
+	
+	public boolean hasMultipleEventSelected () {
+		return selectionStatus == MULTIPLE_EVENTS_SELECTED;
+	}
+	
 	public int getSelectionStatus(){
 		return selectionStatus;
 	}

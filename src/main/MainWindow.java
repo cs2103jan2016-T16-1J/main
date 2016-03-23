@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 
 import java.awt.Container;
@@ -28,6 +29,8 @@ import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
@@ -529,13 +532,8 @@ public class MainWindow {
 		int xOffset = (int) (eventWidth * hour) + 1;
 		int yOffset = (int) eventHeight * dayDifference ;
 		
-		JTextField currentEvent = new JTextField(deadline.getName());
-		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
-		currentEvent.setBackground(darkGreen);
-		currentEvent.setBorder(null);
-		currentEvent.setEditable(false);
-		currentEvent.setHorizontalAlignment(JTextField.CENTER);
-		currentEvent.setForeground(Color.WHITE);
+		JTextPane currentEvent = createEventBlock(deadline.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight);;
+
 		tblCalendar.add(currentEvent);
 	}
 	
@@ -578,17 +576,20 @@ public class MainWindow {
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 		eventWidth *= xMultiplier;
 		
-		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight);
+		JTextPane currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight);
 		tblCalendar.add(currentEvent);
 	}
 	
-	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight) {
-		JTextField currentEvent = new JTextField(name);
+	private JTextPane createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight) {
+		JTextPane currentEvent = new JTextPane();
+		SimpleAttributeSet attribs = new SimpleAttributeSet();  
+		StyleConstants.setAlignment(attribs , StyleConstants.ALIGN_CENTER); 
+		currentEvent.setParagraphAttributes(attribs,true);
+		currentEvent.setText(name);
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
 		currentEvent.setBackground(darkGreen);
 		currentEvent.setBorder(null);
 		currentEvent.setEditable(false);
-		currentEvent.setHorizontalAlignment(JTextField.CENTER);
 		currentEvent.setForeground(Color.WHITE);
 		return currentEvent;
 	}
@@ -639,9 +640,8 @@ public class MainWindow {
 	}
 	
 	private void setSingleCellSelection() {
-        tblCalendar.setColumnSelectionAllowed(true);
-        tblCalendar.setRowSelectionAllowed(true);
-        tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblCalendar.setColumnSelectionAllowed(false);
+        tblCalendar.setRowSelectionAllowed(false);
         tblCalendar.setRowHeight((stblCalendar.getHeight() - 20) / DISPLAYED_DAYS_NUM);
 	}
 }
