@@ -467,8 +467,10 @@ public class Parser {
 
 		int[] matchPattern = matchPatternOfFirstOccurrence(PATTERN_ALL, input);
 		
-		if(matchPattern[0] == 0){
+		if(matchPattern[0] == 0 && matchPattern[1]!=0){
 			isNameDefined = false;
+		} else if(matchPattern[0] == 0 && matchPattern[1] ==0){
+			isNameDefined = true;
 		} else{
 			isNameDefined = true;
 		}
