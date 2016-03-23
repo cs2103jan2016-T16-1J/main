@@ -150,14 +150,34 @@ public class Storage {
 	private JSONObject castEventToJSONObj(Event event){
 		JSONObject jsonObj = new JSONObject();
 		
+		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
+		Date deadLine = null;
+		try {
+			 deadLine = dfDeadline.parse("1970-01-01");
+			 //System.out.println(deadLine);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		try {
 			jsonObj.put("name", event.getName());
 			jsonObj.put("description", event.getDescription());
 			jsonObj.put("category", event.getCategory());
-			jsonObj.put("startTime", event.getStartTime());
+			
+			//jsonObj.put("startTime", event.getStartTime());
+			//	System.out.println(event.getStartTime());
 			jsonObj.put("endTime", event.getEndTime());
 			jsonObj.put("status", event.getStatus());
 			jsonObj.put("location", event.getLocation());
+			
+			if (event.getCategory().equals("DEADLINE")){
+				jsonObj.put("startTime", deadLine);
+				System.out.println("yes!!!!");
+			} else {
+				jsonObj.put("startTime", event.getStartTime());
+			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -171,6 +191,14 @@ public class Storage {
 		Event event = new Event();
 		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
 		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
+		Date deadLine = null;
+		try {
+			 deadLine = dfDeadline.parse("1970-01-01");
+			 //System.out.println(deadLine);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		try {
 			String startTime = jsonObj.get("startTime").toString();
@@ -181,14 +209,19 @@ public class Storage {
 			event.setCategory(jsonObj.getString("category"));
 			event.setStatus(getStatus(jsonObj));
 			event.setLocation(jsonObj.getString("location"));
+			event.setStartTime(df.parse(startTime));
+			event.setEndTime(df.parse(endTime));
 			
+			/*
 			if (jsonObj.getString("category").equals("DEADLINE")){
 				event.setStartTime(dfDeadline.parse(startTime));
+				
+					System.out.println(dfDeadline.parse(startTime));
 				event.setEndTime(df.parse(endTime));
+					System.out.println(df.parse(endTime));
 			} else {
-				event.setStartTime(df.parse(startTime));
-				event.setEndTime(df.parse(endTime));
-			}
+				
+			}*/
 		} catch (JSONException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
