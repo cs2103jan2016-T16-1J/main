@@ -8,7 +8,7 @@ import constant.Constant;
 
 public class Event {
 	public enum Status {
-		INCOMPLETE, OVERDUE, BLOCKED, FLOATING, COMPLETE
+		NULL, INCOMPLETE, OVERDUE, BLOCKED, FLOATING, COMPLETE
 	};
 	
 	public enum Category {

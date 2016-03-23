@@ -57,7 +57,7 @@ public class Controller{
 		System.out.println(completeState.incompletedEvents.size());
 		userCommand.execute(completeState);
 		assert isValidCommand(userCommand);
-		assert false;
+		//assert false;
 		storage.stateToStorage(completeState, Storage.storageFile);
 		return completeState;
 	}
