@@ -21,6 +21,7 @@ import java.util.Vector;
 import constant.CommandType;
 import constant.Constant;
 import main.Event;
+import main.Event.Status;
 
 public class Parser {
 
@@ -231,6 +232,22 @@ public class Parser {
 		return null;
 	}
 	
+	private Event.Status classifyStatus(String userInput){
+		
+		if(userInput.equalsIgnoreCase(Constant.STATUS_INCOMPLETE)){
+			return Event.Status.INCOMPLETE;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_COMPLETE)){
+			return Event.Status.COMPLETE;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_FLOATING)){
+			return Event.Status.FLOATING;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_BLOCKED)){
+			return Event.Status.BLOCKED;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_OVERDUE)){
+			return Event.Status.OVERDUE;
+		}
+		
+		return null;
+	}
 	/**
 	 * Decodes the user input for Adding new task
 	 * @param task
@@ -249,6 +266,7 @@ public class Parser {
 	 * @return
 	 */
 	private Event decodeSelectData(Event task, String input){
+		boolean flag = false;
 		int startIndex = 0;
 		int endIndex = startIndex;
 		
@@ -265,12 +283,18 @@ public class Parser {
 			if(classifyCategory(input) == null){
 				task.setCategory(null);
 			} else {
-				task.setCategory(classifyCategory(input));
+				task.setCategory(classifyCategory(remainingInput));
+			}
+			
+			if(classifyStatus(input) == null){
+				task.setStatus(null);
+			}else{
+				task.setStatus(classifyStatus(remainingInput));
 			}
 			
 			return task;
 		} else{
-			task.setCategory(null);
+			flag = true;
 		}
 		
 		if(input.indexOf("#") >= 0){
@@ -284,12 +308,16 @@ public class Parser {
 					startIndex = input.indexOf("#",startIndex) + 1;
 				}
 			} 
-			
 			userChoice = Integer.parseInt(input.substring(startIndex));
 			indexes.add(userChoice);		
 			task.setSelection(indexes);
 		} else{
 			task = determineQuotedInput(task, remainingInput);
+		}
+		
+		if(flag){
+			task.setCategory(null);
+			task.setStatus(null);
 		}
 		return task;
 	}
@@ -301,13 +329,42 @@ public class Parser {
 	 * @return Event object with updated name field to be checked, other fields are initialized as default values
 	 */
 	private Event decodeDeleteData(Event task, String input){
+		boolean flag = false;
 		int startIndex = 0;
 		int endIndex = startIndex;
 		String remainingInput = extractDescription(task, input);
 		if(remainingInput.isEmpty()){
 			return null;
 		}
-		return determineQuotedInput(task, remainingInput);
+		
+		if(input.indexOf("--") >= 0){
+			startIndex = input.indexOf("--", startIndex) + 1;
+			endIndex = input.length();
+			
+			if(classifyCategory(input) == null){
+				task.setCategory(null);
+			} else {
+				task.setCategory(classifyCategory(remainingInput));
+			}
+			
+			if(classifyStatus(input) == null){
+				task.setStatus(null);
+			}else{
+				task.setStatus(classifyStatus(remainingInput));
+			}
+			
+			return task;
+		} else{
+			flag = true;
+		}
+		
+		task =  determineQuotedInput(task, remainingInput);
+		if(flag){
+			task.setCategory(null);
+			task.setStatus(null);
+		}
+		
+		return task;
 	}
 
 	/**
@@ -411,6 +468,8 @@ public class Parser {
 		
 		if(matchPattern[0] == 0){
 			isNameDefined = false;
+		} else{
+			isNameDefined = true;
 		}
 				
 		while(matcher.find()){

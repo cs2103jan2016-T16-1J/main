@@ -12,4 +12,11 @@ public class Constant {
 	public static final String CATEGORY_FLOATING = "FLOATING";
 	public static final String CATEGORY_UNDETERMINED = "UNDETERMINED";
 	public static final String CATEGORY_NULL = null;
+	
+	public static final String STATUS_INCOMPLETE = "EVENT";
+	public static final String STATUS_COMPLETE = "DEADLINE";
+	public static final String STATUS_FLOATING = "FLOATING";
+	public static final String STATUS_BLOCKED = "BLOCKED";
+	public static final String STATUS_OVERDUE = "OVERDUE";
+	public static final String STATUS_NULL = null;
 }
