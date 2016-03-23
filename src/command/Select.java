@@ -19,28 +19,34 @@ public class Select implements Command{
 	
 	public Select(Event selectedParameters){
 		this.selectedParameters = selectedParameters;
-		if(!completeState.selectedEvents.isEmpty()){
-			completeState.selectedEvents.clear();
-		}
-		completeState.selectedEvent = null;
-		completeState.setSelectionStatus(completeState.NO_EVENTS_SELECTED);;
 
 	}
 	
 	@Override
 	public State execute(State completeState) throws IOException, JSONException {
 		// TODO Auto-generated method stub
-		
 		this.completeState = completeState;
+		
+		clearSelectedEvents();
+		
 		ArrayList<Event> allEvents = completeState.getAllEvents();
 		///for each event in allEvents check if it matches selectedParameters
 		//if the event does, clone it and add it to completeState.selectedEvents
 		getMatchingEvents(allEvents);
+		checkSelectionStatus();
 		//new event list = eventlist.clone
 		//for each event in 
 		return null;
 	}
 
+	private void clearSelectedEvents(){
+		if(!completeState.selectedEvents.isEmpty()){
+			completeState.selectedEvents.clear();
+		}
+		completeState.selectedEvent = null;
+		completeState.setSelectionStatus(completeState.NO_EVENTS_SELECTED);;
+	}
+	
 	private void checkSelectionStatus(){
 		
 		if(completeState.selectedEvents.isEmpty() == true){
@@ -51,6 +57,7 @@ public class Select implements Command{
 		}
 		else{
 			completeState.setSelectionStatus(completeState.ONE_EVENT_SELECTED);
+			completeState.selectedEvent = completeState.selectedEvents.get(0);
 		}
 	}
 	
