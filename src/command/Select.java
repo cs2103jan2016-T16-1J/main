@@ -2,6 +2,9 @@ package command;
 
 import java.io.IOException;
 import java.util.Date;
+
+import constant.Constant;
+
 import java.util.ArrayList;
 
 import json.JSONException;
@@ -16,26 +19,34 @@ public class Select implements Command{
 	
 	public Select(Event selectedParameters){
 		this.selectedParameters = selectedParameters;
-		completeState.selectedEvents.clear();
-		completeState.selectedEvent = null;
-		completeState.setSelectionStatus(completeState.NO_EVENTS_SELECTED);;
 
 	}
 	
 	@Override
 	public State execute(State completeState) throws IOException, JSONException {
 		// TODO Auto-generated method stub
-		
 		this.completeState = completeState;
+		
+		clearSelectedEvents();
+		
 		ArrayList<Event> allEvents = completeState.getAllEvents();
 		///for each event in allEvents check if it matches selectedParameters
 		//if the event does, clone it and add it to completeState.selectedEvents
 		getMatchingEvents(allEvents);
+		checkSelectionStatus();
 		//new event list = eventlist.clone
 		//for each event in 
 		return null;
 	}
 
+	private void clearSelectedEvents(){
+		if(!completeState.selectedEvents.isEmpty()){
+			completeState.selectedEvents.clear();
+		}
+		completeState.selectedEvent = null;
+		completeState.setSelectionStatus(completeState.NO_EVENTS_SELECTED);;
+	}
+	
 	private void checkSelectionStatus(){
 		
 		if(completeState.selectedEvents.isEmpty() == true){
@@ -46,6 +57,7 @@ public class Select implements Command{
 		}
 		else{
 			completeState.setSelectionStatus(completeState.ONE_EVENT_SELECTED);
+			completeState.selectedEvent = completeState.selectedEvents.get(0);
 		}
 	}
 	
@@ -68,10 +80,12 @@ public class Select implements Command{
 		
 		isMatch = isStringMatching(currentEvent.getName(), selectedParameters.getName()) &&
 				isStringMatching(currentEvent.getLocation(), selectedParameters.getLocation()) &&
-				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription()) &&
-				isStringMatching(currentEvent.getCategory(), selectedParameters.getCategory()) &&
-				isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime()) &&
-				isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus());
+				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
+				&&
+				//isStringMatching(currentEvent.getCategory(), selectedParameters.getCategory()) &&
+				isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
+				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
+				;
 		
 		
 		
@@ -87,7 +101,7 @@ public class Select implements Command{
 	private boolean isStringMatching(String eventString, String paramString){
 		boolean isMatch = true;
 		
-		if(paramString == null){
+		if(paramString.equals(Constant.EMPTY_STRING)){
 			return isMatch;
 		}
 		
@@ -97,14 +111,22 @@ public class Select implements Command{
 	}
 	
 	private boolean isTimeMatching(Date eventStart, Date eventEnd, Date paramStart, Date paramEnd){
-		boolean isMatch;
+		boolean isStartMatch;
+		boolean isEndMatch;
 		
-		/****CHECK IF DATA PARAMETERS HAVE BEEN GIVEN*****/
+		isStartMatch = isStartTimeWithinRange(eventStart, paramStart, paramEnd);
+		if(paramStart.equals(Constant.MIN_DATE)){
+			isStartMatch = true;
+		}
 		
-		isMatch = isStartTimeWithinRange(eventStart, paramStart, paramEnd) && isEndTimeWithinRange(eventEnd, paramStart, paramEnd);
+		isEndMatch = isEndTimeWithinRange(eventEnd, paramStart, paramEnd);
+		
+		if(paramStart.equals(Constant.MAX_DATE)){
+			isEndMatch = true;
+		}
 		
 		
-		return isMatch;
+		return isStartMatch && isEndMatch;
 	}
 	
 	public boolean isStartTimeWithinRange(Date eventStart, Date paramStart, Date paramEnd){
