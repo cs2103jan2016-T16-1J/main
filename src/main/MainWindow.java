@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 
 import java.awt.Container;
@@ -28,10 +29,13 @@ import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.text.ParseException;
@@ -381,7 +385,7 @@ public class MainWindow {
 		    {
 		    	String inputString = textField.getText() + NEW_LINE;
 		    	textField.setText(EMPTY_STRING);
-		    	actionsTextArea.append(inputString);
+		    	actionsTextArea.setText(inputString);
 		    	
 		    	//calling controller
 		    	try {
@@ -398,18 +402,20 @@ public class MainWindow {
 	
 	private void renderCalendar() {
 		tblCalendar.removeAll();
+		tblCalendar.getParent().repaint();
 		
 		currentState.sortDisplayedEvents();
-		
-		for (Event event : currentState.displayedEvents){
-	    	//actionsTextArea.append(event.printEvent());
-			
-	    	if (event.isDeadline()) {
+
+		ArrayList<Event> displayedEvents = currentState.displayedEvents;
+		for (int i = 0; i < displayedEvents.size(); i++) {
+			Event event = displayedEvents.get(i);
+			if (event.isDeadline()) {
 	    		createDeadlineEvent(event);
 	    	} else if (event.isEvent()) {
 	    		createSpecificEvent(event);
 	    	}
-    	}
+		}
+		
     	displayEventDetails(currentState.selectedEvent);
 	}
 	
@@ -527,13 +533,8 @@ public class MainWindow {
 		int xOffset = (int) (eventWidth * hour) + 1;
 		int yOffset = (int) eventHeight * dayDifference ;
 		
-		JTextField currentEvent = new JTextField(deadline.getName());
-		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
-		currentEvent.setBackground(darkGreen);
-		currentEvent.setBorder(null);
-		currentEvent.setEditable(false);
-		currentEvent.setHorizontalAlignment(JTextField.CENTER);
-		currentEvent.setForeground(Color.WHITE);
+		JTextField currentEvent = createEventBlock(deadline.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight);
+
 		tblCalendar.add(currentEvent);
 	}
 	
@@ -550,9 +551,7 @@ public class MainWindow {
 	private void createSpecificEvent(Event specificEvent) {
 		updateStartCalendar();
 		updateEndCalendar();
-		
-		Date startDate = startCalendar.getTime();
-		Date endDate = endCalendar.getTime();
+
 		Date startDateEvent = specificEvent.getStartTime();
 		Date endDateEvent = specificEvent.getEndTime();
 
@@ -571,22 +570,23 @@ public class MainWindow {
 		int hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
 		int minute = startEventCalendar.get(Calendar.MINUTE);
 		int yOffset = (int) eventHeight * dayDifference;
-		int xOffset = (int) (eventWidth * (hour + minute / 60.0));
+		int xOffset = (int) (eventWidth * (hour + minute / 60.0)) + 1;
 		double xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 		eventWidth *= xMultiplier;
 		
-		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight);
+		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight);
 		tblCalendar.add(currentEvent);
 	}
 	
 	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight) {
-		JTextField currentEvent = new JTextField(name);
+		JTextField currentEvent = new JTextField();
+		currentEvent.setText(name);
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
 		currentEvent.setBackground(darkGreen);
+		currentEvent.setHorizontalAlignment(JTextField.CENTER);
 		currentEvent.setBorder(null);
 		currentEvent.setEditable(false);
-		currentEvent.setHorizontalAlignment(JTextField.CENTER);
 		currentEvent.setForeground(Color.WHITE);
 		return currentEvent;
 	}
@@ -637,9 +637,8 @@ public class MainWindow {
 	}
 	
 	private void setSingleCellSelection() {
-        tblCalendar.setColumnSelectionAllowed(true);
-        tblCalendar.setRowSelectionAllowed(true);
-        tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblCalendar.setColumnSelectionAllowed(false);
+        tblCalendar.setRowSelectionAllowed(false);
         tblCalendar.setRowHeight((stblCalendar.getHeight() - 20) / DISPLAYED_DAYS_NUM);
 	}
 }
