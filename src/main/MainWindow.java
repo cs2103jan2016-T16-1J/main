@@ -385,7 +385,7 @@ public class MainWindow {
 		    {
 		    	String inputString = textField.getText() + NEW_LINE;
 		    	textField.setText(EMPTY_STRING);
-		    	actionsTextArea.append(inputString);
+		    	actionsTextArea.setText(inputString);
 		    	
 		    	//calling controller
 		    	try {
@@ -402,6 +402,7 @@ public class MainWindow {
 	
 	private void renderCalendar() {
 		tblCalendar.removeAll();
+		tblCalendar.getParent().repaint();
 		
 		currentState.sortDisplayedEvents();
 
@@ -532,7 +533,7 @@ public class MainWindow {
 		int xOffset = (int) (eventWidth * hour) + 1;
 		int yOffset = (int) eventHeight * dayDifference ;
 		
-		JTextPane currentEvent = createEventBlock(deadline.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight);;
+		JTextField currentEvent = createEventBlock(deadline.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight);
 
 		tblCalendar.add(currentEvent);
 	}
@@ -550,9 +551,7 @@ public class MainWindow {
 	private void createSpecificEvent(Event specificEvent) {
 		updateStartCalendar();
 		updateEndCalendar();
-		
-		Date startDate = startCalendar.getTime();
-		Date endDate = endCalendar.getTime();
+
 		Date startDateEvent = specificEvent.getStartTime();
 		Date endDateEvent = specificEvent.getEndTime();
 
@@ -571,23 +570,21 @@ public class MainWindow {
 		int hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
 		int minute = startEventCalendar.get(Calendar.MINUTE);
 		int yOffset = (int) eventHeight * dayDifference;
-		int xOffset = (int) (eventWidth * (hour + minute / 60.0));
+		int xOffset = (int) (eventWidth * (hour + minute / 60.0)) + 1;
 		double xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 		eventWidth *= xMultiplier;
 		
-		JTextPane currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight);
+		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight);
 		tblCalendar.add(currentEvent);
 	}
 	
-	private JTextPane createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight) {
-		JTextPane currentEvent = new JTextPane();
-		SimpleAttributeSet attribs = new SimpleAttributeSet();  
-		StyleConstants.setAlignment(attribs , StyleConstants.ALIGN_CENTER); 
-		currentEvent.setParagraphAttributes(attribs,true);
+	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight) {
+		JTextField currentEvent = new JTextField();
 		currentEvent.setText(name);
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
 		currentEvent.setBackground(darkGreen);
+		currentEvent.setHorizontalAlignment(JTextField.CENTER);
 		currentEvent.setBorder(null);
 		currentEvent.setEditable(false);
 		currentEvent.setForeground(Color.WHITE);
