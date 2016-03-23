@@ -39,6 +39,8 @@ public class State {
 		incompletedEvents = new ArrayList<Event>();
 		floatingEvents = new ArrayList<Event>();
 		displayedEvents = new ArrayList<Event>();
+		selectedEvents = new ArrayList<Event>();
+		
 		statusMessage = new String();
 
 	}
