@@ -32,6 +32,7 @@ import javax.swing.table.TableColumnModel;
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.text.ParseException;
@@ -400,16 +401,17 @@ public class MainWindow {
 		tblCalendar.removeAll();
 		
 		currentState.sortDisplayedEvents();
-		
-		for (Event event : currentState.displayedEvents){
-	    	//actionsTextArea.append(event.printEvent());
-			
-	    	if (event.isDeadline()) {
+
+		ArrayList<Event> displayedEvents = currentState.displayedEvents;
+		for (int i = 0; i < displayedEvents.size(); i++) {
+			Event event = displayedEvents.get(i);
+			if (event.isDeadline()) {
 	    		createDeadlineEvent(event);
 	    	} else if (event.isEvent()) {
 	    		createSpecificEvent(event);
 	    	}
-    	}
+		}
+		
     	displayEventDetails(currentState.selectedEvent);
 	}
 	
