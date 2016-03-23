@@ -18,6 +18,7 @@ public class Select implements Command{
 		this.selectedParameters = selectedParameters;
 		completeState.selectedEvents.clear();
 		completeState.selectedEvent = null;
+		completeState.setSelectionStatus(completeState.NO_EVENTS_SELECTED);;
 
 	}
 	
@@ -30,16 +31,29 @@ public class Select implements Command{
 		///for each event in allEvents check if it matches selectedParameters
 		//if the event does, clone it and add it to completeState.selectedEvents
 		getMatchingEvents(allEvents);
-				
 		//new event list = eventlist.clone
 		//for each event in 
 		return null;
 	}
 
+	private void checkSelectionStatus(){
+		
+		if(completeState.selectedEvents.isEmpty() == true){
+			completeState.setSelectionStatus(completeState.NO_EVENTS_SELECTED);;
+		}
+		else if(completeState.selectedEvents.size() > 1){
+			completeState.setSelectionStatus(completeState.MULTIPLE_EVENTS_SELECTED);
+		}
+		else{
+			completeState.setSelectionStatus(completeState.ONE_EVENT_SELECTED);
+		}
+	}
+	
 	//getMatchingEvents
 	
-	public void getMatchingEvents(ArrayList<Event> allEvents){
-				
+
+	private void getMatchingEvents(ArrayList<Event> allEvents){
+	
 		for(Event e: allEvents){
 			if(isMatchingEvent(e)){
 				completeState.selectedEvents.add(e);
@@ -48,7 +62,7 @@ public class Select implements Command{
 		}	
 	}
 	
-	public boolean isMatchingEvent(Event currentEvent){
+	private boolean isMatchingEvent(Event currentEvent){
 		boolean isMatch = true;
 		
 		
@@ -65,12 +79,12 @@ public class Select implements Command{
 		
 	}
 	
-	public boolean isStatusMatching(Status eventStatus, Status paramStatus){
+	private boolean isStatusMatching(Status eventStatus, Status paramStatus){
 		return eventStatus == paramStatus;
 		
 	}
 	
-	public boolean isStringMatching(String eventString, String paramString){
+	private boolean isStringMatching(String eventString, String paramString){
 		boolean isMatch = true;
 		
 		if(paramString == null){
@@ -82,7 +96,7 @@ public class Select implements Command{
 		return isMatch;
 	}
 	
-	public boolean isTimeMatching(Date eventStart, Date eventEnd, Date paramStart, Date paramEnd){
+	private boolean isTimeMatching(Date eventStart, Date eventEnd, Date paramStart, Date paramEnd){
 		boolean isMatch;
 		
 		/****CHECK IF DATA PARAMETERS HAVE BEEN GIVEN*****/
@@ -98,7 +112,7 @@ public class Select implements Command{
 		return ((eventStart.getTime() >= paramStart.getTime()) && (eventStart.getTime() <= paramEnd.getTime()));
 	}
 	
-	public boolean isEndTimeWithinRange(Date eventEnd, Date paramStart, Date paramEnd){
+	private boolean isEndTimeWithinRange(Date eventEnd, Date paramStart, Date paramEnd){
 		
 		return ((eventEnd.getTime() >= paramStart.getTime()) && (eventEnd.getTime() <= paramEnd.getTime()));
 	}

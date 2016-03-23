@@ -10,8 +10,12 @@ import storage.Storage;;
 
 public class State {
 
-	public static final String MESSAGE_EVENT_NOT_FOUND = "The request event was not found";
-	public static final String MESSAGE_PARSE_ERROR = "Unable to parse the requestd event";
+	public static final String MESSAGE_EVENT_NOT_FOUND = "The requested event was not found";
+	public static final String MESSAGE_PARSE_ERROR = "Unable to parse the requestedd event";
+	public static final String MESSAGE_TOO_MANY_SELECTIONS = "More than one result was found. Please select the desired event's number";
+	public static final int NO_EVENTS_SELECTED = 0;
+	public static final int ONE_EVENT_SELECTED = 1;
+	public static final int MULTIPLE_EVENTS_SELECTED = 2;
 	public static ArrayList<Event> completedEvents;
 	public static ArrayList<Event> incompletedEvents;
 	public static ArrayList<Event> floatingEvents;
@@ -21,6 +25,9 @@ public class State {
 	Stack<Event> eventHistory;
 	
 	public Event selectedEvent;
+	
+	//indicates whether an event is selected and if more than one is selected
+	public int selectionStatus;
 	
 	public String statusMessage;
 
@@ -34,6 +41,14 @@ public class State {
 		displayedEvents = new ArrayList<Event>();
 		statusMessage = new String();
 
+	}
+	
+	public int getSelectionStatus(){
+		return selectionStatus;
+	}
+	
+	public void setSelectionStatus(int selectionStatus){
+		this.selectionStatus = selectionStatus;
 	}
 	
 	public void setStatusMessage(String statusMessage){
