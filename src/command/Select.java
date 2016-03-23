@@ -2,6 +2,9 @@ package command;
 
 import java.io.IOException;
 import java.util.Date;
+
+import constant.Constant;
+
 import java.util.ArrayList;
 
 import json.JSONException;
@@ -16,7 +19,9 @@ public class Select implements Command{
 	
 	public Select(Event selectedParameters){
 		this.selectedParameters = selectedParameters;
-		completeState.selectedEvents.clear();
+		if(!completeState.selectedEvents.isEmpty()){
+			completeState.selectedEvents.clear();
+		}
 		completeState.selectedEvent = null;
 		completeState.setSelectionStatus(completeState.NO_EVENTS_SELECTED);;
 
@@ -68,10 +73,12 @@ public class Select implements Command{
 		
 		isMatch = isStringMatching(currentEvent.getName(), selectedParameters.getName()) &&
 				isStringMatching(currentEvent.getLocation(), selectedParameters.getLocation()) &&
-				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription()) &&
-				isStringMatching(currentEvent.getCategory(), selectedParameters.getCategory()) &&
-				isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime()) &&
-				isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus());
+				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
+				&&
+				//isStringMatching(currentEvent.getCategory(), selectedParameters.getCategory()) &&
+				isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
+				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
+				;
 		
 		
 		
@@ -87,7 +94,7 @@ public class Select implements Command{
 	private boolean isStringMatching(String eventString, String paramString){
 		boolean isMatch = true;
 		
-		if(paramString == null){
+		if(paramString.equals(Constant.EMPTY_STRING)){
 			return isMatch;
 		}
 		
@@ -97,14 +104,22 @@ public class Select implements Command{
 	}
 	
 	private boolean isTimeMatching(Date eventStart, Date eventEnd, Date paramStart, Date paramEnd){
-		boolean isMatch;
+		boolean isStartMatch;
+		boolean isEndMatch;
 		
-		/****CHECK IF DATA PARAMETERS HAVE BEEN GIVEN*****/
+		isStartMatch = isStartTimeWithinRange(eventStart, paramStart, paramEnd);
+		if(paramStart.equals(Constant.MIN_DATE)){
+			isStartMatch = true;
+		}
 		
-		isMatch = isStartTimeWithinRange(eventStart, paramStart, paramEnd) && isEndTimeWithinRange(eventEnd, paramStart, paramEnd);
+		isEndMatch = isEndTimeWithinRange(eventEnd, paramStart, paramEnd);
+		
+		if(paramStart.equals(Constant.MAX_DATE)){
+			isEndMatch = true;
+		}
 		
 		
-		return isMatch;
+		return isStartMatch && isEndMatch;
 	}
 	
 	public boolean isStartTimeWithinRange(Date eventStart, Date paramStart, Date paramEnd){
