@@ -12,8 +12,11 @@ import command.Delete;
 import command.Edit;
 import command.Select;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 import constant.CommandType;
 import constant.Constant;
@@ -226,8 +229,34 @@ public class Parser {
 	 * @return
 	 */
 	private Event decodeSelectData(Event task, String input){
+		int startIndex = 0;
+		int endIndex = startIndex;
+		
+		List<Integer> indexes = new ArrayList<>();
+		int userChoice;
+		int i = 0;
+		
 		String remainingInput = extractDescription(task, input);
-		return determineQuotedInput(task, remainingInput);
+
+		if(input.indexOf("#") >= 0){
+			startIndex = input.indexOf("#",startIndex) + 1;
+			while(input.indexOf(",", startIndex) > 0){
+				endIndex = input.indexOf(",", startIndex);
+				userChoice = Integer.parseInt(input.substring(startIndex, endIndex));
+				startIndex = endIndex + 1;
+				indexes.add(userChoice);
+				if(input.indexOf("#",startIndex) >= 0){
+					startIndex = input.indexOf("#",startIndex) + 1;
+				}
+			} 
+			
+			userChoice = Integer.parseInt(input.substring(startIndex));
+			indexes.add(userChoice);		
+			task.setSelection(indexes);
+		} else{
+			task = determineQuotedInput(task, remainingInput);
+		}
+		return task;
 	}
 
 	/**
@@ -240,14 +269,10 @@ public class Parser {
 		final int offset = 1;
 		int startIndex = 0;
 		int endIndex = startIndex;
-
+		
 		if(input.indexOf("#") > 0){
 			startIndex = input.indexOf("#") + offset;
-			if(input.indexOf("all", startIndex) < 0){
-				int selectedIndex = Integer.parseInt(input.substring(startIndex));
-			} else{
-
-			}
+			
 		} else{
 			task.setName(input);
 		}
@@ -592,14 +617,17 @@ public class Parser {
 				task.setCategory(Constant.CATEGORY_EVENT);
 			}
 
+			String[] dateTime = extractTimeFromDate(stringDate);
+			int[] matchAmPm = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, dateTime[1]);
+
 			if(DateChecker.isDay){
-				String[] dateTime = extractTimeFromDate(stringDate);
-				
 				if(dateTime[1] != null){
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
 					task.setStartTime(DateChecker.writeTime(stringDate, time));
 					task.setCategory(Constant.CATEGORY_EVENT);
 				}
+			} else if(dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
+				task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
 			}
 				
 			newStartIndex = matchPatternOfFirstOccurrence(PATTERN_TO, input)[1] + 1;
@@ -615,8 +643,8 @@ public class Parser {
 				task.setEndTime(inputDate);
 			} 
 			
-			String[] dateTime = extractTimeFromDate(stringDate);
-
+			dateTime = extractTimeFromDate(stringDate);
+			matchAmPm = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, dateTime[1]);
 		/*	check for dd/MM/yyyy or dd MMM yyyy format without HH:mm to replace the originally written time */
 			if(DateChecker.isDay){
 				if(dateTime[1] != null){
@@ -624,9 +652,10 @@ public class Parser {
 					task.setEndTime(DateChecker.writeTime(stringDate, time));
 				} 
 			} else if (dateTime[1] == null){
-				Date setDate = DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT);
-				task.setEndTime(setDate);
+				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
 
+			} else if (dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
+				task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
 			}
 		}
 

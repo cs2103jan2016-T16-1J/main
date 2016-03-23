@@ -1,6 +1,9 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import constant.Constant;
 
 public class Event {
@@ -19,6 +22,7 @@ public class Event {
 	private Date startTime;
 	private Date endTime;
 	private Status status;
+	private List<Integer> selection;
 	
 	public Event(){
 		name = Constant.EMPTY_NAME;
@@ -28,6 +32,7 @@ public class Event {
 		startTime = Constant.MIN_DATE; 
 		endTime = Constant.MAX_DATE;
 		status = Status.INCOMPLETE;
+		selection = new ArrayList<>();
 	}
 	
 	public Event(String name, String location, String description, String category, Date startTime, Date endTime, Status status){
@@ -101,6 +106,14 @@ public class Event {
 		Event clonedEvent = new Event(this.getName(), this.getLocation(), this.getDescription(), this.getCategory(), this.getStartTime(), this.getEndTime(), this.getStatus());
 		
 		return clonedEvent;
+	}
+	
+	public List<Integer> getSelection(){
+		return selection;
+	}
+	
+	public void setSelection(List<Integer> selection){
+		this.selection = selection;
 	}
 	
 	

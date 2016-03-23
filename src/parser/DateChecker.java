@@ -141,10 +141,19 @@ public class DateChecker {
 		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd MMM yy"));
 		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd/MM/yyyy"));		
 		supportedDateFormats.add(new SimpleDateFormat("HH:mm dd MMM yyyy"));
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy hh:mm a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy hh a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yyyy hh:mm a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yyyy hh a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy hh:mm a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy hh a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yyyy hh:mm a"));
+		supportedDateFormats.add(new SimpleDateFormat("dd MMM yyyy hh a"));
 		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yy"));
 		supportedDateFormats.add(new SimpleDateFormat("dd/MM/yyyy"));
 		supportedDateFormats.add(new SimpleDateFormat("dd MMM yy"));
 		supportedDateFormats.add(new SimpleDateFormat("dd MMM yyyy"));
+
 
 		supportedTimeFormats = new ArrayList<>();
 		supportedTimeFormats.add(new SimpleDateFormat("hh:mm a"));
