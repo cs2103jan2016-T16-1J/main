@@ -50,7 +50,7 @@ public class Parser {
 	private final String PATTERN_ALL = "(\\b(on)\\b|\\b(by)\\b|\\b(from)\\b|\\b(at)\\b)";
 
 	private final String TIME_BEFORE_MIDNIGHT = "23:59";
-	private final String TIME_BEFORE_MIDNIGHT_SEC = "23:59:59";
+	private final String TIME_BEFORE_MIDNIGHT_SEC = "23:59:01";
 	private final String TIME_MIDNIGHT = "00:00";
 	private final String ERROR_DATE_FORMAT = "The input date format is not supported";
 
@@ -525,7 +525,7 @@ public class Parser {
 			
 			if(inputDate != null){
 				task.setStartTime(inputDate);
-				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
+				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
 				task.setCategory(Constant.CATEGORY_EVENT);
 			}
 			
@@ -641,7 +641,7 @@ public class Parser {
 			inputDate = DateChecker.validateDate(stringDate);
 			if(inputDate != null){
 				task.setStartTime(Constant.MIN_DATE);
-				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
+				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
 				task.setCategory(Constant.CATEGORY_DEADLINE);
 			}
 			
@@ -726,10 +726,10 @@ public class Parser {
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
 					task.setEndTime(DateChecker.writeTime(stringDate, time));
 				} else if(dateTime[1] == null){    /* to friday */
-					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
+					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
 				}
 			} else if (dateTime[1] == null){
-				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
+				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
 
 			} else if (dateTime[0] == null && dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
 				task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
