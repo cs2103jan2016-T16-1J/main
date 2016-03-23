@@ -407,8 +407,8 @@ public class MainWindow {
 	    	} else if (event.isEvent()) {
 	    		createSpecificEvent(event);
 	    	}
-	    	displayEventDetails(event);
     	}
+    	displayEventDetails(currentState.selectedEvent);
 	}
 	
 	private void initializeOutputField() {
@@ -522,7 +522,7 @@ public class MainWindow {
 		double eventWidth = getEventWidth();
 		int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 		int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
-		int xOffset = (int) eventWidth * hour;
+		int xOffset = (int) (eventWidth * hour);
 		int yOffset = (int) eventHeight * dayDifference ;
 		
 		JTextField currentEvent = new JTextField(deadline.getName());
@@ -567,8 +567,9 @@ public class MainWindow {
 		double eventWidth = getEventWidth();
 		int dayDifference = endEventCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 		int hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
+		int minute = startEventCalendar.get(Calendar.MINUTE);
 		int yOffset = (int) eventHeight * dayDifference;
-		int xOffset = (int) eventWidth * hour;
+		int xOffset = (int) (eventWidth * (hour + minute / 60.0));
 		double xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 		eventWidth *= xMultiplier;
