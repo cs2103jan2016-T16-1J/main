@@ -206,7 +206,8 @@ public class Storage {
 			
 			event.setName(jsonObj.getString("name"));
 			event.setDescription(jsonObj.getString("description"));
-			event.setCategory(jsonObj.getString("category"));
+			//event.setCategory(jsonObj.getString("category"));
+			event.setCategory(getCategory(jsonObj));
 			event.setStatus(getStatus(jsonObj));
 			event.setLocation(jsonObj.getString("location"));
 			event.setStartTime(df.parse(startTime));
@@ -244,6 +245,18 @@ public class Storage {
 			return Event.Status.OVERDUE;
 		} else {
 			return Event.Status.FLOATING;
+		}
+	}
+	
+	private Event.Category getCategory(JSONObject jsonObj) throws JSONException{
+		if (jsonObj.get("category").equals("DEADLINE")){
+			return Event.Category.DEADLINE;
+		} else if (jsonObj.get("category").equals("EVENT")){
+			return Event.Category.EVENT;
+		} else if (jsonObj.get("category").equals("FLOATING")){
+			return Event.Category.FLOATING;
+		} else {
+			return Event.Category.UNDETERMINED;
 		}
 	}
 
