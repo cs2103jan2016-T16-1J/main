@@ -137,6 +137,29 @@ public class Storage {
 		
 		return state;
 	}
+	
+	
+	public void changeDirectory(String oldDirectory, String newDirectory){
+		try {
+			File oldFile = new File(oldDirectory);
+			
+			if (oldFile.renameTo(new File(newDirectory))){
+				System.out.println("File is moved successful!");
+	    	} else {
+	    		System.out.println("File is failed to move!"); 
+	    	}
+		    
+    	} catch (Exception e){
+    		e.printStackTrace();
+    	}
+	}
+	
+	
+	
+	
+	
+	
+	
 
 	private void storageToState(State state, Event event) {
 		if (event.getStatus() == Status.COMPLETE){
