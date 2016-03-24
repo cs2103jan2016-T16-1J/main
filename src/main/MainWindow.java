@@ -33,6 +33,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -94,7 +96,7 @@ public class MainWindow {
 	static JScrollPane areaScrollPane;	//text area scrollpane
 	static JPanel pnlCalendar; //The panel
 	static int realDay, realMonth, realYear, currentMonth, currentYear;
-	private JTable rowHeaderTable;
+	private RowNumberTable rowHeaderTable;
 	private JLabel lblInfoEventDescription;
 	private JLabel lblInfoEventStartTime;
 	private JLabel lblInfoEventEndTime;
@@ -262,6 +264,7 @@ public class MainWindow {
 		frame.setBounds(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.addKeyListener(new ChangeMonthListener());
 	}
 	
 	private void initializeTabButtons() {
@@ -351,7 +354,7 @@ public class MainWindow {
 		
 		lblInfoEventEndTime.setText(currentEvent.getEndTime().toString());
 		
-		lblInfoEventCategory.setText(currentEvent.getCategory());
+		lblInfoEventCategory.setText(currentEvent.getCategory().toString());
 	}
 	
 	private void initializeMainTab() {
@@ -372,6 +375,8 @@ public class MainWindow {
 		
 		textField = new JTextField();
 		textField.setBorder(new LineBorder(borderColor));
+		
+		textField.addKeyListener(new ChangeMonthListener());
 		
 		Action inputAction = getInputAction();
 		textField.addActionListener(inputAction);
@@ -403,11 +408,31 @@ public class MainWindow {
 		return action;
 	}
 	
+	private class ChangeMonthListener implements KeyListener {
+		 public void keyTyped(KeyEvent e) {
+		        // Invoked when a key has been typed.
+		    }
+
+	    public void keyPressed(KeyEvent e) {
+	        // Invoked when a key has been pressed.
+	        if (e.getKeyCode() == KeyEvent.VK_UP) {
+	        	calendarInstance.add(Calendar.DAY_OF_YEAR, DISPLAYED_DAYS_NUM);
+	        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+	        	calendarInstance.add(Calendar.DAY_OF_YEAR, -DISPLAYED_DAYS_NUM);
+	        }
+        	rowHeaderTable.setCalendarInstance(calendarInstance);
+        	rowHeaderTable.refresh();
+        	renderCalendar();
+	    }
+
+	    public void keyReleased(KeyEvent e) {
+	        // Invoked when a key has been released.
+	    }
+	}
+	
 	private void renderCalendar() {
-
+		
 		tblCalendar.removeAll();
-
-		currentState.sortDisplayedEvents();
 
 		ArrayList<Event> displayedEvents = currentState.displayedEvents;
 		for (int i = 0; i < displayedEvents.size(); i++) {
@@ -478,6 +503,7 @@ public class MainWindow {
 		calendarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 		rowHeaderTable = new RowNumberTable(tblCalendar, calendarInstance, this.DISPLAYED_DAYS_NUM);
 		rowHeaderTable.setGridColor(borderColor);
+		rowHeaderTable.refresh();
 	}
 	
 	private void refreshMonth() {
