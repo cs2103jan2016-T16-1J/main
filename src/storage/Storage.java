@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 
 import main.Event;
+import main.Event.Category;
 import main.Event.Status;
 import main.State;
 
@@ -172,7 +173,7 @@ public class Storage {
 			jsonObj.put("status", event.getStatus());
 			jsonObj.put("location", event.getLocation());
 			
-			if (event.getCategory().equals("DEADLINE")){
+			if (event.getCategory().equals(Category.DEADLINE)){
 				jsonObj.put("startTime", deadLine);
 				System.out.println("yes!!!!");
 			} else {
