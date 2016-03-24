@@ -74,6 +74,7 @@ public class MainWindow {
 	private static Color backgroundColor;
 	private static Color buttonColor;
 	private static Color darkGreen;
+	private static Color lightRed;
 	public static Color fontColor;
 	public static Color lightGray;
 	public static Color borderColor;
@@ -101,6 +102,7 @@ public class MainWindow {
 	private JLabel lblInfoEventName;
 	private JLabel lblInfoEventLocation;
 	private JToggleButton toggleButton;
+	
 
 
 	/**
@@ -245,10 +247,11 @@ public class MainWindow {
 		navbarColor = new Color(55, 71, 79);
 		backgroundColor = new Color(243, 243, 244);
 		buttonColor = new Color(28, 192, 159);
-		darkGreen = new Color(23, 152, 126, 170);
 		lightGray = new Color(244, 246, 250);
 		borderColor = new Color(231, 234, 236);
 		fontColor = new Color(103, 106, 108);
+		lightRed = new Color (231,111,81,170);
+		darkGreen = new Color(42,157,143, 170);
 	}
 	
 	private void initializeMainWindow() {
@@ -292,7 +295,7 @@ public class MainWindow {
 		frame.getContentPane().add(infoPanel);
 		
 		lblInfoEventName = new JLabel("PLACEHOLDER");
-		lblInfoEventName.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblInfoEventName.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblInfoEventName.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventName.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 		lblInfoEventName.setBounds(0, 0, 286, 45);
@@ -542,8 +545,8 @@ public class MainWindow {
 		int xOffset = (int) (eventWidth * hour) + 1;
 		int yOffset = (int) eventHeight * dayDifference ;
 		
-		JTextField currentEvent = createEventBlock(deadline.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight);
-
+		JTextField currentEvent = createEventBlock(deadline.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight, lightRed);
+		
 		tblCalendar.add(currentEvent);
 	}
 	
@@ -584,15 +587,16 @@ public class MainWindow {
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 		eventWidth *= xMultiplier;
 		
-		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight);
+		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight, darkGreen);
+		
 		tblCalendar.add(currentEvent);
 	}
 	
-	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight) {
+	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight, Color color) {
 		JTextField currentEvent = new JTextField();
 		currentEvent.setText(name);
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
-		currentEvent.setBackground(darkGreen);
+		currentEvent.setBackground(color);
 		currentEvent.setHorizontalAlignment(JTextField.CENTER);
 		currentEvent.setBorder(null);
 		currentEvent.setEditable(false);

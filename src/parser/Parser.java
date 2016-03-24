@@ -245,9 +245,9 @@ public class Parser {
 			return Event.Status.BLOCKED;
 		}else if(userInput.equalsIgnoreCase(Constant.STATUS_OVERDUE)){
 			return Event.Status.OVERDUE;
+		} else{
+			return Event.Status.NULL;
 		}
-		
-		return null;
 	}
 	/**
 	 * Decodes the user input for Adding new task
@@ -287,12 +287,8 @@ public class Parser {
 				task.setCategory(classifyCategory(remainingInput));
 			}
 			
-			if(classifyStatus(input) == null){
-				task.setStatus(null);
-			}else{
-				task.setStatus(classifyStatus(remainingInput));
-			}
-			
+			task.setStatus(classifyStatus(remainingInput));
+
 			return task;
 		} else{
 			flag = true;
@@ -318,7 +314,7 @@ public class Parser {
 		
 		if(flag){
 			task.setCategory(null);
-			task.setStatus(null);
+			task.setStatus(Event.Status.NULL);
 		}
 		return task;
 	}
@@ -347,12 +343,7 @@ public class Parser {
 			} else {
 				task.setCategory(classifyCategory(remainingInput));
 			}
-			
-			if(classifyStatus(input) == null){
-				task.setStatus(null);
-			}else{
-				task.setStatus(classifyStatus(remainingInput));
-			}
+			task.setStatus(classifyStatus(remainingInput));
 			
 			return task;
 		} else{
@@ -362,7 +353,7 @@ public class Parser {
 		task =  determineQuotedInput(task, remainingInput);
 		if(flag){
 			task.setCategory(null);
-			task.setStatus(null);
+			task.setStatus(Event.Status.NULL);
 		}
 		
 		return task;
@@ -436,7 +427,7 @@ public class Parser {
 				endIndex = input.length();
 				input = input.substring(startIndex, endIndex).trim();
 			}
-		}else if (isEdit && indexes[0] != 0){
+		}else if (isEdit && isNameDefined){
 			task.setName(input.substring(0, indexes[0]).trim());
 		}
 
@@ -467,8 +458,10 @@ public class Parser {
 
 		int[] matchPattern = matchPatternOfFirstOccurrence(PATTERN_ALL, input);
 		
-		if(matchPattern[0] == 0){
+		if(matchPattern[0] == 0 && matchPattern[1]!=0){
 			isNameDefined = false;
+		} else if(matchPattern[0] == 0 && matchPattern[1] ==0){
+			isNameDefined = true;
 		} else{
 			isNameDefined = true;
 		}
