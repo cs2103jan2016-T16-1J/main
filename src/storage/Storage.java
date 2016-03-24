@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 
 import main.Event;
+import main.Event.Category;
 import main.Event.Status;
 import main.State;
 
@@ -136,6 +137,29 @@ public class Storage {
 		
 		return state;
 	}
+	
+	
+	public void changeDirectory(String oldDirectory, String newDirectory){
+		try {
+			File oldFile = new File(oldDirectory);
+			
+			if (oldFile.renameTo(new File(newDirectory))){
+				System.out.println("File is moved successful!");
+	    	} else {
+	    		System.out.println("File is failed to move!"); 
+	    	}
+		    
+    	} catch (Exception e){
+    		e.printStackTrace();
+    	}
+	}
+	
+	
+	
+	
+	
+	
+	
 
 	private void storageToState(State state, Event event) {
 		if (event.getStatus() == Status.COMPLETE){
@@ -172,7 +196,7 @@ public class Storage {
 			jsonObj.put("status", event.getStatus());
 			jsonObj.put("location", event.getLocation());
 			
-			if (event.getCategory().equals("DEADLINE")){
+			if (event.getCategory().equals(Category.DEADLINE)){
 				jsonObj.put("startTime", deadLine);
 				System.out.println("yes!!!!");
 			} else {
@@ -206,7 +230,8 @@ public class Storage {
 			
 			event.setName(jsonObj.getString("name"));
 			event.setDescription(jsonObj.getString("description"));
-			event.setCategory(jsonObj.getString("category"));
+			//event.setCategory(jsonObj.getString("category"));
+			event.setCategory(getCategory(jsonObj));
 			event.setStatus(getStatus(jsonObj));
 			event.setLocation(jsonObj.getString("location"));
 			event.setStartTime(df.parse(startTime));
@@ -244,6 +269,18 @@ public class Storage {
 			return Event.Status.OVERDUE;
 		} else {
 			return Event.Status.FLOATING;
+		}
+	}
+	
+	private Event.Category getCategory(JSONObject jsonObj) throws JSONException{
+		if (jsonObj.get("category").equals("DEADLINE")){
+			return Event.Category.DEADLINE;
+		} else if (jsonObj.get("category").equals("EVENT")){
+			return Event.Category.EVENT;
+		} else if (jsonObj.get("category").equals("FLOATING")){
+			return Event.Category.FLOATING;
+		} else {
+			return Event.Category.UNDETERMINED;
 		}
 	}
 

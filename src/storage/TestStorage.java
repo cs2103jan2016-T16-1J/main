@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import org.junit.Test;
 import main.Event;
+import main.Event.Category;
 import main.Event.Status;
 import main.State;
 
@@ -134,7 +135,7 @@ public class TestStorage {
 		String startTime = "Sun Mar 27 00:00:00 SGT 2016";
 		String endTime = "Sun Mar 27 23:59:00 SGT 2016";
 		
-		testIncompletedEvent.setCategory("EVENT");
+		testIncompletedEvent.setCategory(Category.EVENT);
 		testIncompletedEvent.setDescription("project manual");
 		testIncompletedEvent.setLocation("NUS");
 		testIncompletedEvent.setName("CS2103");
@@ -154,7 +155,7 @@ public class TestStorage {
 		String startTime = "Sun Mar 27 00:00:00 SGT 2016";
 		String endTime = "Sun Mar 27 23:59:00 SGT 2016";
 		
-		testCompletedEvent.setCategory("EVENT");
+		testCompletedEvent.setCategory(Category.EVENT);
 		testCompletedEvent.setDescription("project manual");
 		testCompletedEvent.setLocation("NUS");
 		testCompletedEvent.setName("CS2103");
@@ -174,7 +175,7 @@ public class TestStorage {
 		String startTime = "Sun Mar 27 00:00:00 SGT 2016";
 		String endTime = "Sun Mar 27 23:59:00 SGT 2016";
 		
-		testFloatingEvent.setCategory("EVENT");
+		testFloatingEvent.setCategory(Category.EVENT);
 		testFloatingEvent.setDescription("project manual");
 		testFloatingEvent.setLocation("NUS");
 		testFloatingEvent.setName("CS2103");

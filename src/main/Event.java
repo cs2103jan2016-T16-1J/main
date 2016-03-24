@@ -12,12 +12,12 @@ public class Event {
 	};
 	
 	public enum Category {
-		DEADLINE, EVENT, FLOATING, UNDETERMINED
+		NULL, DEADLINE, EVENT, FLOATING, UNDETERMINED
 	};
 	
 	private String name;
 	private String description;
-	private String category;
+	private Category category;
 	private String location;
 	private Date startTime;
 	private Date endTime;
@@ -28,14 +28,14 @@ public class Event {
 		name = Constant.EMPTY_STRING;
 		location = Constant.EMPTY_STRING;
 		description = Constant.EMPTY_STRING;
-		category = constant.Constant.CATEGORY_FLOATING;
+		category = Category.FLOATING;
 		startTime = Constant.MIN_DATE; 
 		endTime = Constant.MAX_DATE;
 		status = Status.INCOMPLETE;
 		selection = new ArrayList<>();
 	}
 	
-	public Event(String name, String location, String description, String category, Date startTime, Date endTime, Status status){
+	public Event(String name, String location, String description, Category category, Date startTime, Date endTime, Status status){
 		this.name = name;
 		this.location = location;
 		this.description = description;
@@ -62,11 +62,11 @@ public class Event {
 		return this.description;
 	}
 	
-	public void setCategory(String category){
+	public void setCategory(Category category){
 		this.category = category;
 	}
 	
-	public String getCategory(){
+	public Category getCategory(){
 		return this.category;
 	}
 
@@ -122,14 +122,14 @@ public class Event {
 	 */
 	
 	public boolean isDeadline() {
-		if (this.category.compareToIgnoreCase("deadline") == 0) {
+		if (this.category == Category.DEADLINE) {
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean isEvent() {
-		if (this.category.compareToIgnoreCase("event") == 0) {
+		if (this.category == Category.EVENT) {
 			return true;
 		}
 		return false;
