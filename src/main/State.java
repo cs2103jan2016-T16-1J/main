@@ -15,6 +15,7 @@ public class State {
 	public static final String MESSAGE_EVENT_NOT_FOUND = "The requested event was not found";
 	public static final String MESSAGE_PARSE_ERROR = "Unable to parse the requestedd event";
 	public static final String MESSAGE_TOO_MANY_SELECTIONS = "More than one result was found. Please select the desired event's number";
+	public static final String MESSAGE_NO_SELECTED_EVENT = "No event has been selected. Please select an event.";
 	public static final int NO_EVENTS_SELECTED = 0;
 	public static final int ONE_EVENT_SELECTED = 1;
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
@@ -45,6 +46,22 @@ public class State {
 		
 		statusMessage = new String();
 
+	}
+	
+	public Event getSingleSelectedEvent(){
+		return selectedEvent;
+	}
+	
+	public ArrayList<Event> getAllSelectedEvents(){
+		return selectedEvents;
+	}
+	
+	public void clearSelections(){
+		if(!selectedEvents.isEmpty()){
+			selectedEvents.clear();
+		}
+		selectedEvent = null;
+		setSelectionStatus(NO_EVENTS_SELECTED);;
 	}
 	
 	public boolean hasEventSelected () {
@@ -103,7 +120,7 @@ public class State {
 	private class CustomEndTimeComparator implements Comparator<Event> {
 	    @Override
 	    public int compare(Event o1, Event o2) {
-	        return o2.getEndTime().compareTo(o1.getEndTime());
+	        return o1.getEndTime().compareTo(o2.getEndTime());
 	    }
 	}
 	

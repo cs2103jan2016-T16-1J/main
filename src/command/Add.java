@@ -36,6 +36,10 @@ public class Add implements Command{
 		
 		this.completeState = completeState;
 		
+		if(!isNewEventValid()){
+			return completeState;
+		}
+		
 		switch (modifiedEvent.getStatus()){
 		case COMPLETE:
 			addToCompleteList();
@@ -54,6 +58,15 @@ public class Add implements Command{
 		return completeState;
 	}
 
+	
+	private boolean isNewEventValid(){
+		if(null == modifiedEvent){
+			completeState.setStatusMessage(State.MESSAGE_PARSE_ERROR);
+			return false;
+		}
+		
+		return true;
+	}
 	/**
 	 * adds the given task to the completed list in State
 	 */
