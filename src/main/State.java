@@ -21,7 +21,6 @@ public class State {
 	public static ArrayList<Event> completedEvents;
 	public static ArrayList<Event> incompletedEvents;
 	public static ArrayList<Event> floatingEvents;
-	public static ArrayList<Event> allEvents;
 	
 	public ArrayList<Event> displayedEvents;
 	public ArrayList<Event> selectedEvents;
@@ -43,7 +42,6 @@ public class State {
 		floatingEvents = new ArrayList<Event>();
 		displayedEvents = new ArrayList<Event>();
 		selectedEvents = new ArrayList<Event>();
-		allEvents = new ArrayList<Event>();
 		
 		statusMessage = new String();
 

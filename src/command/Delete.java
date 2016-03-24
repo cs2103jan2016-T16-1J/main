@@ -43,7 +43,6 @@ public class Delete implements Command{
 		case FLOATING:
 			successfullyDeleted = deleteFromFloatingList();
 			break;
-				
 		}
 		
 		if(!successfullyDeleted){
@@ -78,6 +77,7 @@ public class Delete implements Command{
 	public boolean deleteFromFloatingList(){
 		return completeState.incompletedEvents.remove(modifiedEvent);
 	}
+	
 	
 	/**
 	 * updates the displayedEvents with new information
