@@ -415,9 +415,9 @@ public class MainWindow {
 
 	    public void keyPressed(KeyEvent e) {
 	        // Invoked when a key has been pressed.
-	        if (e.getKeyCode() == KeyEvent.VK_UP) {
+	        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 	        	calendarInstance.add(Calendar.DAY_OF_YEAR, DISPLAYED_DAYS_NUM);
-	        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+	        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
 	        	calendarInstance.add(Calendar.DAY_OF_YEAR, -DISPLAYED_DAYS_NUM);
 	        }
         	rowHeaderTable.setCalendarInstance(calendarInstance);
@@ -433,6 +433,8 @@ public class MainWindow {
 	private void renderCalendar() {
 		
 		tblCalendar.removeAll();
+		
+		refreshMonth();
 
 		ArrayList<Event> displayedEvents = currentState.displayedEvents;
 		for (int i = 0; i < displayedEvents.size(); i++) {
