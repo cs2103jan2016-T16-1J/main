@@ -467,7 +467,7 @@ public class MainWindow {
 		textField.addKeyListener(new ChangeMonthListener());
 		
 		textField.setColumns(10);
-		textField.setBounds(10, 730, 1100, 20);
+		textField.setBounds(10, 600, 1100, 20);
 		mainTab.add(textField);
 	}
 	

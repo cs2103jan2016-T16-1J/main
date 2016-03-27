@@ -12,8 +12,9 @@ import org.junit.Test;
 
 import json.JSONException;
 import main.Event;
-import main.Event.Category;
-import main.Event.Status;
+import main.GenericEvent;
+import main.GenericEvent.Category;
+import main.GenericEvent.Status;
 import main.State;
 
 /**
@@ -26,8 +27,8 @@ public class CommandTesting {
 	private static final String VALID_NAME = "Test Event Name";
 	private static final String VALID_DESCRIPTION = "Test Event Description";
 	private static final String VALID_LOCATION = "Supahotfire's house";
-	private static final Status VALID_STATUS = Status.COMPLETE;
-	private static final Category VALID_CATEGORY = Category.EVENT;
+	private static final GenericEvent.Status VALID_STATUS = GenericEvent.Status.COMPLETE;
+	private static final GenericEvent.Category VALID_CATEGORY = GenericEvent.Category.EVENT;
 	private static final String EMPTY_STRING = "";
 	private static final Date MAX_DATE = new Date(Long.MAX_VALUE);
 

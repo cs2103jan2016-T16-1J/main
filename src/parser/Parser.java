@@ -21,8 +21,9 @@ import java.util.Vector;
 import constant.CommandType;
 import constant.Constant;
 import main.Event;
-import main.Event.Category;
-import main.Event.Status;
+import main.GenericEvent;
+import main.GenericEvent.Category;
+import main.GenericEvent.Status;
 
 public class Parser {
 
@@ -96,13 +97,13 @@ public class Parser {
 			cmdInterface = new Select(event);
 		} else if(tempCmd == CommandType.BLOCK){
 			event = decodeAddData(event, removeFirstWord(input));
-			event.setCategory(Category.UNDETERMINED);
+			event.setCategory(GenericEvent.Category.UNDETERMINED);
 			isBlock = true;
 			oldEvent = event;
 			cmdInterface = new Add(event);
 		} else if(tempCmd == CommandType.UNBLOCK){
 			event = decodeDeleteData(event, removeFirstWord(input));
-			event.setCategory(Category.UNDETERMINED);
+			event.setCategory(GenericEvent.Category.UNDETERMINED);
 			oldEvent = event;
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.UNDO){
@@ -157,7 +158,7 @@ public class Parser {
 			return task;
 		} else if(tempCmd == CommandType.BLOCK){
 			task = decodeAddData(task, removeFirstWord(input));
-			task.setCategory(Category.UNDETERMINED);
+			task.setCategory(GenericEvent.Category.UNDETERMINED);
 			isBlock = true;
 			oldEvent = task;
 			return task;
@@ -219,35 +220,35 @@ public class Parser {
 		return resultedIndex;
 	}
 
-	private Category classifyCategory(String userInput){
+	private GenericEvent.Category classifyCategory(String userInput){
 		
 		if(userInput.equalsIgnoreCase(Constant.CATEGORY_DEADLINE)){
-			return Category.DEADLINE;
+			return GenericEvent.Category.DEADLINE;
 		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_EVENT)){
-			return Category.EVENT;
+			return GenericEvent.Category.EVENT;
 		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_FLOATING)){
-			return Category.FLOATING;
+			return GenericEvent.Category.FLOATING;
 		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_UNDETERMINED)){
-			return Category.UNDETERMINED;
+			return GenericEvent.Category.UNDETERMINED;
 		} 
 		
 		return null;
 	}
 	
-	private Event.Status classifyStatus(String userInput){
+	private GenericEvent.Status classifyStatus(String userInput){
 		
 		if(userInput.equalsIgnoreCase(Constant.STATUS_INCOMPLETE)){
-			return Event.Status.INCOMPLETE;
+			return GenericEvent.Status.INCOMPLETE;
 		}else if(userInput.equalsIgnoreCase(Constant.STATUS_COMPLETE)){
-			return Event.Status.COMPLETE;
+			return GenericEvent.Status.COMPLETE;
 		}else if(userInput.equalsIgnoreCase(Constant.STATUS_FLOATING)){
-			return Event.Status.FLOATING;
+			return GenericEvent.Status.FLOATING;
 		}else if(userInput.equalsIgnoreCase(Constant.STATUS_BLOCKED)){
-			return Event.Status.BLOCKED;
+			return GenericEvent.Status.BLOCKED;
 		}else if(userInput.equalsIgnoreCase(Constant.STATUS_OVERDUE)){
-			return Event.Status.OVERDUE;
+			return GenericEvent.Status.OVERDUE;
 		} else{
-			return Event.Status.NULL;
+			return GenericEvent.Status.NULL;
 		}
 	}
 	/**
@@ -268,7 +269,7 @@ public class Parser {
 	 * @return
 	 */
 	private Event decodeSelectData(Event task, String input){
-		boolean flag = false;
+		boolean isCategoryDefined = false;
 		int startIndex = 0;
 		int endIndex = startIndex;
 		
@@ -292,7 +293,7 @@ public class Parser {
 
 			return task;
 		} else{
-			flag = true;
+			isCategoryDefined = true;
 		}
 		
 		if(input.indexOf("#") >= 0){
@@ -313,9 +314,9 @@ public class Parser {
 			task = determineQuotedInput(task, remainingInput);
 		}
 		
-		if(flag){
+		if(isCategoryDefined){
 			task.setCategory(null);
-			task.setStatus(Event.Status.NULL);
+			task.setStatus(GenericEvent.Status.NULL);
 		}
 		return task;
 	}
@@ -327,7 +328,7 @@ public class Parser {
 	 * @return Event object with updated name field to be checked, other fields are initialized as default values
 	 */
 	private Event decodeDeleteData(Event task, String input){
-		boolean flag = false;
+		boolean isCategoryDefined = false;
 		int startIndex = 0;
 		int endIndex = startIndex;
 		String remainingInput = extractDescription(task, input);
@@ -348,13 +349,14 @@ public class Parser {
 			
 			return task;
 		} else{
-			flag = true;
+			isCategoryDefined = true;
 		}
 		
 		task =  determineQuotedInput(task, remainingInput);
-		if(flag){
+		
+		if(isCategoryDefined){
 			task.setCategory(null);
-			task.setStatus(Event.Status.NULL);
+			task.setStatus(GenericEvent.Status.NULL);
 		}
 		
 		return task;
@@ -380,13 +382,13 @@ public class Parser {
 		input = input.toUpperCase();
 
 		if (input.startsWith(Constant.CATEGORY_DEADLINE) && input.endsWith(Constant.CATEGORY_DEADLINE)){
-			task.setCategory(Category.DEADLINE);
+			task.setCategory(GenericEvent.Category.DEADLINE);
 			return task;
 		} else if(input.startsWith(Constant.CATEGORY_EVENT) && input.endsWith(Constant.CATEGORY_EVENT)){
-			task.setCategory(Category.EVENT);
+			task.setCategory(GenericEvent.Category.EVENT);
 			return task;
 		} else if(input.startsWith(Constant.CATEGORY_FLOATING) && input.endsWith(Constant.CATEGORY_FLOATING)){
-			task.setCategory(Category.FLOATING);
+			task.setCategory(GenericEvent.Category.FLOATING);
 			return task;
 		} 
 		return decodeDataFromInput(task, input);
@@ -520,7 +522,7 @@ public class Parser {
 			if(inputDate != null){
 				task.setStartTime(inputDate);
 				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
-				task.setCategory(Category.EVENT);
+				task.setCategory(GenericEvent.Category.EVENT);
 			}
 			
 			/*check date time in Day of the week format */
@@ -530,18 +532,18 @@ public class Parser {
 				if(dateTime[1] != null){ /*check date time in dd/MM/yy (HH:mm) or dd MMM yy (HH:mm) format*/
 					task.setStartTime(Constant.MIN_DATE);
 					task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
-					task.setCategory(Category.DEADLINE);
+					task.setCategory(GenericEvent.Category.DEADLINE);
 					return task;
 				}	
 			} else if(dateTime[0] == null && dateTime[1] != null){
 				task.setStartTime(Constant.MIN_DATE);
 				task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
-				task.setCategory(Category.DEADLINE);
+				task.setCategory(GenericEvent.Category.DEADLINE);
 				return task;
 			} else if(dateTime[0] != null && dateTime[1] != null){
 				task.setStartTime(Constant.MIN_DATE);
 				task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
-				task.setCategory(Category.DEADLINE);
+				task.setCategory(GenericEvent.Category.DEADLINE);
 				return task;
 			}
 			
@@ -560,7 +562,7 @@ public class Parser {
 			if(task.getName().isEmpty() && isNameDefined){
 				String name = input.substring(startIndex, endIndex).trim();
 				task.setName(name);
-				task.setCategory(Category.FLOATING);
+				task.setCategory(GenericEvent.Category.FLOATING);
 			} 
 
 			newStartIndex = endIndex + 3;
@@ -581,7 +583,7 @@ public class Parser {
 				if(dateTime[0] == null && dateTime[1] != null && !stringDate.equals(dateTime[1])){
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
 					task.setEndTime(DateChecker.writeTime(stringDate, time));
-					task.setCategory(Category.DEADLINE);
+					task.setCategory(GenericEvent.Category.DEADLINE);
 				} else if(dateTime[0] == null && dateTime[1] != null && stringDate.equals(dateTime[1])) {
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
 					Calendar cal = Calendar.getInstance();
@@ -589,10 +591,11 @@ public class Parser {
 					String today = sdf.format(new Date());
 					Date todayDate = DateChecker.writeTime(today, time);
 					task.setEndTime(todayDate);
-					task.setCategory(Category.DEADLINE);
+					task.setCategory(GenericEvent.Category.DEADLINE);
 
 					if(cal.getTime().after(todayDate)){
-						task.setEndTime(DateChecker.findDate(1));
+						int interval = 1;
+						task.setEndTime(DateChecker.findDate(interval));
 
 						String writtenDate = formatToString.format(task.getEndTime());
 						task.setEndTime(DateChecker.writeTime(writtenDate, time));
@@ -600,7 +603,7 @@ public class Parser {
 				} else if(dateTime[0] != null && dateTime[1] != null){
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
 					task.setEndTime(DateChecker.writeTime(dateTime[0], time));
-					task.setCategory(Category.DEADLINE);
+					task.setCategory(GenericEvent.Category.DEADLINE);
 				} 
 				
 				if(time == null){
@@ -609,7 +612,7 @@ public class Parser {
 					if(inputDate != null){
 						task.setStartTime(inputDate);
 						task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
-						task.setCategory(Category.DEADLINE);
+						task.setCategory(GenericEvent.Category.DEADLINE);
 						return task;
 					} else{
 						task.setLocation(stringDate);
@@ -621,7 +624,7 @@ public class Parser {
 			if(task.getName().isEmpty() && isNameDefined){
 				String name = input.substring(startIndex, endIndex).trim();
 				task.setName(name);
-				task.setCategory(Category.DEADLINE);
+				task.setCategory(GenericEvent.Category.DEADLINE);
 			} 
 
 			newStartIndex = endIndex + 3;
@@ -635,7 +638,7 @@ public class Parser {
 			inputDate = DateChecker.validateDate(stringDate);
 			if(inputDate != null){
 				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
-				task.setCategory(Category.DEADLINE);
+				task.setCategory(GenericEvent.Category.DEADLINE);
 			}
 			
 			/*check date time in Day of the week format*/
@@ -644,21 +647,46 @@ public class Parser {
 			
 			if(dateTime[0] == null && dateTime[1] != null){
 				time = DateChecker.convertAmPmToTime(dateTime[1]);
+				Calendar cal = Calendar.getInstance();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				String today = sdf.format(new Date());
+				Date todayDate = DateChecker.writeTime(today, time);
+
 				task.setEndTime(DateChecker.writeTime(stringDate, time));
-				task.setCategory(Category.DEADLINE);
+				task.setCategory(GenericEvent.Category.DEADLINE);
+				
+				if(cal.getTime().after(todayDate)){
+					int interval = 7;
+					task.setEndTime(DateChecker.findDate(interval));
+
+					String writtenDate = formatToString.format(task.getEndTime());
+					task.setEndTime(DateChecker.writeTime(writtenDate, time));
+				}
 			} else if(dateTime[0] != null && dateTime[1] != null){
 				time = DateChecker.convertAmPmToTime(dateTime[1]);
-				task.setEndTime(DateChecker.writeTime(dateTime[0], time));
-				task.setCategory(Category.DEADLINE);
+				Calendar cal = Calendar.getInstance();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				String today = sdf.format(new Date());
+				Date todayDate = DateChecker.writeTime(today, time);
+
+				task.setEndTime(DateChecker.writeTime(dateTime[0], time));				
+				task.setCategory(GenericEvent.Category.DEADLINE);				
+				if(cal.getTime().after(todayDate)){
+					int interval = 7;
+					task.setEndTime(DateChecker.findDate(interval));
+
+					String writtenDate = formatToString.format(task.getEndTime());
+					task.setEndTime(DateChecker.writeTime(writtenDate, time));
+				}
 			}
-	
+			
 			return task;
 
 		} else if(preposition.equalsIgnoreCase("from")){
 			if(task.getName().isEmpty() && isNameDefined){
 				String name = input.substring(startIndex, endIndex).trim();
 				task.setName(name);
-				task.setCategory(Category.EVENT);
+				task.setCategory(GenericEvent.Category.EVENT);
 			}
 			
 			newStartIndex = endIndex + 5;
@@ -673,7 +701,7 @@ public class Parser {
 			
 			if(inputDate != null){
 				task.setStartTime(inputDate);
-				task.setCategory(Category.EVENT);
+				task.setCategory(GenericEvent.Category.EVENT);
 			}
 
 			String[] dateTime = extractTimeFromDate(stringDate);
@@ -682,16 +710,37 @@ public class Parser {
 				matchAmPm = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, dateTime[1]);
 			}
 			if(DateChecker.isDay){
-				if(dateTime[1] != null){
-					time = DateChecker.convertAmPmToTime(dateTime[1]);
+				
+				if(dateTime[0] == null && dateTime[1] != null && dateTime[1].contains("11:59 pm")
+						|| dateTime[1].contains(TIME_BEFORE_MIDNIGHT_SEC)){
+					time = TIME_BEFORE_MIDNIGHT_SEC;
 					task.setStartTime(DateChecker.writeTime(stringDate, time));
 					task.setCategory(Category.EVENT);
+				} else if(dateTime[0] == null && dateTime[1] != null){
+					time = DateChecker.convertAmPmToTime(dateTime[1]);
+					task.setStartTime(DateChecker.writeTime(stringDate, time));
+					task.setCategory(GenericEvent.Category.EVENT);
+				} else if(dateTime[0] != null && dateTime[1] != null){
+					time = DateChecker.convertAmPmToTime(dateTime[1]);
+					task.setStartTime(DateChecker.writeTime(dateTime[0], time));
+					task.setCategory(Category.EVENT);
+
 				}
 			} else if(dateTime[0] == null && dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
-				task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
+				
+				if(dateTime[1].contains("11:59 pm") || dateTime[1].contains(TIME_BEFORE_MIDNIGHT_SEC)){
+					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
+				} else{
+					task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
+				}
 				
 			} else if(dateTime[0] != null && dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
-				task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
+				
+				if(dateTime[1].contains("11:59 pm") || dateTime[1].contains("23:59")){
+					task.setEndTime(DateChecker.writeTime(dateTime[0],TIME_BEFORE_MIDNIGHT_SEC));
+				} else{
+					task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
+				}
 			}
 				
 			newStartIndex = matchPatternOfFirstOccurrence(PATTERN_TO, input)[1] + 1;
@@ -720,12 +769,17 @@ public class Parser {
 			}
 			
 			if(DateChecker.isDay){
-				if(dateTime[1] != null){    		/*to friday 3 am or to friday 13:00*/
+				if(dateTime[0] == null && dateTime[1] != null){    		/*to friday 3 am or to friday 13:00*/
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
 					task.setEndTime(DateChecker.writeTime(stringDate, time));
-				} else if(dateTime[1] == null){    /* to friday */
+				} else if(dateTime[0] != null && dateTime[1] != null){
+					time = DateChecker.convertAmPmToTime(dateTime[1]);
+					task.setEndTime(DateChecker.writeTime(dateTime[0], time));
+				} else if(dateTime[0] == null && dateTime[1] == null){    /* to friday */
 					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
-				}
+				} else if(dateTime[0] != null && dateTime[1] == null){
+					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
+				} 
 			} else if (dateTime[1] == null){
 				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
 
@@ -741,7 +795,7 @@ public class Parser {
 				
 			} else if(dateTime[0] != null && dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
 				
-				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT)){
+				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT) || dateTime[1].contains("11:59 pm")){
 					task.setEndTime(DateChecker.writeTime(dateTime[0], TIME_BEFORE_MIDNIGHT_SEC));
 
 				}else{
@@ -760,6 +814,8 @@ public class Parser {
 	 * @return string array of size 2 with date value at index 0 and time value at index 1 
 	 */
 	private String[] extractTimeFromDate(String date){
+		int startIndex = 0;
+		int endIndex = 0;
 		String[] dateTime = {null, null};
 
 		int[] matchedAtData = matchPatternOfFirstOccurrence(PATTERN_AT, date);
@@ -772,8 +828,14 @@ public class Parser {
 		int[] matchedData = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, date);
 		int[] matchedSpace = matchPatternOfFirstOccurrence(PATTERN_SPACE, date);
 
-		if(matchedSpace[1] == matchedData[0] && matchedSpace[1] !=0 && matchedData[0] !=0){
+		if(matchedData[1] != date.length()){
+			dateTime[0] = date.substring(matchedData[1], date.length()).trim();
+			dateTime[1] = date.substring(0, matchedData[1]).trim();
+		} else {
 			dateTime[1] = date;
+		}
+		
+		if(matchedSpace[1] == matchedData[0] && matchedSpace[1] !=0 && matchedData[0] !=0){
 			return dateTime;
 		}else if(matchedData[0] > 0){
 			dateTime[0] = date.substring(0, matchedSpace[0]).trim();
@@ -783,9 +845,19 @@ public class Parser {
 		
 		int[] matchedColumn = matchPatternOfFirstOccurrence(PATTERN_COLUMN, date);
 		int[] matchedLastSpace = matchPatternOfLastOccurrence(PATTERN_SPACE, date);
+		
+		if(matchedColumn[1] < matchedLastSpace[1]){
+			startIndex =  0;
+			endIndex = matchedLastSpace[0];
+			dateTime[0] = date.substring(matchedLastSpace[1], date.length());
+					
+		} else if(matchedColumn[1] > matchedLastSpace[1]){
+			endIndex = date.length();
+			dateTime[0] = date.substring(0,matchedLastSpace[0]).trim();
+		}
 
 		if(matchedColumn[0] > 0){
-			dateTime[1] = date.substring(matchedLastSpace[0], date.length()).trim();
+			dateTime[1] = date.substring(startIndex, endIndex).trim();
 		} else{
 			dateTime[1] = null;
 		}
@@ -824,11 +896,11 @@ public class Parser {
 	 */
 	private Event determineCategory(Event event){
 		if(event.getStartTime() == Constant.MIN_DATE && event.getEndTime() == Constant.MAX_DATE){
-			event.setCategory(Category.FLOATING);
+			event.setCategory(GenericEvent.Category.FLOATING);
 		} else if(event.getStartTime() == Constant.MIN_DATE && event.getEndTime() != Constant.MAX_DATE){
-			event.setCategory(Category.DEADLINE);
+			event.setCategory(GenericEvent.Category.DEADLINE);
 		} else if(event.getStartTime() != Constant.MIN_DATE && event.getEndTime() != Constant.MAX_DATE){
-			event.setCategory(Category.EVENT);
+			event.setCategory(GenericEvent.Category.EVENT);
 		}
 		
 		return event;
