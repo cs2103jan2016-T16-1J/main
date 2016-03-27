@@ -145,7 +145,7 @@ public class Delete implements Command{
 				isStringMatching(currentEvent.getLocation(), selectedParameters.getLocation()) &&
 				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
 				&&
-				//isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory())&&
+				isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory())&&
 				isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
 				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
 				;
@@ -164,7 +164,7 @@ public class Delete implements Command{
 		
 	}
 	
-	private boolean isCategoryMatching(String eventCategory, String paramCategory){
+	private boolean isCategoryMatching(Category eventCategory, Category paramCategory){
 		if(paramCategory.equals(Constant.CATEGORY_NULL)){
 			return true;
 		}

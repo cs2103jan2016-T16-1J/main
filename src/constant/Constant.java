@@ -2,6 +2,9 @@ package constant;
 
 import java.sql.Date;
 
+import main.Event.Category;
+import main.Event.Status;
+
 public class Constant {
 	public static final String EMPTY_STRING = "";
 	public static final Date MIN_DATE = new Date(0);
@@ -11,12 +14,12 @@ public class Constant {
 	public static final String CATEGORY_DEADLINE = "DEADLINE";
 	public static final String CATEGORY_FLOATING = "FLOATING";
 	public static final String CATEGORY_UNDETERMINED = "UNDETERMINED";
-	public static final String CATEGORY_NULL = null;
+	public static final Category CATEGORY_NULL = null;
 	
 	public static final String STATUS_INCOMPLETE = "EVENT";
 	public static final String STATUS_COMPLETE = "DEADLINE";
 	public static final String STATUS_FLOATING = "FLOATING";
 	public static final String STATUS_BLOCKED = "BLOCKED";
 	public static final String STATUS_OVERDUE = "OVERDUE";
-	public static final String STATUS_NULL = null;
+	public static final Status STATUS_NULL = null;
 }
