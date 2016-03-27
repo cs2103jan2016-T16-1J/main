@@ -593,7 +593,8 @@ public class Parser {
 					task.setCategory(Category.DEADLINE);
 
 					if(cal.getTime().after(todayDate)){
-						task.setEndTime(DateChecker.findDate(1));
+						int interval = 1;
+						task.setEndTime(DateChecker.findDate(interval));
 
 						String writtenDate = formatToString.format(task.getEndTime());
 						task.setEndTime(DateChecker.writeTime(writtenDate, time));
@@ -645,14 +646,40 @@ public class Parser {
 			
 			if(dateTime[0] == null && dateTime[1] != null){
 				time = DateChecker.convertAmPmToTime(dateTime[1]);
+				Calendar cal = Calendar.getInstance();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				String today = sdf.format(new Date());
+				Date todayDate = DateChecker.writeTime(today, time);
+
 				task.setEndTime(DateChecker.writeTime(stringDate, time));
 				task.setCategory(Category.DEADLINE);
+				
+				if(cal.getTime().after(todayDate)){
+					int interval = 7;
+					task.setEndTime(DateChecker.findDate(interval));
+
+					String writtenDate = formatToString.format(task.getEndTime());
+					task.setEndTime(DateChecker.writeTime(writtenDate, time));
+				}
 			} else if(dateTime[0] != null && dateTime[1] != null){
 				time = DateChecker.convertAmPmToTime(dateTime[1]);
+				Calendar cal = Calendar.getInstance();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				String today = sdf.format(new Date());
+				Date todayDate = DateChecker.writeTime(today, time);
+
 				task.setEndTime(DateChecker.writeTime(dateTime[0], time));
 				task.setCategory(Category.DEADLINE);
+				
+				if(cal.getTime().after(todayDate)){
+					int interval = 7;
+					task.setEndTime(DateChecker.findDate(interval));
+
+					String writtenDate = formatToString.format(task.getEndTime());
+					task.setEndTime(DateChecker.writeTime(writtenDate, time));
+				}
 			}
-	
+			
 			return task;
 
 		} else if(preposition.equalsIgnoreCase("from")){
@@ -824,7 +851,6 @@ public class Parser {
 			dateTime[0] = date.substring(matchedLastSpace[1], date.length());
 					
 		} else if(matchedColumn[1] > matchedLastSpace[1]){
-			startIndex = matchedLastSpace[0];
 			endIndex = date.length();
 			dateTime[0] = date.substring(0,matchedLastSpace[0]).trim();
 		}
