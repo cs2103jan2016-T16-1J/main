@@ -2,6 +2,11 @@ package main;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.LayoutManager;
+import java.awt.ScrollPane;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
@@ -40,6 +45,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -54,6 +60,20 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import java.awt.Font;
+import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.RowSpec;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.BoxLayout;
+
+import java.awt.Component;
 
 
 public class MainWindow {
@@ -70,6 +90,7 @@ public class MainWindow {
 	private JTable calendarTable;
 	private JPanel calendarPanel;
 	private JPanel infoPanel;
+	private JPanel infoSectionWrapper;
 	private static JTextArea actionsTextArea;
 	
 	private static Color navbarColor;
@@ -94,15 +115,10 @@ public class MainWindow {
 	static DefaultTableModel mtblCalendar; //Table model
 	static JScrollPane stblCalendar; //The scrollpane
 	static JScrollPane areaScrollPane;	//text area scrollpane
+	static JScrollPane infoScrollPane;
 	static JPanel pnlCalendar; //The panel
 	static int realDay, realMonth, realYear, currentMonth, currentYear;
 	private RowNumberTable rowHeaderTable;
-	private JLabel lblInfoEventDescription;
-	private JLabel lblInfoEventStartTime;
-	private JLabel lblInfoEventEndTime;
-	private JLabel lblInfoEventCategory;
-	private JLabel lblInfoEventName;
-	private JLabel lblInfoEventLocation;
 	private JToggleButton toggleButton;
 	
 
@@ -291,69 +307,143 @@ public class MainWindow {
 	
 	private void initializeInfoSection() {
 		infoPanel = new JPanel();
+		infoPanel.setBackground(lightGray);
+		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+		
 		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
 		infoPanel.setBounds(119, 0, 286, 761);
-		infoPanel.setBackground(lightGray);
-		frame.getContentPane().add(infoPanel);
 		
-		lblInfoEventName = new JLabel("PLACEHOLDER");
+		frame.getContentPane().add(infoPanel);	
+	}
+	
+	private void displayEventDetails(Event currentEvent) {	
+		JPanel infoSectionWrapper = new JPanel();
+		infoSectionWrapper.setLayout(null);
+		infoSectionWrapper.setSize(new Dimension(infoPanel.getWidth(), 200));
+		infoSectionWrapper.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.RED));
+		
+		infoPanel.add(infoSectionWrapper);
+		
+		addEventDetails(infoSectionWrapper, currentEvent);	
+	}
+	
+	private void displayMultipleEventsDetails(ArrayList<Event> events) {
+		JPanel infoSectionWrapper = new JPanel();
+		infoSectionWrapper.setLayout(null);
+		infoSectionWrapper.setSize(new Dimension(infoPanel.getWidth(), 200));
+		infoSectionWrapper.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.RED));
+		
+		infoPanel.add(infoSectionWrapper);
+		int counter = 0;
+		for (Event currentEvent : events) {
+			addEventDetails(infoSectionWrapper, currentEvent, counter);
+			counter++;
+			if (counter >= 6) {
+				break;
+			}
+		}
+	}
+	
+	private void addEventDetails(JPanel wrapper, Event currentEvent) {
+		this.addEventDetails(wrapper, currentEvent, 0);
+	}
+	
+	private void addEventDetails(JPanel wrapper, Event currentEvent, int elementNumber) {		
+		JPanel currentPanel = new JPanel();
+		currentPanel.setBounds(0, 113 * elementNumber, infoPanel.getWidth(), 113);
+		GridBagLayout layout = new GridBagLayout();
+		currentPanel.setLayout(layout);
+		
+		GridBagConstraints c = new GridBagConstraints();
+	    c.ipady = 5;      //make this component tall
+	    c.gridwidth = 5;
+	    c.gridx = 0;
+	    c.gridy = 0;
+		
+		JLabel lblInfoEventName = createInfoLabelTitle(currentEvent, elementNumber);
+		layout.setConstraints(lblInfoEventName, c);
+		currentPanel.add(lblInfoEventName);
+		
+		JLabel lblInfoEventDescription = createInfoLabelDescription(currentEvent);
+		c.gridy = 1;
+		layout.setConstraints(lblInfoEventDescription, c);
+		currentPanel.add(lblInfoEventDescription);
+		
+		JLabel lblInfoEventLocation = createInfoLabelLocation(currentEvent);
+		c.gridy = 2;
+		layout.setConstraints(lblInfoEventLocation, c);
+		currentPanel.add(lblInfoEventLocation);
+		
+		JLabel lblInfoEventStartTime = createInfoLabelStartTime(currentEvent);
+		c.gridy = 3;
+		layout.setConstraints(lblInfoEventStartTime, c);
+		currentPanel.add(lblInfoEventStartTime);
+		
+		JLabel lblInfoEventEndTime = createInfoLabelEndTime(currentEvent);
+		c.gridy = 4;
+		layout.setConstraints(lblInfoEventEndTime, c);
+		currentPanel.add(lblInfoEventEndTime);
+		
+		JLabel lblInfoEventCategory = createInfoLabelCategory(currentEvent);
+		c.gridy = 5;
+		layout.setConstraints(lblInfoEventCategory, c);
+		currentPanel.add(lblInfoEventCategory);
+		
+		wrapper.add(currentPanel);
+	}
+
+	private JLabel createInfoLabelCategory(Event currentEvent) {
+		JLabel lblInfoEventCategory = new JLabel(currentEvent.getCategory().toString());
+		lblInfoEventCategory.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventCategory.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventCategory.setForeground(fontColor);
+		return lblInfoEventCategory;
+	}
+
+	private JLabel createInfoLabelEndTime(Event currentEvent) {
+		JLabel lblInfoEventEndTime = new JLabel(currentEvent.getEndTime().toString());
+		lblInfoEventEndTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventEndTime.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventEndTime.setForeground(fontColor);
+		return lblInfoEventEndTime;
+	}
+
+	private JLabel createInfoLabelStartTime(Event currentEvent) {
+		JLabel lblInfoEventStartTime = new JLabel(currentEvent.getStartTime().toString());
+		lblInfoEventStartTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventStartTime.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventStartTime.setForeground(fontColor);
+		return lblInfoEventStartTime;
+	}
+
+	private JLabel createInfoLabelLocation(Event currentEvent) {
+		JLabel lblInfoEventLocation = new JLabel(currentEvent.getLocation());
+		lblInfoEventLocation.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventLocation.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventLocation.setForeground(fontColor);
+		return lblInfoEventLocation;
+	}
+
+	private JLabel createInfoLabelDescription(Event currentEvent) {
+		JLabel lblInfoEventDescription = new JLabel(currentEvent.getDescription());
+		lblInfoEventDescription.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventDescription.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfoEventDescription.setForeground(fontColor);
+		return lblInfoEventDescription;
+	}
+
+	private JLabel createInfoLabelTitle(Event currentEvent, int id) {
+		String title = String.format("[%d] %s", id + 1, currentEvent.getName());
+		JLabel lblInfoEventName = new JLabel(title);
 		lblInfoEventName.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblInfoEventName.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventName.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
-		lblInfoEventName.setBounds(0, 0, 286, 45);
 		lblInfoEventName.setForeground(fontColor);
-		infoPanel.add(lblInfoEventName);
-		
-		lblInfoEventDescription = new JLabel("PLACEHOLDER");
-		lblInfoEventDescription.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblInfoEventDescription.setHorizontalAlignment(SwingConstants.CENTER);
-		lblInfoEventDescription.setBounds(0, 54, 286, 40);
-		lblInfoEventDescription.setForeground(fontColor);
-		infoPanel.add(lblInfoEventDescription);
-		
-		lblInfoEventLocation = new JLabel("PLACEHOLDER");
-		lblInfoEventLocation.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblInfoEventLocation.setHorizontalAlignment(SwingConstants.CENTER);
-		lblInfoEventLocation.setBounds(0, 100, 286, 14);
-		lblInfoEventLocation.setForeground(fontColor);
-		infoPanel.add(lblInfoEventLocation);
-		
-		lblInfoEventStartTime = new JLabel("PLACEHOLDER");
-		lblInfoEventStartTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblInfoEventStartTime.setHorizontalAlignment(SwingConstants.CENTER);
-		lblInfoEventStartTime.setBounds(0, 120, 286, 14);
-		lblInfoEventStartTime.setForeground(fontColor);
-		infoPanel.add(lblInfoEventStartTime);
-		
-		lblInfoEventEndTime = new JLabel("PLACEHOLDER");
-		lblInfoEventEndTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblInfoEventEndTime.setHorizontalAlignment(SwingConstants.CENTER);
-		lblInfoEventEndTime.setBounds(0, 140, 286, 14);
-		lblInfoEventEndTime.setForeground(fontColor);
-		infoPanel.add(lblInfoEventEndTime);
-		
-		lblInfoEventCategory = new JLabel("PLACEHOLDER");
-		lblInfoEventCategory.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		lblInfoEventCategory.setHorizontalAlignment(SwingConstants.CENTER);
-		lblInfoEventCategory.setBounds(0, 160, 286, 14);
-		lblInfoEventCategory.setForeground(fontColor);
-		infoPanel.add(lblInfoEventCategory);
-		
-		infoPanel.setLayout(null);		
+		return lblInfoEventName;
 	}
 	
-	private void displayEventDetails(Event currentEvent) {
-		lblInfoEventName.setText(currentEvent.getName());
+	private void createLabelTitleInfo() {
 		
-		lblInfoEventDescription.setText(currentEvent.getDescription());
-		
-		lblInfoEventLocation.setText(currentEvent.getLocation());
-		
-		lblInfoEventStartTime.setText(currentEvent.getStartTime().toString());
-		
-		lblInfoEventEndTime.setText(currentEvent.getEndTime().toString());
-		
-		lblInfoEventCategory.setText(currentEvent.getCategory().toString());
 	}
 	
 	private void initializeMainTab() {
@@ -377,34 +467,9 @@ public class MainWindow {
 		
 		textField.addKeyListener(new ChangeMonthListener());
 		
-		Action inputAction = getInputAction();
-		textField.addActionListener(inputAction);
 		textField.setColumns(10);
-		textField.setBounds(10, 600, 1100, 20);
+		textField.setBounds(10, 730, 1100, 20);
 		mainTab.add(textField);
-	}
-	
-	private Action getInputAction() {
-		Action action = new AbstractAction()
-		{
-		    @Override
-		    public void actionPerformed(ActionEvent e)
-		    {
-		    	String inputString = textField.getText() + NEW_LINE;
-		    	textField.setText(EMPTY_STRING);
-		    	actionsTextArea.setText(inputString);
-		    	
-		    	//calling controller
-		    	try {
-					currentState = mainController.executeCommand(inputString);
-				} catch (IOException | JSONException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-		    	renderCalendar();
-		    }
-		};
-		return action;
 	}
 	
 	private class ChangeMonthListener implements KeyListener {
@@ -451,6 +516,8 @@ public class MainWindow {
 		
 		tblCalendar.removeAll();
 		
+		infoPanel.removeAll();
+		
 		refreshMonth();
 
 		ArrayList<Event> displayedEvents = currentState.displayedEvents;
@@ -463,16 +530,18 @@ public class MainWindow {
 	    	}
 		}
 		
-		tblCalendar.validate();
+	
+		if (currentState.hasSingleEventSelected()) {
+			displayEventDetails(currentState.getSingleSelectedEvent());
+		} else if (currentState.hasMultipleEventSelected()) {
+			displayMultipleEventsDetails(currentState.getAllSelectedEvents());
+		}
+		
+		tblCalendar.revalidate();
 		tblCalendar.repaint();
-		
-		stblCalendar.validate();
-		stblCalendar.repaint();
-		
-		calendarPanel.validate();
-		calendarPanel.repaint();
-		
-    	displayEventDetails(currentState.selectedEvent);
+    	
+		infoPanel.revalidate();
+		infoPanel.repaint();
 	}
 	
 	private void initializeOutputField() {
@@ -513,7 +582,8 @@ public class MainWindow {
 		mtblCalendar = getDefaultTableModel();
 		tblCalendar = new JTable(mtblCalendar); //Table using the above model
 		tblCalendar.setGridColor(borderColor);
-		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table
+		stblCalendar = new JScrollPane(tblCalendar); //The scrollpane of the above table`
+		
 		stblCalendar.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		stblCalendar.setBackground(Color.WHITE);
 		stblCalendar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
