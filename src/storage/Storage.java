@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import constant.Constant;
 import json.*;
 
 /**
@@ -273,14 +274,18 @@ public class Storage {
 	}
 	
 	private GenericEvent.Category getCategory(JSONObject jsonObj) throws JSONException{
-		if (jsonObj.get("category").equals("DEADLINE")){
+		if (jsonObj.get("category").equals(Constant.CATEGORY_DEADLINE)){
 			return GenericEvent.Category.DEADLINE;
-		} else if (jsonObj.get("category").equals("EVENT")){
+		} else if (jsonObj.get("category").equals(Constant.CATEGORY_EVENT)){
 			return GenericEvent.Category.EVENT;
-		} else if (jsonObj.get("category").equals("FLOATING")){
+		} else if (jsonObj.get("category").equals(Constant.CATEGORY_FLOATING)){
 			return GenericEvent.Category.FLOATING;
-		} else {
-			return GenericEvent.Category.UNDETERMINED;
+		} else if (jsonObj.get("category").equals(Constant.CATEGORY_UNDETERMINED_EVENT)){
+			return GenericEvent.Category.UNDETERMINED_EVENT;
+		}  else if (jsonObj.get("category").equals(Constant.CATEGORY_UNDETERMINED_DEADLINE)){
+			return GenericEvent.Category.UNDETERMINED_DEADLINE;
+		} else{
+			return GenericEvent.Category.UNDETERMINED_FLOATING;
 		}
 	}
 

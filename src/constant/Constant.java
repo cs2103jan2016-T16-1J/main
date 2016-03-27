@@ -14,7 +14,10 @@ public class Constant {
 	public static final String CATEGORY_EVENT = "EVENT";
 	public static final String CATEGORY_DEADLINE = "DEADLINE";
 	public static final String CATEGORY_FLOATING = "FLOATING";
-	public static final String CATEGORY_UNDETERMINED = "UNDETERMINED";
+	public static final String CATEGORY_UNDETERMINED_EVENT = "UNDETERMINED_EVENT";
+	public static final String CATEGORY_UNDETERMINED_DEADLINE = "UNDETERMINED_DEADLINE";
+	public static final String CATEGORY_UNDETERMINED_FLOATING = "UNDETERMINED_FLOATING";
+	
 	public static final GenericEvent.Category CATEGORY_NULL = GenericEvent.Category.NULL;
 	
 	public static final String STATUS_INCOMPLETE = "EVENT";

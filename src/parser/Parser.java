@@ -97,13 +97,11 @@ public class Parser {
 			cmdInterface = new Select(event);
 		} else if(tempCmd == CommandType.BLOCK){
 			event = decodeAddData(event, removeFirstWord(input));
-			event.setCategory(GenericEvent.Category.UNDETERMINED);
 			isBlock = true;
 			oldEvent = event;
 			cmdInterface = new Add(event);
 		} else if(tempCmd == CommandType.UNBLOCK){
 			event = decodeDeleteData(event, removeFirstWord(input));
-			event.setCategory(GenericEvent.Category.UNDETERMINED);
 			oldEvent = event;
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.UNDO){
@@ -136,9 +134,6 @@ public class Parser {
 		} else if(tempCmd == CommandType.ADD){
 			oldEvent = decodeAddData(task, removeFirstWord(input));
 			return oldEvent;
-		} else if(tempCmd == CommandType.SEARCH){
-			oldEvent = null;
-			return decodeSearchData(task, removeFirstWord(input));
 		} else if(tempCmd == CommandType.DELETE){
 			oldEvent = null;
 			return decodeDeleteData(task, removeFirstWord(input));
@@ -158,7 +153,6 @@ public class Parser {
 			return task;
 		} else if(tempCmd == CommandType.BLOCK){
 			task = decodeAddData(task, removeFirstWord(input));
-			task.setCategory(GenericEvent.Category.UNDETERMINED);
 			isBlock = true;
 			oldEvent = task;
 			return task;
@@ -171,6 +165,18 @@ public class Parser {
 			return task;
 		}
 		return null;
+	}
+
+
+	private GenericEvent setCategoryForBlockedEvent(Event task) {
+		if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() == Constant.MAX_DATE){
+			task.setCategory(GenericEvent.Category.UNDETERMINED_FLOATING);
+		} else if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() != Constant.MAX_DATE){
+			task.setCategory(GenericEvent.Category.UNDETERMINED_DEADLINE);
+		} else if(task.getStartTime() != Constant.MIN_DATE && task.getEndTime() != Constant.MAX_DATE){
+			task.setCategory(GenericEvent.Category.UNDETERMINED_EVENT);
+		}
+		return task;
 	}
 	/**
 	 * This method finds the pattern provided which is used in data extraction
@@ -228,11 +234,15 @@ public class Parser {
 			return GenericEvent.Category.EVENT;
 		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_FLOATING)){
 			return GenericEvent.Category.FLOATING;
-		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_UNDETERMINED)){
-			return GenericEvent.Category.UNDETERMINED;
-		} 
+		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_UNDETERMINED_DEADLINE)){
+			return GenericEvent.Category.UNDETERMINED_DEADLINE;
+		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_UNDETERMINED_EVENT)){
+			return GenericEvent.Category.UNDETERMINED_EVENT;
+		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_UNDETERMINED_FLOATING)){
+			return GenericEvent.Category.UNDETERMINED_FLOATING;
+		}
 		
-		return null;
+		return GenericEvent.Category.NULL;
 	}
 	
 	private GenericEvent.Status classifyStatus(String userInput){
