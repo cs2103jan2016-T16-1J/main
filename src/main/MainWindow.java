@@ -264,7 +264,6 @@ public class MainWindow {
 		frame.setBounds(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		frame.addKeyListener(new ChangeMonthListener());
 	}
 	
 	private void initializeTabButtons() {
@@ -414,19 +413,37 @@ public class MainWindow {
 		    }
 
 	    public void keyPressed(KeyEvent e) {
-	        // Invoked when a key has been pressed.
-	        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-	        	calendarInstance.add(Calendar.DAY_OF_YEAR, DISPLAYED_DAYS_NUM);
-	        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-	        	calendarInstance.add(Calendar.DAY_OF_YEAR, -DISPLAYED_DAYS_NUM);
-	        }
-        	rowHeaderTable.setCalendarInstance(calendarInstance);
-        	rowHeaderTable.refresh();
-        	renderCalendar();
+
 	    }
 
 	    public void keyReleased(KeyEvent e) {
-	        // Invoked when a key has been released.
+	    	boolean actionTaken = false;
+	        // Invoked when a key has been pressed.
+	        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+	        	calendarInstance.add(Calendar.DAY_OF_YEAR, DISPLAYED_DAYS_NUM);
+	        	actionTaken = true;
+	        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+	        	calendarInstance.add(Calendar.DAY_OF_YEAR, -DISPLAYED_DAYS_NUM);
+	        	actionTaken = true;
+	        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		    	String inputString = textField.getText() + NEW_LINE;
+		    	textField.setText(EMPTY_STRING);
+		    	actionsTextArea.setText(inputString);
+		    	
+		    	//calling controller
+		    	try {
+					currentState = mainController.executeCommand(inputString);
+					actionTaken = true;
+				} catch (IOException | JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+	        }
+	        if (actionTaken) {
+	        	rowHeaderTable.setCalendarInstance(calendarInstance);
+	        	rowHeaderTable.refresh();
+	        	renderCalendar();
+	        }
 	    }
 	}
 	
