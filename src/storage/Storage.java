@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 
 import main.Event;
-import main.Event.Category;
-import main.Event.Status;
+import main.GenericEvent;
+import main.GenericEvent.Category;
+import main.GenericEvent.Status;
 import main.State;
 
 import java.io.FileNotFoundException;
@@ -162,11 +163,11 @@ public class Storage {
 	
 
 	private void storageToState(State state, Event event) {
-		if (event.getStatus() == Status.COMPLETE){
+		if (event.getStatus() == GenericEvent.Status.COMPLETE){
 			state.addToCompletedList(event);
-		} else if (event.getStatus() == Status.INCOMPLETE){
+		} else if (event.getStatus() == GenericEvent.Status.INCOMPLETE){
 			state.addToIncompletedList(event);
-		} else if (event.getStatus() == Status.FLOATING){
+		} else if (event.getStatus() == GenericEvent.Status.FLOATING){
 			state.addToFloatingList(event);
 		}
 	}
@@ -196,7 +197,7 @@ public class Storage {
 			jsonObj.put("status", event.getStatus());
 			jsonObj.put("location", event.getLocation());
 			
-			if (event.getCategory().equals(Category.DEADLINE)){
+			if (event.getCategory().equals(GenericEvent.Category.DEADLINE)){
 				jsonObj.put("startTime", deadLine);
 			} else {
 				jsonObj.put("startTime", event.getStartTime());
@@ -257,29 +258,29 @@ public class Storage {
 		return event;
 	}
 	
-	private Event.Status getStatus(JSONObject jsonObj) throws JSONException{
+	private GenericEvent.Status getStatus(JSONObject jsonObj) throws JSONException{
 		if (jsonObj.get("status").equals("COMPLETE")){
-			return Event.Status.COMPLETE;
+			return GenericEvent.Status.COMPLETE;
 		} else if (jsonObj.get("status").equals("INCOMPLETE")){
-			return Event.Status.INCOMPLETE;
+			return GenericEvent.Status.INCOMPLETE;
 		} else if (jsonObj.get("status").equals("BLOCKED")){
-			return Event.Status.BLOCKED;
+			return GenericEvent.Status.BLOCKED;
 		} else if (jsonObj.get("status").equals("OVERDUE")){
-			return Event.Status.OVERDUE;
+			return GenericEvent.Status.OVERDUE;
 		} else {
-			return Event.Status.FLOATING;
+			return GenericEvent.Status.FLOATING;
 		}
 	}
 	
-	private Event.Category getCategory(JSONObject jsonObj) throws JSONException{
+	private GenericEvent.Category getCategory(JSONObject jsonObj) throws JSONException{
 		if (jsonObj.get("category").equals("DEADLINE")){
-			return Event.Category.DEADLINE;
+			return GenericEvent.Category.DEADLINE;
 		} else if (jsonObj.get("category").equals("EVENT")){
-			return Event.Category.EVENT;
+			return GenericEvent.Category.EVENT;
 		} else if (jsonObj.get("category").equals("FLOATING")){
-			return Event.Category.FLOATING;
+			return GenericEvent.Category.FLOATING;
 		} else {
-			return Event.Category.UNDETERMINED;
+			return GenericEvent.Category.UNDETERMINED;
 		}
 	}
 

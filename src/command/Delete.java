@@ -7,8 +7,9 @@ import constant.Constant;
 import json.JSONException;
 import main.Event;
 import main.State;
-import main.Event.Category;
-import main.Event.Status;
+import main.GenericEvent;
+import main.GenericEvent.Category;
+import main.GenericEvent.Status;
 import storage.Storage;
 
 /**
@@ -145,9 +146,9 @@ public class Delete implements Command{
 				isStringMatching(currentEvent.getLocation(), selectedParameters.getLocation()) &&
 				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
 				&&
-				isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory())&&
+				//isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory())&&
 				isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
-				&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
+				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
 				;
 		
 		
@@ -156,7 +157,7 @@ public class Delete implements Command{
 		
 	}
 	
-	private boolean isStatusMatching(Status eventStatus, Status paramStatus){
+	private boolean isStatusMatching(GenericEvent.Status eventStatus, GenericEvent.Status paramStatus){
 		if(paramStatus == Constant.STATUS_NULL){
 			return true;
 		}
@@ -164,7 +165,7 @@ public class Delete implements Command{
 		
 	}
 	
-	private boolean isCategoryMatching(Category eventCategory, Category paramCategory){
+	private boolean isCategoryMatching(GenericEvent.Category eventCategory, GenericEvent.Category paramCategory){
 		if(paramCategory == Constant.CATEGORY_NULL){
 			return true;
 		}
