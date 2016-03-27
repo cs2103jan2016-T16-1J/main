@@ -360,7 +360,7 @@ public class MainWindow {
 	    c.gridx = 0;
 	    c.gridy = 0;
 		
-		JLabel lblInfoEventName = createInfoLabelTitle(currentEvent);
+		JLabel lblInfoEventName = createInfoLabelTitle(currentEvent, elementNumber);
 		layout.setConstraints(lblInfoEventName, c);
 		currentPanel.add(lblInfoEventName);
 		
@@ -432,8 +432,9 @@ public class MainWindow {
 		return lblInfoEventDescription;
 	}
 
-	private JLabel createInfoLabelTitle(Event currentEvent) {
-		JLabel lblInfoEventName = new JLabel(currentEvent.getName());
+	private JLabel createInfoLabelTitle(Event currentEvent, int id) {
+		String title = String.format("[%d] %s", id + 1, currentEvent.getName());
+		JLabel lblInfoEventName = new JLabel(title);
 		lblInfoEventName.setFont(new Font("Tahoma", Font.BOLD, 16));
 		lblInfoEventName.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventName.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
@@ -467,7 +468,7 @@ public class MainWindow {
 		textField.addKeyListener(new ChangeMonthListener());
 		
 		textField.setColumns(10);
-		textField.setBounds(10, 600, 1100, 20);
+		textField.setBounds(10, 730, 1100, 20);
 		mainTab.add(textField);
 	}
 	
