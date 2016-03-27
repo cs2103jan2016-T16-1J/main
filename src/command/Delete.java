@@ -7,8 +7,9 @@ import constant.Constant;
 import json.JSONException;
 import main.Event;
 import main.State;
-import main.Event.Category;
-import main.Event.Status;
+import main.GenericEvent;
+import main.GenericEvent.Category;
+import main.GenericEvent.Status;
 import storage.Storage;
 
 /**
@@ -156,16 +157,16 @@ public class Delete implements Command{
 		
 	}
 	
-	private boolean isStatusMatching(Status eventStatus, Status paramStatus){
-		if(paramStatus.equals(Constant.STATUS_NULL)){
+	private boolean isStatusMatching(GenericEvent.Status eventStatus, GenericEvent.Status paramStatus){
+		if(paramStatus == Constant.STATUS_NULL){
 			return true;
 		}
 		return eventStatus == paramStatus;
 		
 	}
 	
-	private boolean isCategoryMatching(String eventCategory, String paramCategory){
-		if(paramCategory.equals(Constant.CATEGORY_NULL)){
+	private boolean isCategoryMatching(GenericEvent.Category eventCategory, GenericEvent.Category paramCategory){
+		if(paramCategory == Constant.CATEGORY_NULL){
 			return true;
 		}
 		return eventCategory == paramCategory;

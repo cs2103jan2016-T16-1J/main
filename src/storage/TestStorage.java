@@ -11,8 +11,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import org.junit.Test;
 import main.Event;
-import main.Event.Category;
-import main.Event.Status;
+import main.GenericEvent;
+import main.GenericEvent.Category;
+import main.GenericEvent.Status;
 import main.State;
 
 public class TestStorage {
@@ -135,11 +136,11 @@ public class TestStorage {
 		String startTime = "Sun Mar 27 00:00:00 SGT 2016";
 		String endTime = "Sun Mar 27 23:59:00 SGT 2016";
 		
-		testIncompletedEvent.setCategory(Category.EVENT);
+		testIncompletedEvent.setCategory(GenericEvent.Category.EVENT);
 		testIncompletedEvent.setDescription("project manual");
 		testIncompletedEvent.setLocation("NUS");
 		testIncompletedEvent.setName("CS2103");
-		testIncompletedEvent.setStatus(Status.INCOMPLETE);
+		testIncompletedEvent.setStatus(GenericEvent.Status.INCOMPLETE);
 		try {
 			testIncompletedEvent.setStartTime(sdf.parse(startTime));
 			testIncompletedEvent.setEndTime(sdf.parse(endTime));
@@ -155,11 +156,11 @@ public class TestStorage {
 		String startTime = "Sun Mar 27 00:00:00 SGT 2016";
 		String endTime = "Sun Mar 27 23:59:00 SGT 2016";
 		
-		testCompletedEvent.setCategory(Category.EVENT);
+		testCompletedEvent.setCategory(GenericEvent.Category.EVENT);
 		testCompletedEvent.setDescription("project manual");
 		testCompletedEvent.setLocation("NUS");
 		testCompletedEvent.setName("CS2103");
-		testCompletedEvent.setStatus(Status.COMPLETE);
+		testCompletedEvent.setStatus(GenericEvent.Status.COMPLETE);
 		try {
 			testCompletedEvent.setStartTime(sdf.parse(startTime));
 			testCompletedEvent.setEndTime(sdf.parse(endTime));
@@ -175,11 +176,11 @@ public class TestStorage {
 		String startTime = "Sun Mar 27 00:00:00 SGT 2016";
 		String endTime = "Sun Mar 27 23:59:00 SGT 2016";
 		
-		testFloatingEvent.setCategory(Category.EVENT);
+		testFloatingEvent.setCategory(GenericEvent.Category.EVENT);
 		testFloatingEvent.setDescription("project manual");
 		testFloatingEvent.setLocation("NUS");
 		testFloatingEvent.setName("CS2103");
-		testFloatingEvent.setStatus(Status.FLOATING);
+		testFloatingEvent.setStatus(GenericEvent.Status.FLOATING);
 		try {
 			testFloatingEvent.setStartTime(sdf.parse(startTime));
 			testFloatingEvent.setEndTime(sdf.parse(endTime));
