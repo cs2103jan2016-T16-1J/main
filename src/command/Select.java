@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import json.JSONException;
 import main.Event;
+import main.Event.Category;
 import main.Event.Status;
 import main.State;
 
@@ -75,14 +76,22 @@ public class Select implements Command{
 				isStringMatching(currentEvent.getLocation(), selectedParameters.getLocation()) &&
 				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
 				&&
-				//isStringMatching(currentEvent.getCategory(), selectedParameters.getCategory()) &&
+				isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory()) &&
 				isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
-				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
+				&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
 				;
 		
 		
 		
 		return isMatch;
+		
+	}
+	
+	private boolean isCategoryMatching(Category eventCategory, Category paramCategory){
+		if(paramCategory.equals(Constant.CATEGORY_NULL)){
+			return true;
+		}
+		return eventCategory == paramCategory;
 		
 	}
 	
