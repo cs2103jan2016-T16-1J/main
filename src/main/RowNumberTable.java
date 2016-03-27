@@ -22,18 +22,24 @@ public class RowNumberTable extends JTable
 {
 	private JTable main;
 	
+	private TableColumn column;
+	private Calendar calendarInstance;
+	private int numberOfDays;
+	
 	public RowNumberTable(JTable table, Calendar calendarInstance, int numberOfDays)
 	{
 		this.main = table;
+		this.calendarInstance = calendarInstance;
+		this.numberOfDays = numberOfDays;
 		main.addPropertyChangeListener( this );
 		main.getModel().addTableModelListener( this );
 
 		setFocusable( false );
 		setAutoCreateColumnsFromModel( false );
-		setSelectionModel( main.getSelectionModel() );
+		setSelectionModel(main.getSelectionModel() );
 
 
-		TableColumn column = new TableColumn();
+		this.column = new TableColumn();
 		column.setHeaderValue("");
 		addColumn( column );
 		column.setCellRenderer(new RowNumberRenderer(calendarInstance, numberOfDays));
@@ -41,6 +47,9 @@ public class RowNumberTable extends JTable
 		getColumnModel().getColumn(0).setPreferredWidth(50);
 		setPreferredScrollableViewportSize(getPreferredSize());
 	}
+	
+
+	
 	
 	
 	@Override
@@ -152,6 +161,17 @@ public class RowNumberTable extends JTable
 	/*
 	 *  Attempt to mimic the table header renderer
 	 */
+	
+	public void setCalendarInstance(Calendar calendarInstance) {
+		this.calendarInstance = calendarInstance;
+	}
+	
+	public void refresh() {
+		column.setCellRenderer(new RowNumberRenderer(calendarInstance, numberOfDays));
+		getColumnModel().getColumn(0).setPreferredWidth(50);
+		setPreferredScrollableViewportSize(getPreferredSize());
+	}
+	
 	private static class RowNumberRenderer extends DefaultTableCellRenderer
 	{
 		private Calendar calendarInstance;
