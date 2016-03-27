@@ -198,7 +198,6 @@ public class Storage {
 			
 			if (event.getCategory().equals(Category.DEADLINE)){
 				jsonObj.put("startTime", deadLine);
-				System.out.println("yes!!!!");
 			} else {
 				jsonObj.put("startTime", event.getStartTime());
 			}
