@@ -74,6 +74,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.BoxLayout;
 
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 
 
 public class MainWindow {
@@ -120,7 +121,9 @@ public class MainWindow {
 	static int realDay, realMonth, realYear, currentMonth, currentYear;
 	private RowNumberTable rowHeaderTable;
 	private JToggleButton toggleButton;
-	
+	private JLabel lblGuidance;
+	private JLabel lblInfoEventName;
+	private JTextArea lblAdd;
 
 
 	/**
@@ -234,7 +237,7 @@ public class MainWindow {
 		
 		initializeTabButtons();
 		
-		initializeInfoSection();
+		//initializeInfoSection();
 		
 		initializeMainTab();
 				
@@ -243,6 +246,9 @@ public class MainWindow {
 		initializeOutputField();
 		
 		initializeCalendar();
+		
+		initializeInfoSection();
+		initializeInfoSection();
 		
 		
 	}
@@ -303,6 +309,7 @@ public class MainWindow {
 		tglbtnNewToggleButton_2.setBackground(buttonColor);
 		tglbtnNewToggleButton_2.setBounds(0, 34, 119, 34);
 		frame.getContentPane().add(tglbtnNewToggleButton_2);
+		
 	}
 	
 	private void initializeInfoSection() {
@@ -313,6 +320,48 @@ public class MainWindow {
 		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
 		infoPanel.setBounds(119, 0, 286, 761);
 		
+		
+		
+		lblGuidance = new JLabel("Guidance");
+		lblGuidance.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblGuidance.setHorizontalAlignment(JLabel.LEFT);
+		lblGuidance.setAlignmentX(Component.LEFT_ALIGNMENT);
+		lblGuidance.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
+		lblGuidance.setBounds(0, 0, 286, 45);
+		lblGuidance.setForeground(fontColor);
+		infoPanel.add(lblGuidance);
+		
+		
+		String text = "ADD FORMAT\n" +
+	            "    add [Task name] [Time] [Location]\n" +
+	            "    E.g.add meeting on sunday\n" +
+	            "          add brunch by wed 3 am\n" +
+	            "          add drive from tues 3 am to tues 4 pm\n" +
+	            "          add viewing at \'Garden by the bay\'\n" +
+	            "          add \"travel from Tokyo to Osaka\" from" +
+	            "                   17/4/16 17:00 to 20/4/16 19:00\n" +
+	            "(*if task name or location contains preposition need to "
+	            + "enclose it with single quote or double quote)\n\n" +
+	           
+	            "EDIT FORMAT\n" +
+	            "    edit [Task name]/[Time]/[Location]\n" +
+	            "    E.g. edit this thing\n\n" + 
+	            
+	            "SELECT FORMAT\n" +
+	            "    select [Task name]/ select[Index]\n" +
+	            "    E.g. select meething\n"
+	            ;
+	  
+	    JTextArea textArea = new JTextArea();
+	    textArea.setLineWrap(true);
+	    textArea.setWrapStyleWord(true);
+	    textArea.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+	    textArea.setText(text);
+	    textArea.setBackground(lightGray);
+	    textArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
+	    textArea.setForeground(fontColor);
+	    infoPanel.add(textArea);
+	        
 		frame.getContentPane().add(infoPanel);	
 	}
 	
