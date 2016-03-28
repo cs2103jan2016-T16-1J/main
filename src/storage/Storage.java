@@ -38,7 +38,7 @@ import json.*;
 
 public class Storage {
 	
-	public final static String storageFile =  ("./storage.txt");
+	public final static String storageFile =  ("./storage/storage.txt");
 	public final static String tempFileName = ("temp.txt");
 	
 	/** 

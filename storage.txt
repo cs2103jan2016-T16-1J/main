@@ -1,7 +1,0 @@
-{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"new","endTime":"Wed Mar 30 02:00:00 SGT 2016"}
-{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"event2","endTime":"Wed Mar 30 03:00:00 SGT 2016"}
-{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"event4","endTime":"Tue Mar 29 12:12:00 SGT 2016"}
-{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"event5","endTime":"Fri Apr 29 12:12:00 SGT 2016"}
-{"startTime":"Mon Mar 28 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"eventeventalsjdlaksjdlkasjdlksajdlkasjlkdjalksjdlkajskldjaklsjdkljasl","endTime":"Mon Mar 28 23:59:01 SGT 2016"}
-{"startTime":"Tue Mar 29 02:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"alskdjalskjdklasjdlkasjdlkasjdlkasjdlkjaslkdjklasjdklasjkld","endTime":"Tue Mar 29 16:00:00 SGT 2016"}
-{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"new","endTime":"Wed Mar 30 02:00:00 SGT 2016"}
