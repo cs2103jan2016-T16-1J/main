@@ -47,7 +47,7 @@ public class Add implements Command{
 		case INCOMPLETE:
 			addToIncompleteList();
 			break;
-		case FLOATING:
+		case UNDETERMINED:
 			addToFloatingList();
 			break;
 			
