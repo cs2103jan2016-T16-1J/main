@@ -23,5 +23,4 @@ public interface Command {
 	 */
 	public State execute(State completeState) throws IOException, JSONException;
 	
-	public void updatedDisplayedEvents();
 }

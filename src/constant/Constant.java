@@ -27,7 +27,7 @@ public class Constant {
 	public static final String STATUS_OVERDUE = "OVERDUE";
 	public static final GenericEvent.Status STATUS_NULL = GenericEvent.Status.NULL;
 	
-	public static final int UNDETERMINED_TAB = 1;
-	public static final int COMPLETED_TAB = 2;
-	public static final int INCOMPLETED_TAB = 3;
+	public static final int TAB_UNDETERMINED = 1;
+	public static final int TAB_COMPLETED = 2;
+	public static final int TAB_INCOMPLETE = 3;
 }

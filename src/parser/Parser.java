@@ -1,6 +1,5 @@
 package parser;
 
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
@@ -10,20 +9,21 @@ import command.Add;
 import command.Command;
 import command.Delete;
 import command.Edit;
+import command.Export;
 import command.Select;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import constant.CommandType;
 import constant.Constant;
 import main.Event;
 import main.GenericEvent;
+import main.ReservedEvent;
+import main.TimePair;
 import main.GenericEvent.Category;
-import main.GenericEvent.Status;
 
 public class Parser {
 
@@ -36,6 +36,7 @@ public class Parser {
 	private final String PATTERN_AT = "(\\bat\\b)";
 	private final String PATTERN_AT_OR_BY = "(\\b(at)\\b|\\b(by)\\b)";
 	private final String PATTERN_COLUMN = "(\\b(:)\\b)";
+	private final String PATTERN_AND = "(\\b(and)\\b|\\b(&)\\b)";
 	private final String PATTERN_FROM = "(\\bfrom\\b)";
 	private final String PATTERN_TO = "(\\bto\\b)";
 	private final String PATTERN_ON = "(\\bon\\b)";
@@ -56,51 +57,52 @@ public class Parser {
 	private final String TIME_MIDNIGHT = "00:00";
 	private final String ERROR_DATE_FORMAT = "The input date format is not supported";
 
+	private final String TAB_UNDETERMINED = "UNDETERMINE";
+	private final String TAB_COMPLETED = "COMPLETE";
+	private final String TAB_INCOMPLETE = "INCOMPLETE";
+
 	public Command parseCommand(String input){
 		Command cmdInterface = null;
-		Event event = new Event();
-
 		String command = getFirstWord(input);
 		CommandType tempCmd = getCommandType(command);
 
 		if (tempCmd == CommandType.INVALID){
+			Event event = new Event();
 			event = null;
 			oldEvent = null;
 		} else if(tempCmd == CommandType.ADD){
+			Event event = new Event();
 			event = decodeAddData(event, removeFirstWord(input));
 			oldEvent = event;
 			cmdInterface = new Add(event);
-		} else if(tempCmd == CommandType.SEARCH){
-			event =  decodeSearchData(event, removeFirstWord(input));
-			oldEvent = null;
 		} else if(tempCmd == CommandType.DELETE){
+			Event event = new Event();
 			event = decodeDeleteData(event, removeFirstWord(input));
 			oldEvent = null;
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.EDIT){
 			Event realOldEvent = new Event();
+			Event event = new Event();
 			event = oldEvent;
-			realOldEvent.setName(oldEvent.getName());
-			realOldEvent.setDescription(oldEvent.getDescription());
-			realOldEvent.setCategory(oldEvent.getCategory());
-			realOldEvent.setEndTime(oldEvent.getEndTime());
-			realOldEvent.setStartTime(oldEvent.getStartTime());
-			realOldEvent.setLocation(oldEvent.getLocation());
-			realOldEvent.setStatus(oldEvent.getStatus());
-			
+
+			realOldEvent = cloneEvent(oldEvent, realOldEvent);
+
 			isEdit = true;
 			event = decodeEditData(event , removeFirstWord(input));
 			cmdInterface = new Edit(realOldEvent, event);
 			oldEvent = event;
-		} else if(tempCmd == CommandType.SELECT){
+		} else if(tempCmd == CommandType.SELECT){		
+			Event event = new Event();
 			event = decodeSelectData(event, removeFirstWord(input));
 			cmdInterface = new Select(event);
 		} else if(tempCmd == CommandType.BLOCK){
+			Event event = new Event();
 			event = decodeAddData(event, removeFirstWord(input));
 			isBlock = true;
 			oldEvent = event;
 			cmdInterface = new Add(event);
 		} else if(tempCmd == CommandType.UNBLOCK){
+			Event event = new Event();
 			event = decodeDeleteData(event, removeFirstWord(input));
 			oldEvent = event;
 			cmdInterface = new Delete(event);
@@ -109,22 +111,30 @@ public class Parser {
 		} else if(tempCmd == CommandType.REDO){
 			
 		} else if(tempCmd == CommandType.CONFIRM){
+			Event event = new Event();
 			event = determineQuotedInput(event, removeFirstWord(input));
 			event = determineCategory(event);
 			oldEvent = event;
-			
+		} else if(tempCmd == CommandType.EXPORT){
+			Event event = new Event();
+			event = decodeExportData(event, removeFirstWord(input));
+			cmdInterface = new Export(event);
+		} else if(tempCmd == CommandType.CHANGETAB){
+			int tab = decodeChangeTab(removeFirstWord(input));
+			//cmdInterface = new ChangeTab(tab);
 		}
 		return cmdInterface;
 
 	}
 
+	
 
 	/**
 	 * For testing user input (TEST)
 	 * @param input
 	 * @return
 	 */
-	public Event testingParseCommand(String input){
+	public Event testingDeterminedStuff(String input){
 		String command = getFirstWord(input);
 		CommandType tempCmd = getCommandType(command);
 		Event task = new Event();
@@ -151,22 +161,51 @@ public class Parser {
 			task = decodeEditData(task , removeFirstWord(input));
 			oldEvent = task;
 			return task;
-		} else if(tempCmd == CommandType.BLOCK){
-			task = decodeAddData(task, removeFirstWord(input));
-			isBlock = true;
-			oldEvent = task;
-			return task;
-		} else if(tempCmd == CommandType.UNBLOCK){
-			
-		} else if(tempCmd == CommandType.CONFIRM){
-			
 		} else if(tempCmd == CommandType.SELECT){
 			task = decodeSelectData(task, removeFirstWord(input));
+			return task;
+		} else if(tempCmd == CommandType.EXPORT){
+			task = decodeExportData(task, removeFirstWord(input));
 			return task;
 		}
 		return null;
 	}
+	
+	public ReservedEvent testingReservedStuff(String input){
+		String command = getFirstWord(input);
+		CommandType tempCmd = getCommandType(command);
+		Event task = new Event();
+		if(tempCmd == CommandType.BLOCK){
+			ReservedEvent reserved = new ReservedEvent();
+			reserved = decodeReservedData(task, removeFirstWord(input));
+			isBlock = true;
+			return reserved;
+		} else if(tempCmd == CommandType.UNBLOCK){
+			
+		} else if(tempCmd == CommandType.CONFIRM){
+			
+		}
+		return null;
+	}
 
+	
+	/**
+	 * 
+	 * @param eventToBeCloned
+	 * @param eventCloned
+	 * @return the cloned event
+	 */
+	public Event cloneEvent(Event eventToBeCloned, Event eventCloned){
+		eventCloned.setName(eventToBeCloned.getName());
+		eventCloned.setDescription(eventToBeCloned.getDescription());
+		eventCloned.setCategory(eventToBeCloned.getCategory());
+		eventCloned.setEndTime(eventToBeCloned.getEndTime());
+		eventCloned.setStartTime(eventToBeCloned.getStartTime());
+		eventCloned.setLocation(eventToBeCloned.getLocation());
+		eventCloned.setStatus(eventToBeCloned.getStatus());
+		
+		return eventCloned;
+	}
 
 	private GenericEvent setCategoryForBlockedEvent(Event task) {
 		if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() == Constant.MAX_DATE){
@@ -273,6 +312,63 @@ public class Parser {
 	}
 	
 	/**
+	 * Decodes the user input for Reserving new task
+	 * @param task
+	 * @param input
+	 * @return
+	 */
+	private ReservedEvent decodeReservedData(Event task, String input){
+		int startIndex = 0;
+		int endIndex = startIndex;
+
+		ArrayList<String> choppedInputData = new ArrayList<>();
+		ArrayList<TimePair> reservedTimes = new ArrayList<>();
+		String remainingInput = extractDescription(task, input).trim();
+		
+		Pattern pattern = Pattern.compile(PATTERN_AND,Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(input);
+		
+		while(matcher.find()){
+			endIndex = matcher.start();
+			choppedInputData.add(input.substring(startIndex, endIndex).trim());
+			startIndex = matcher.end();
+		}
+		
+		choppedInputData.add(input.substring(startIndex,input.length()).trim());
+		task = determineQuotedInput(task, remainingInput);
+
+		for(int i = 0; i < choppedInputData.size(); i++){
+			
+		}
+		TimePair reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
+		reservedTimes.add(reservedTime);
+
+		ReservedEvent reserved = new ReservedEvent(task.getName(), task.getLocation(),
+				task.getDescription(), task.getCategory(), reservedTimes, task.getStatus());
+		return reserved;
+	}
+	
+	private Event decodeExportData(Event task, String input){
+		
+		String directory = input.replace('\\', '/');
+		task.setName(directory);
+		
+		return task;
+	}
+	
+	private int decodeChangeTab(String input){
+		input = input.toUpperCase();
+		if(input.contains(TAB_UNDETERMINED)){
+			return Constant.TAB_UNDETERMINED;
+		} else if(input.contains(TAB_COMPLETED)){
+			return Constant.TAB_COMPLETED;
+		} else if(input.contains(TAB_INCOMPLETE)){
+			return Constant.TAB_INCOMPLETE;
+		}
+		
+		return Constant.TAB_INCOMPLETE;
+	}
+	/**
 	 * Decodes the user input for selecting task
 	 * @param task
 	 * @param input
@@ -289,6 +385,7 @@ public class Parser {
 		
 		String remainingInput = extractDescription(task, input);
 
+		/** Look for Selecting Category type command **/
 		if(input.indexOf("--") >= 0){
 			startIndex = input.indexOf("--", startIndex) + 1;
 			endIndex = input.length();
@@ -346,6 +443,7 @@ public class Parser {
 			return null;
 		}
 		
+		/** Look for Selecting Category type command **/
 		if(input.indexOf("--") >= 0){
 			startIndex = input.indexOf("--", startIndex) + 1;
 			endIndex = input.length();
@@ -385,23 +483,6 @@ public class Parser {
 			return task;
 		}
 		return determineQuotedInput(task, remainingInput);
-	}
-
-	private Event decodeSearchData(Event task, String input){		
-
-		input = input.toUpperCase();
-
-		if (input.startsWith(Constant.CATEGORY_DEADLINE) && input.endsWith(Constant.CATEGORY_DEADLINE)){
-			task.setCategory(GenericEvent.Category.DEADLINE);
-			return task;
-		} else if(input.startsWith(Constant.CATEGORY_EVENT) && input.endsWith(Constant.CATEGORY_EVENT)){
-			task.setCategory(GenericEvent.Category.EVENT);
-			return task;
-		} else if(input.startsWith(Constant.CATEGORY_FLOATING) && input.endsWith(Constant.CATEGORY_FLOATING)){
-			task.setCategory(GenericEvent.Category.FLOATING);
-			return task;
-		} 
-		return decodeDataFromInput(task, input);
 	}
 
 	/**
@@ -922,9 +1003,6 @@ public class Parser {
 			return CommandType.ADD;
 		}else if (command.equalsIgnoreCase("delete")){
 			return CommandType.DELETE;
-		}else if (command.equalsIgnoreCase("display") || 
-				command.equalsIgnoreCase("search")){
-			return CommandType.SEARCH;
 		}else if (command.equalsIgnoreCase("edit") || 
 				command.equalsIgnoreCase("e")){
 			return CommandType.EDIT;
@@ -932,7 +1010,7 @@ public class Parser {
 			return CommandType.IMPORT;
 		}else if (command.equalsIgnoreCase("export")){
 			return CommandType.EXPORT;
-		}else if (command.equalsIgnoreCase("block")){
+		}else if (command.equalsIgnoreCase("block") || command.equalsIgnoreCase("reserve")){
 			return CommandType.BLOCK;
 		}else if (command.equalsIgnoreCase("unblock") || command.equalsIgnoreCase("release")){
 			return CommandType.UNBLOCK;
@@ -944,6 +1022,8 @@ public class Parser {
 			return CommandType.REDO;
 		}else if (command.equalsIgnoreCase("select")){
 			return CommandType.SELECT;
+		}else if (command.equalsIgnoreCase("changetab")){
+			return CommandType.CHANGETAB;
 		}
 
 		return CommandType.INVALID;
