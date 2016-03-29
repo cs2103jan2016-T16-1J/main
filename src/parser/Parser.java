@@ -57,6 +57,10 @@ public class Parser {
 	private final String TIME_MIDNIGHT = "00:00";
 	private final String ERROR_DATE_FORMAT = "The input date format is not supported";
 
+	private final String TAB_UNDETERMINED = "UNDETERMINE";
+	private final String TAB_COMPLETED = "COMPLETE";
+	private final String TAB_INCOMPLETE = "INCOMPLETE";
+
 	public Command parseCommand(String input){
 		Command cmdInterface = null;
 		String command = getFirstWord(input);
@@ -116,8 +120,8 @@ public class Parser {
 			event = decodeExportData(event, removeFirstWord(input));
 			cmdInterface = new Export(event);
 		} else if(tempCmd == CommandType.CHANGETAB){
-			Event event = new Event();
-			event = decodeChangeTab(event, removeFirstWord(input));
+			int tab = decodeChangeTab(removeFirstWord(input));
+			//cmdInterface = new ChangeTab(tab);
 		}
 		return cmdInterface;
 
@@ -352,10 +356,17 @@ public class Parser {
 		return task;
 	}
 	
-	private Event decodeChangeTab(Event task, String input){
+	private int decodeChangeTab(String input){
+		input = input.toUpperCase();
+		if(input.contains(TAB_UNDETERMINED)){
+			return Constant.TAB_UNDETERMINED;
+		} else if(input.contains(TAB_COMPLETED)){
+			return Constant.TAB_COMPLETED;
+		} else if(input.contains(TAB_INCOMPLETE)){
+			return Constant.TAB_INCOMPLETE;
+		}
 		
-		
-		return task;
+		return Constant.TAB_INCOMPLETE;
 	}
 	/**
 	 * Decodes the user input for selecting task
