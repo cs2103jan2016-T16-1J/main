@@ -32,14 +32,29 @@ import json.*;
  */
 
 
-
-
-
-
 public class Storage {
 	
-	public final static String storageFile =  ("./storage/storage.txt");
+	public static String storageFile ;
 	public final static String tempFileName = ("temp.txt");
+	
+	
+	public Storage(){
+		storageFile =  "./storage/storage.txt";
+	}
+	
+	public String getDirectory(){
+		return storageFile;
+	}
+	
+	public void setDirectory(String s){
+		storageFile = s;
+	}
+	
+	public void changeDirectory(String newDirectory){
+		createFile(newDirectory);
+		setDirectory(newDirectory);
+	}
+	
 	
 	/** 
 	 * Check if the file is exist. If not, create a new file
@@ -140,7 +155,7 @@ public class Storage {
 		return state;
 	}
 	
-	
+	/*
 	public void changeDirectory(String oldDirectory, String newDirectory){
 		try {
 			File oldFile = new File(oldDirectory);
@@ -154,8 +169,7 @@ public class Storage {
     	} catch (Exception e){
     		e.printStackTrace();
     	}
-	}
-	
+	}*/
 	
 	
 	
