@@ -19,6 +19,9 @@ public class State {
 	public static final int NO_EVENTS_SELECTED = 0;
 	public static final int ONE_EVENT_SELECTED = 1;
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
+	public static final int UNDETERMINED_TAB = 1;
+	public static final int COMPLETED_TAB = 2;
+	public static final int INCOMPLETED_TAB = 3;
 	public static ArrayList<Event> completedEvents;
 	public static ArrayList<Event> incompletedEvents;
 	public static ArrayList<Event> floatingEvents;
@@ -29,8 +32,10 @@ public class State {
 	
 	public Event selectedEvent;
 	
+	
 	//indicates whether an event is selected and if more than one is selected
 	public int selectionStatus;
+	public int tabStatus;
 	
 	public String statusMessage;
 
@@ -62,6 +67,18 @@ public class State {
 		}
 		selectedEvent = null;
 		setSelectionStatus(NO_EVENTS_SELECTED);;
+	}
+	
+	public boolean isUndeterminedSelected(){
+		return tabStatus == UNDETERMINED_TAB;
+	}
+	
+	public boolean isCompletedSelected(){
+		return tabStatus == COMPLETED_TAB;
+	}
+	
+	public boolean isIncompletedSelected(){
+		return tabStatus == INCOMPLETED_TAB;
 	}
 	
 	public boolean hasEventSelected () {
