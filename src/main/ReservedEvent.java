@@ -11,7 +11,8 @@ public class ReservedEvent extends GenericEvent{
 		reservedTimes = new ArrayList<TimePair>();
 	}
 	
-	public ReservedEvent(String name, String location, String description, Category category, ArrayList<TimePair> reservedTimes, Status status){
+	public ReservedEvent(String name, String location,String description,
+			Category category, ArrayList<TimePair> reservedTimes, Status status){
 		super(name, location, description, category, status);
 		this.reservedTimes = reservedTimes;
 		
@@ -27,7 +28,8 @@ public class ReservedEvent extends GenericEvent{
 	}
 	
 	public ReservedEvent getClone(){
-		ReservedEvent clonedEvent = new ReservedEvent(this.getName(), this.getLocation(), this.getDescription(), this.getCategory(), this.getReservedTimes(), this.getStatus());
+		ReservedEvent clonedEvent = new ReservedEvent(this.getName(), this.getLocation(),
+				this.getDescription(), this.getCategory(), this.getReservedTimes(), this.getStatus());
 		
 		return clonedEvent;
 	}

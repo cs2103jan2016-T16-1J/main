@@ -68,15 +68,15 @@ public class State {
 	}
 	
 	public boolean isUndeterminedSelected(){
-		return tabStatus == Constant.UNDETERMINED_TAB;
+		return tabStatus == Constant.TAB_UNDETERMINED;
 	}
 	
 	public boolean isCompletedSelected(){
-		return tabStatus == Constant.COMPLETED_TAB;
+		return tabStatus == Constant.TAB_COMPLETED;
 	}
 	
 	public boolean isIncompletedSelected(){
-		return tabStatus == Constant.INCOMPLETED_TAB;
+		return tabStatus == Constant.TAB_INCOMPLETE;
 	}
 	
 	public boolean hasEventSelected () {
