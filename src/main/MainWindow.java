@@ -248,7 +248,6 @@ public class MainWindow {
 		initializeCalendar();
 		
 		initializeInfoSection();
-		initializeInfoSection();
 		
 		
 	}
@@ -742,15 +741,38 @@ public class MainWindow {
 	private void addSpecificEvent(Event specificEvent, Calendar startEventCalendar, Calendar endEventCalendar) {
 		double eventHeight = getEventHeight();
 		double eventWidth = getEventWidth();
-		int dayDifference = endEventCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
-		int hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
-		int minute = startEventCalendar.get(Calendar.MINUTE);
-		int yOffset = (int) eventHeight * dayDifference;
-		int xOffset = (int) (eventWidth * (hour + minute / 60.0)) + 1;
-		double xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
+		int dayDifference, hour, minute, yOffset, xOffset;
+		double xMultiplier;
+		
+		while (startEventCalendar.get(Calendar.DAY_OF_YEAR) < endEventCalendar.get(Calendar.DAY_OF_YEAR)) {
+			double currentEventWidth = eventWidth;
+			dayDifference = startEventCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
+			hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
+			minute = startEventCalendar.get(Calendar.MINUTE);
+			yOffset = (int) eventHeight * dayDifference;
+			xOffset = (int) (eventWidth * (hour + minute / 60.0)) + 1;
+			xMultiplier = (24 - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
+					(60 - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
+			currentEventWidth *= xMultiplier;
+			JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) Math.ceil(currentEventWidth), (int) eventHeight, darkGreen);
+
+			tblCalendar.add(currentEvent);
+			startEventCalendar.set(Calendar.DAY_OF_YEAR, startEventCalendar.get(Calendar.DAY_OF_YEAR) + 1);
+			startEventCalendar.set(Calendar.HOUR_OF_DAY, 0);
+			startEventCalendar.set(Calendar.MINUTE, 0);
+			startEventCalendar.set(Calendar.SECOND, 0);
+		}
+		
+		dayDifference = endEventCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
+
+		hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
+		minute = startEventCalendar.get(Calendar.MINUTE);
+		yOffset = (int) eventHeight * dayDifference;
+		xOffset = (int) (eventWidth * (hour + minute / 60.0)) + 1;
+
+		xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 		eventWidth *= xMultiplier;
-		
 		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight, darkGreen);
 		
 		tblCalendar.add(currentEvent);
