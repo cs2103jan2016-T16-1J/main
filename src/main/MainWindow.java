@@ -36,6 +36,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledEditorKit.UnderlineAction;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -109,6 +110,12 @@ public class MainWindow {
 	private Calendar calendarInstance;
 	private Calendar startCalendar;
 	private Calendar endCalendar;
+	private JToggleButton incompletedTab;
+	
+	private JToggleButton undeterminedTab;
+	
+	private JToggleButton completedTab;
+
 	
 	static JLabel lblMonth;
 	static JTable tblCalendar;
@@ -298,27 +305,26 @@ public class MainWindow {
 	}
 	
 	private void initializeTabButtons() {
-		JToggleButton tglbtnNewToggleButton = new JToggleButton("Today");
-		tglbtnNewToggleButton.setForeground(Color.WHITE);
-		tglbtnNewToggleButton.setBorder(null);
-		tglbtnNewToggleButton.setBackground(buttonColor);
-		tglbtnNewToggleButton.setBounds(0, 68, 119, 34);
-		frame.getContentPane().add(tglbtnNewToggleButton);
+		incompletedTab = new JToggleButton("Incompleted");
+		incompletedTab.setForeground(Color.WHITE);
+		incompletedTab.setBorder(null);
+		incompletedTab.setBackground(buttonColor);
+		incompletedTab.setBounds(0, 68, 119, 34);
+		frame.getContentPane().add(incompletedTab);
 		
-		JToggleButton tglbtnNewToggleButton_1 = new JToggleButton("Undetermined");
-		tglbtnNewToggleButton_1.setForeground(Color.WHITE);
-		tglbtnNewToggleButton_1.setBorder(null);
-		tglbtnNewToggleButton_1.setBackground(buttonColor);
-		tglbtnNewToggleButton_1.setBounds(0, 0, 119, 34);
-		frame.getContentPane().add(tglbtnNewToggleButton_1);
+		undeterminedTab = new JToggleButton("Undetermined");
+		undeterminedTab.setForeground(Color.WHITE);
+		undeterminedTab.setBorder(null);
+		undeterminedTab.setBackground(buttonColor);
+		undeterminedTab.setBounds(0, 0, 119, 34);
+		frame.getContentPane().add(undeterminedTab);
 		
-		JToggleButton tglbtnNewToggleButton_2 = new JToggleButton("Completed");
-		tglbtnNewToggleButton_2.setForeground(Color.WHITE);
-		tglbtnNewToggleButton_2.setBorder(null);
-		tglbtnNewToggleButton_2.setBackground(buttonColor);
-		tglbtnNewToggleButton_2.setBounds(0, 34, 119, 34);
-		frame.getContentPane().add(tglbtnNewToggleButton_2);
-		
+		completedTab = new JToggleButton("Completed");
+		completedTab.setForeground(Color.WHITE);
+		completedTab.setBorder(null);
+		completedTab.setBackground(buttonColor);
+		completedTab.setBounds(0, 34, 119, 34);
+		frame.getContentPane().add(completedTab);
 	}
 	
 	private void initializeInfoSection() {
@@ -328,48 +334,6 @@ public class MainWindow {
 		
 		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
 		infoPanel.setBounds(119, 0, 286, 761);
-		
-		
-		
-		lblGuidance = new JLabel("Guidance");
-		lblGuidance.setFont(new Font("Tahoma", Font.BOLD, 16));
-		lblGuidance.setHorizontalAlignment(JLabel.LEFT);
-		lblGuidance.setAlignmentX(Component.LEFT_ALIGNMENT);
-		lblGuidance.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
-		lblGuidance.setBounds(0, 0, 286, 45);
-		lblGuidance.setForeground(fontColor);
-		infoPanel.add(lblGuidance);
-		
-		
-		String text = "ADD FORMAT\n" +
-	            "    add [Task name] [Time] [Location]\n" +
-	            "    E.g.add meeting on sunday\n" +
-	            "          add brunch by wed 3 am\n" +
-	            "          add drive from tues 3 am to tues 4 pm\n" +
-	            "          add viewing at \'Garden by the bay\'\n" +
-	            "          add \"travel from Tokyo to Osaka\" from" +
-	            "                   17/4/16 17:00 to 20/4/16 19:00\n" +
-	            "(*if task name or location contains preposition need to "
-	            + "enclose it with single quote or double quote)\n\n" +
-	           
-	            "EDIT FORMAT\n" +
-	            "    edit [Task name]/[Time]/[Location]\n" +
-	            "    E.g. edit this thing\n\n" + 
-	            
-	            "SELECT FORMAT\n" +
-	            "    select [Task name]/ select[Index]\n" +
-	            "    E.g. select meething\n"
-	            ;
-	  
-	    JTextArea textArea = new JTextArea();
-	    textArea.setLineWrap(true);
-	    textArea.setWrapStyleWord(true);
-	    textArea.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-	    textArea.setText(text);
-	    textArea.setBackground(lightGray);
-	    textArea.setFont(new Font("Tahoma", Font.PLAIN, 14));
-	    textArea.setForeground(fontColor);
-	    infoPanel.add(textArea);
 	        
 		frame.getContentPane().add(infoPanel);	
 	}
@@ -500,10 +464,6 @@ public class MainWindow {
 		return lblInfoEventName;
 	}
 	
-	private void createLabelTitleInfo() {
-		
-	}
-	
 	private void initializeMainTab() {
 		mainTab = new JPanel();
 		mainTab.setBackground(Color.WHITE);
@@ -576,8 +536,22 @@ public class MainWindow {
 		
 		infoPanel.removeAll();
 		
-		refreshMonth();
-
+		this.refreshMonth();
+		
+		this.renderEvents();
+		
+		this.renderInfoSection();
+		
+		this.renderTabSection();
+		
+		tblCalendar.revalidate();
+		tblCalendar.repaint();
+    	
+		infoPanel.revalidate();
+		infoPanel.repaint();
+	}
+	
+	private void renderEvents() {
 		ArrayList<Event> displayedEvents = currentState.displayedEvents;
 		for (int i = 0; i < displayedEvents.size(); i++) {
 			Event event = displayedEvents.get(i);
@@ -587,19 +561,27 @@ public class MainWindow {
 	    		createSpecificEvent(event);
 	    	}
 		}
-		
+	}
 	
+	private void renderInfoSection() {
 		if (currentState.hasSingleEventSelected()) {
 			displayEventDetails(currentState.getSingleSelectedEvent());
 		} else if (currentState.hasMultipleEventSelected()) {
 			displayMultipleEventsDetails(currentState.getAllSelectedEvents());
 		}
-		
-		tblCalendar.revalidate();
-		tblCalendar.repaint();
-    	
-		infoPanel.revalidate();
-		infoPanel.repaint();
+	}
+	
+	private void renderTabSection() {
+		completedTab.setSelected(false);
+		incompletedTab.setSelected(false);
+		undeterminedTab.setSelected(false);
+		if (currentState.isCompletedSelected()) {
+			completedTab.setSelected(true);
+		} else if (currentState.isIncompletedSelected()) {
+			incompletedTab.setSelected(true);
+		} else if (currentState.isUndeterminedSelected()) {
+			undeterminedTab.setSelected(true);
+		}
 	}
 	
 	private void initializeOutputField() {
