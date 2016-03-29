@@ -66,7 +66,9 @@ public class State {
 		ArrayList<Event> filteredEvents = new ArrayList<Event>();
 		
 		for(Event e: selectedEvents){
-		//	if()
+			if(e.getStatus().equals(getSelectedTab())){
+				filteredEvents.add(e);
+			}
 		}
 		
 		return filteredEvents;
