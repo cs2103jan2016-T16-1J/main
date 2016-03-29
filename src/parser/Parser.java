@@ -6,10 +6,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import command.Add;
+import command.ChangeTab;
 import command.Command;
 import command.Delete;
 import command.Edit;
 import command.Export;
+import command.Import;
 import command.Select;
 
 import java.util.ArrayList;
@@ -115,16 +117,19 @@ public class Parser {
 			event = determineQuotedInput(event, removeFirstWord(input));
 			event = determineCategory(event);
 			oldEvent = event;
+		} else if(tempCmd == CommandType.IMPORT) {
+			Event event = new Event();
+			event = decodeImportExportData(event, removeFirstWord(input));
+			cmdInterface = new Import(event);
 		} else if(tempCmd == CommandType.EXPORT){
 			Event event = new Event();
-			event = decodeExportData(event, removeFirstWord(input));
+			event = decodeImportExportData(event, removeFirstWord(input));
 			cmdInterface = new Export(event);
 		} else if(tempCmd == CommandType.CHANGETAB){
 			int tab = decodeChangeTab(removeFirstWord(input));
-			//cmdInterface = new ChangeTab(tab);
+			cmdInterface = new ChangeTab(tab);
 		}
 		return cmdInterface;
-
 	}
 
 	
@@ -165,7 +170,7 @@ public class Parser {
 			task = decodeSelectData(task, removeFirstWord(input));
 			return task;
 		} else if(tempCmd == CommandType.EXPORT){
-			task = decodeExportData(task, removeFirstWord(input));
+			task = decodeImportExportData(task, removeFirstWord(input));
 			return task;
 		}
 		return null;
@@ -290,15 +295,11 @@ public class Parser {
 			return GenericEvent.Status.INCOMPLETE;
 		}else if(userInput.equalsIgnoreCase(Constant.STATUS_COMPLETE)){
 			return GenericEvent.Status.COMPLETE;
-		}else if(userInput.equalsIgnoreCase(Constant.STATUS_FLOATING)){
-			return GenericEvent.Status.FLOATING;
-		}else if(userInput.equalsIgnoreCase(Constant.STATUS_BLOCKED)){
-			return GenericEvent.Status.BLOCKED;
-		}else if(userInput.equalsIgnoreCase(Constant.STATUS_OVERDUE)){
-			return GenericEvent.Status.OVERDUE;
-		} else{
-			return GenericEvent.Status.NULL;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_UNDETERMINED)){
+			return GenericEvent.Status.UNDETERMINED;
 		}
+		return GenericEvent.Status.NULL;
+
 	}
 	/**
 	 * Decodes the user input for Adding new task
@@ -338,7 +339,7 @@ public class Parser {
 		task = determineQuotedInput(task, remainingInput);
 
 		for(int i = 0; i < choppedInputData.size(); i++){
-			
+			DateChecker.validateDate(choppedInputData.get(i));
 		}
 		TimePair reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
 		reservedTimes.add(reservedTime);
@@ -348,7 +349,7 @@ public class Parser {
 		return reserved;
 	}
 	
-	private Event decodeExportData(Event task, String input){
+	private Event decodeImportExportData(Event task, String input){
 		
 		String directory = input.replace('\\', '/');
 		task.setName(directory);

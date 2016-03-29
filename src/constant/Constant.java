@@ -22,9 +22,7 @@ public class Constant {
 	
 	public static final String STATUS_INCOMPLETE = "EVENT";
 	public static final String STATUS_COMPLETE = "DEADLINE";
-	public static final String STATUS_FLOATING = "FLOATING";
-	public static final String STATUS_BLOCKED = "BLOCKED";
-	public static final String STATUS_OVERDUE = "OVERDUE";
+	public static final String STATUS_UNDETERMINED = "UNDETERMINED";
 	public static final GenericEvent.Status STATUS_NULL = GenericEvent.Status.NULL;
 	
 	public static final int TAB_UNDETERMINED = 1;
