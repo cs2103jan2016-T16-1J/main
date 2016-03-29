@@ -1,6 +1,5 @@
 package parser;
 
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
@@ -10,13 +9,13 @@ import command.Add;
 import command.Command;
 import command.Delete;
 import command.Edit;
+import command.Export;
 import command.Select;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import constant.CommandType;
 import constant.Constant;
@@ -25,7 +24,6 @@ import main.GenericEvent;
 import main.ReservedEvent;
 import main.TimePair;
 import main.GenericEvent.Category;
-import main.GenericEvent.Status;
 
 public class Parser {
 
@@ -38,7 +36,7 @@ public class Parser {
 	private final String PATTERN_AT = "(\\bat\\b)";
 	private final String PATTERN_AT_OR_BY = "(\\b(at)\\b|\\b(by)\\b)";
 	private final String PATTERN_COLUMN = "(\\b(:)\\b)";
-	private final String PATTERN_AND = "(\\b(and||&)\\b)";
+	private final String PATTERN_AND = "(\\b(and)\\b|\\b(&)\\b)";
 	private final String PATTERN_FROM = "(\\bfrom\\b)";
 	private final String PATTERN_TO = "(\\bto\\b)";
 	private final String PATTERN_ON = "(\\bon\\b)";
@@ -81,16 +79,10 @@ public class Parser {
 		} else if(tempCmd == CommandType.EDIT){
 			Event realOldEvent = new Event();
 			Event event = new Event();
-
 			event = oldEvent;
-			realOldEvent.setName(oldEvent.getName());
-			realOldEvent.setDescription(oldEvent.getDescription());
-			realOldEvent.setCategory(oldEvent.getCategory());
-			realOldEvent.setEndTime(oldEvent.getEndTime());
-			realOldEvent.setStartTime(oldEvent.getStartTime());
-			realOldEvent.setLocation(oldEvent.getLocation());
-			realOldEvent.setStatus(oldEvent.getStatus());
-			
+
+			realOldEvent = cloneEvent(oldEvent, realOldEvent);
+
 			isEdit = true;
 			event = decodeEditData(event , removeFirstWord(input));
 			cmdInterface = new Edit(realOldEvent, event);
@@ -122,11 +114,16 @@ public class Parser {
 		} else if(tempCmd == CommandType.EXPORT){
 			Event event = new Event();
 			event = decodeExportData(event, removeFirstWord(input));
+			cmdInterface = new Export(event);
+		} else if(tempCmd == CommandType.CHANGETAB){
+			Event event = new Event();
+			event = decodeChangeTab(event, removeFirstWord(input));
 		}
 		return cmdInterface;
 
 	}
 
+	
 
 	/**
 	 * For testing user input (TEST)
@@ -187,6 +184,24 @@ public class Parser {
 		return null;
 	}
 
+	
+	/**
+	 * 
+	 * @param eventToBeCloned
+	 * @param eventCloned
+	 * @return the cloned event
+	 */
+	public Event cloneEvent(Event eventToBeCloned, Event eventCloned){
+		eventCloned.setName(eventToBeCloned.getName());
+		eventCloned.setDescription(eventToBeCloned.getDescription());
+		eventCloned.setCategory(eventToBeCloned.getCategory());
+		eventCloned.setEndTime(eventToBeCloned.getEndTime());
+		eventCloned.setStartTime(eventToBeCloned.getStartTime());
+		eventCloned.setLocation(eventToBeCloned.getLocation());
+		eventCloned.setStatus(eventToBeCloned.getStatus());
+		
+		return eventCloned;
+	}
 
 	private GenericEvent setCategoryForBlockedEvent(Event task) {
 		if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() == Constant.MAX_DATE){
@@ -301,6 +316,8 @@ public class Parser {
 	private ReservedEvent decodeReservedData(Event task, String input){
 		int startIndex = 0;
 		int endIndex = startIndex;
+
+		ArrayList<String> choppedInputData = new ArrayList<>();
 		ArrayList<TimePair> reservedTimes = new ArrayList<>();
 		String remainingInput = extractDescription(task, input).trim();
 		
@@ -309,11 +326,16 @@ public class Parser {
 		
 		while(matcher.find()){
 			endIndex = matcher.start();
-			
+			choppedInputData.add(input.substring(startIndex, endIndex).trim());
+			startIndex = matcher.end();
+		}
+		
+		choppedInputData.add(input.substring(startIndex,input.length()).trim());
+		task = determineQuotedInput(task, remainingInput);
+
+		for(int i = 0; i < choppedInputData.size(); i++){
 			
 		}
-
-		task = determineQuotedInput(task, remainingInput);
 		TimePair reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
 		reservedTimes.add(reservedTime);
 
@@ -326,6 +348,12 @@ public class Parser {
 		
 		String directory = input.replace('\\', '/');
 		task.setName(directory);
+		
+		return task;
+	}
+	
+	private Event decodeChangeTab(Event task, String input){
+		
 		
 		return task;
 	}
@@ -964,9 +992,6 @@ public class Parser {
 			return CommandType.ADD;
 		}else if (command.equalsIgnoreCase("delete")){
 			return CommandType.DELETE;
-		}else if (command.equalsIgnoreCase("display") || 
-				command.equalsIgnoreCase("search")){
-			return CommandType.SEARCH;
 		}else if (command.equalsIgnoreCase("edit") || 
 				command.equalsIgnoreCase("e")){
 			return CommandType.EDIT;
@@ -974,7 +999,7 @@ public class Parser {
 			return CommandType.IMPORT;
 		}else if (command.equalsIgnoreCase("export")){
 			return CommandType.EXPORT;
-		}else if (command.equalsIgnoreCase("block")){
+		}else if (command.equalsIgnoreCase("block") || command.equalsIgnoreCase("reserve")){
 			return CommandType.BLOCK;
 		}else if (command.equalsIgnoreCase("unblock") || command.equalsIgnoreCase("release")){
 			return CommandType.UNBLOCK;
@@ -986,6 +1011,8 @@ public class Parser {
 			return CommandType.REDO;
 		}else if (command.equalsIgnoreCase("select")){
 			return CommandType.SELECT;
+		}else if (command.equalsIgnoreCase("changetab")){
+			return CommandType.CHANGETAB;
 		}
 
 		return CommandType.INVALID;
