@@ -102,6 +102,7 @@ public class MainWindow {
 	public static Color fontColor;
 	public static Color lightGray;
 	public static Color borderColor;
+	private static ArrayList<Color> randomColors;
 	
 	private Controller mainController;
 	private State currentState;
@@ -275,6 +276,15 @@ public class MainWindow {
 		fontColor = new Color(103, 106, 108);
 		lightRed = new Color (231,111,81,170);
 		darkGreen = new Color(42,157,143, 170);
+		randomColors = new ArrayList<Color>();
+		for (int i = 0; i < 300; i++) {
+			Color currentColor = new Color((int) (Math.random() * 255),
+										   (int) (Math.random() * 255),
+										   (int) (Math.random() * 255),
+										   170);
+			randomColors.add(currentColor);			
+		}
+		
 	}
 	
 	private void initializeMainWindow() {
@@ -743,6 +753,7 @@ public class MainWindow {
 		double eventWidth = getEventWidth();
 		int dayDifference, hour, minute, yOffset, xOffset;
 		double xMultiplier;
+		Color currentColor = randomColors.get((int)(Math.random() * randomColors.size()));
 		
 		while (startEventCalendar.get(Calendar.DAY_OF_YEAR) < endEventCalendar.get(Calendar.DAY_OF_YEAR)) {
 			double currentEventWidth = eventWidth;
@@ -754,7 +765,7 @@ public class MainWindow {
 			xMultiplier = (24 - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 					(60 - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 			currentEventWidth *= xMultiplier;
-			JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) Math.ceil(currentEventWidth), (int) eventHeight, darkGreen);
+			JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) Math.ceil(currentEventWidth), (int) eventHeight, currentColor);
 
 			tblCalendar.add(currentEvent);
 			startEventCalendar.set(Calendar.DAY_OF_YEAR, startEventCalendar.get(Calendar.DAY_OF_YEAR) + 1);
@@ -773,7 +784,7 @@ public class MainWindow {
 		xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 		eventWidth *= xMultiplier;
-		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight, darkGreen);
+		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight, currentColor);
 		
 		tblCalendar.add(currentEvent);
 	}
