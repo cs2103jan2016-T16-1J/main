@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
+import constant.Constant;
 
 import json.JSONException;
 import main.Event;
@@ -19,9 +20,6 @@ public class State {
 	public static final int NO_EVENTS_SELECTED = 0;
 	public static final int ONE_EVENT_SELECTED = 1;
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
-	public static final int UNDETERMINED_TAB = 1;
-	public static final int COMPLETED_TAB = 2;
-	public static final int INCOMPLETED_TAB = 3;
 	public static ArrayList<Event> completedEvents;
 	public static ArrayList<Event> incompletedEvents;
 	public static ArrayList<Event> floatingEvents;
@@ -70,15 +68,15 @@ public class State {
 	}
 	
 	public boolean isUndeterminedSelected(){
-		return tabStatus == UNDETERMINED_TAB;
+		return tabStatus == Constant.UNDETERMINED_TAB;
 	}
 	
 	public boolean isCompletedSelected(){
-		return tabStatus == COMPLETED_TAB;
+		return tabStatus == Constant.COMPLETED_TAB;
 	}
 	
 	public boolean isIncompletedSelected(){
-		return tabStatus == INCOMPLETED_TAB;
+		return tabStatus == Constant.INCOMPLETED_TAB;
 	}
 	
 	public boolean hasEventSelected () {
