@@ -13,10 +13,5 @@ public class Help implements Command {
 		return null;
 	}
 
-	@Override
-	public void updatedDisplayedEvents() {
-		// TODO Auto-generated method stub
-		
-	}
 
 }
