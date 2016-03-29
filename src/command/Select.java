@@ -145,13 +145,6 @@ public class Select implements Command{
 		return ((eventEnd.getTime() >= paramStart.getTime()) && (eventEnd.getTime() <= paramEnd.getTime()));
 	}
 	
-	
-	
-	//isEventmatching
-	@Override
-	public void updatedDisplayedEvents() {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 }
