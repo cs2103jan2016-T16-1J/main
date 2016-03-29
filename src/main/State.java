@@ -9,6 +9,7 @@ import constant.Constant;
 
 import json.JSONException;
 import main.Event;
+import main.GenericEvent.Status;
 import storage.Storage;;
 
 public class State {
@@ -33,7 +34,7 @@ public class State {
 	
 	//indicates whether an event is selected and if more than one is selected
 	public int selectionStatus;
-	public int tabStatus;
+	public Status tabStatus;
 	
 	public String statusMessage;
 
@@ -48,6 +49,8 @@ public class State {
 		selectedEvents = new ArrayList<Event>();
 		
 		statusMessage = new String();
+		
+		tabStatus = Constant.TAB_INCOMPLETE;
 
 	}
 	
@@ -56,7 +59,17 @@ public class State {
 	}
 	
 	public ArrayList<Event> getAllSelectedEvents(){
-		return selectedEvents;
+		return filterByTab();
+	}
+	
+	public ArrayList<Event> filterByTab(){
+		ArrayList<Event> filteredEvents = new ArrayList<Event>();
+		
+		for(Event e: selectedEvents){
+		//	if()
+		}
+		
+		return filteredEvents;
 	}
 	
 	public void clearSelections(){
@@ -71,8 +84,12 @@ public class State {
 		return tabStatus == Constant.TAB_UNDETERMINED;
 	}
 	
+	public Status getSelectedTab(){
+		return tabStatus;
+	}
+	
 	public boolean isCompletedSelected(){
-		return tabStatus == Constant.TAB_COMPLETED;
+		return tabStatus == Constant.TAB_COMPLETE;
 	}
 	
 	public boolean isIncompletedSelected(){
@@ -138,5 +155,6 @@ public class State {
 	        return o1.getEndTime().compareTo(o2.getEndTime());
 	    }
 	}
-	
+
 }
+

@@ -9,7 +9,7 @@ import constant.Constant;
 public abstract class GenericEvent {
 
 	public enum Status {
-		NULL, INCOMPLETE, OVERDUE, BLOCKED, FLOATING, COMPLETE
+		NULL, INCOMPLETE, UNDETERMINED, COMPLETE
 	}
 
 	public enum Category {

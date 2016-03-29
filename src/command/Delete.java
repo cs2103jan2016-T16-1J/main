@@ -97,7 +97,7 @@ public class Delete implements Command{
 		case INCOMPLETE:
 			removeFromIncompleteList(e);
 			break;
-		case FLOATING:
+		case UNDETERMINED:
 			removeFromFloatingList(e);
 			break;
 			
