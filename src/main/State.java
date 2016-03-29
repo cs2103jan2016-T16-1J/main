@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
+import constant.Constant;
 
 import json.JSONException;
 import main.Event;
@@ -29,8 +30,10 @@ public class State {
 	
 	public Event selectedEvent;
 	
+	
 	//indicates whether an event is selected and if more than one is selected
 	public int selectionStatus;
+	public int tabStatus;
 	
 	public String statusMessage;
 
@@ -62,6 +65,18 @@ public class State {
 		}
 		selectedEvent = null;
 		setSelectionStatus(NO_EVENTS_SELECTED);;
+	}
+	
+	public boolean isUndeterminedSelected(){
+		return tabStatus == Constant.UNDETERMINED_TAB;
+	}
+	
+	public boolean isCompletedSelected(){
+		return tabStatus == Constant.COMPLETED_TAB;
+	}
+	
+	public boolean isIncompletedSelected(){
+		return tabStatus == Constant.INCOMPLETED_TAB;
 	}
 	
 	public boolean hasEventSelected () {
