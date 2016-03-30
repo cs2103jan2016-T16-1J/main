@@ -28,7 +28,7 @@ public class TestStorage {
 	public void initialize(){
 		setUpCompletedEvent();
 		setUpIncompletedEvent();
-		setUpFloatingEvent();
+		//setUpFloatingEvent();
 		setUpState();
 		testStorage.clearFile(testFileName);
 	}
@@ -170,7 +170,7 @@ public class TestStorage {
 		}
 		
 	}
-	
+	/*
 	public void setUpFloatingEvent(){
 		SimpleDateFormat sdf = new SimpleDateFormat("EE MMM dd kk:mm:ss z yyyy");
 		String startTime = "Sun Mar 27 00:00:00 SGT 2016";
@@ -189,7 +189,7 @@ public class TestStorage {
 			e.printStackTrace();
 		}
 		
-	}
+	}*/
 	
 	public void setUpState(){
 		testState.addToFloatingList(testFloatingEvent);

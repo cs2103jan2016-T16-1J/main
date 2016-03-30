@@ -182,7 +182,7 @@ public class Storage {
 			state.addToCompletedList(event);
 		} else if (event.getStatus() == GenericEvent.Status.INCOMPLETE){
 			state.addToIncompletedList(event);
-		} else if (event.getStatus() == GenericEvent.Status.FLOATING){
+		} else if (event.getStatus() == GenericEvent.Status.UNDETERMINED){
 			state.addToFloatingList(event);
 		}
 	}
@@ -278,12 +278,10 @@ public class Storage {
 			return GenericEvent.Status.COMPLETE;
 		} else if (jsonObj.get("status").equals("INCOMPLETE")){
 			return GenericEvent.Status.INCOMPLETE;
-		} else if (jsonObj.get("status").equals("BLOCKED")){
-			return GenericEvent.Status.BLOCKED;
-		} else if (jsonObj.get("status").equals("OVERDUE")){
-			return GenericEvent.Status.OVERDUE;
+		} else if (jsonObj.get("status").equals("UNDETERMINED")){
+			return GenericEvent.Status.UNDETERMINED;
 		} else {
-			return GenericEvent.Status.FLOATING;
+			return GenericEvent.Status.NULL;
 		}
 	}
 	
