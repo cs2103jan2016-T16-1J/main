@@ -35,8 +35,28 @@ public class Controller{
 		
 	}
 	
+	public Controller (String directory){
+		parser = new Parser();
+		storage = new Storage();
+		completeState = storage.readStorage(directory);
+	}
+	
+	/**
+	 * for integration testing only
+	 */
+	public Controller (String testDirectory, State testState){
+		parser = new Parser();
+		storage = new Storage();
+		//state = storage.readStorage(directory);
+	}
+	
 	public State getCompleteState() {
 		return completeState;
+	}
+	
+	//for testing use only
+	public void setCompleteState(State state){
+		this.completeState = state;
 	}
 
 	/**
@@ -47,19 +67,34 @@ public class Controller{
 	 * @throws JSONException 
 	 * @throws IOException 
 	 */
-	public State executeCommand(String commandText) throws IOException, JSONException{
+	public State executeCommand(String commandText, String directory) throws IOException, JSONException{
 		completeState.setStatusMessage(null);
 		Command userCommand;
 		userCommand = parser.parseCommand(commandText); //parser should return Command
 		if(null == userCommand){
 			completeState.setStatusMessage(State.MESSAGE_PARSE_ERROR);
 		}
-		System.out.println(completeState.incompletedEvents.size());
+		//System.out.println(completeState.incompletedEvents.size());
 		userCommand.execute(completeState);
 		assert isValidCommand(userCommand);
 		//assert false;
-		storage.stateToStorage(completeState, storage.getDirectory());
+		storage.stateToStorage(completeState, directory);
 		return completeState;
+	}
+	
+	public State executeCommand(String commandText, String directory, State state) throws IOException, JSONException{
+		state.setStatusMessage(null);
+		Command userCommand;
+		userCommand = parser.parseCommand(commandText); //parser should return Command
+		if(null == userCommand){
+			state.setStatusMessage(State.MESSAGE_PARSE_ERROR);
+		}
+		//System.out.println(completeState.incompletedEvents.size());
+		userCommand.execute(state);
+		assert isValidCommand(userCommand);
+		//assert false;
+		storage.stateToStorage(state, directory);
+		return state;
 	}
 	
 	private boolean isValidCommand(Command userCommand){

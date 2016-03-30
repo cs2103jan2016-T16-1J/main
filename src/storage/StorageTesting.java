@@ -16,7 +16,7 @@ import main.GenericEvent.Category;
 import main.GenericEvent.Status;
 import main.State;
 
-public class TestStorage {
+public class StorageTesting {
 	String testFileName = "./TestStorage.txt";
 	
 	Storage testStorage = new Storage();
