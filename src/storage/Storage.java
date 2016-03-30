@@ -32,14 +32,29 @@ import json.*;
  */
 
 
-
-
-
-
 public class Storage {
 	
-	public final static String storageFile =  ("./storage/storage.txt");
+	public static String storageFile ;
 	public final static String tempFileName = ("temp.txt");
+	
+	
+	public Storage(){
+		storageFile =  "./storage/storage.txt";
+	}
+	
+	public String getDirectory(){
+		return storageFile;
+	}
+	
+	public void setDirectory(String s){
+		storageFile = s;
+	}
+	
+	public void changeDirectory(String newDirectory){
+		createFile(newDirectory);
+		setDirectory(newDirectory);
+	}
+	
 	
 	/** 
 	 * Check if the file is exist. If not, create a new file
@@ -140,7 +155,7 @@ public class Storage {
 		return state;
 	}
 	
-	
+	/*
 	public void changeDirectory(String oldDirectory, String newDirectory){
 		try {
 			File oldFile = new File(oldDirectory);
@@ -154,8 +169,7 @@ public class Storage {
     	} catch (Exception e){
     		e.printStackTrace();
     	}
-	}
-	
+	}*/
 	
 	
 	
@@ -168,7 +182,7 @@ public class Storage {
 			state.addToCompletedList(event);
 		} else if (event.getStatus() == GenericEvent.Status.INCOMPLETE){
 			state.addToIncompletedList(event);
-		} else if (event.getStatus() == GenericEvent.Status.FLOATING){
+		} else if (event.getStatus() == GenericEvent.Status.UNDETERMINED){
 			state.addToFloatingList(event);
 		}
 	}
@@ -264,12 +278,10 @@ public class Storage {
 			return GenericEvent.Status.COMPLETE;
 		} else if (jsonObj.get("status").equals("INCOMPLETE")){
 			return GenericEvent.Status.INCOMPLETE;
-		} else if (jsonObj.get("status").equals("BLOCKED")){
-			return GenericEvent.Status.BLOCKED;
-		} else if (jsonObj.get("status").equals("OVERDUE")){
-			return GenericEvent.Status.OVERDUE;
+		} else if (jsonObj.get("status").equals("UNDETERMINED")){
+			return GenericEvent.Status.UNDETERMINED;
 		} else {
-			return GenericEvent.Status.FLOATING;
+			return GenericEvent.Status.NULL;
 		}
 	}
 	

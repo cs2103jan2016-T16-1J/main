@@ -45,7 +45,7 @@ public class Edit implements Command{
 		case INCOMPLETE:
 			editInIncompletedEventList(index);
 			break;
-		case FLOATING:
+		case UNDETERMINED:
 			editInFloatingEventList(index);
 			break;
 		}
@@ -93,7 +93,7 @@ public class Edit implements Command{
 		case INCOMPLETE:
 			completeState.incompletedEvents.indexOf(originalEvent);
 			break;
-		case FLOATING:
+		case UNDETERMINED:
 			completeState.floatingEvents.indexOf(originalEvent);
 			break;
 		}
