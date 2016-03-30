@@ -132,6 +132,8 @@ public class MainWindow {
 	private JLabel lblGuidance;
 	private JLabel lblInfoEventName;
 	private JTextArea lblAdd;
+	
+	private String defaultStorage = "./storage/storage.txt";
 
 
 	/**
@@ -515,7 +517,7 @@ public class MainWindow {
 		    	
 		    	//calling controller
 		    	try {
-					currentState = mainController.executeCommand(inputString);
+					currentState = mainController.executeCommand(inputString, defaultStorage);
 					actionTaken = true;
 				} catch (IOException | JSONException e1) {
 					// TODO Auto-generated catch block
