@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -104,6 +105,7 @@ public class MainWindow {
 	public static Color lightGray;
 	public static Color borderColor;
 	private static ArrayList<Color> randomColors;
+	private static HashMap<String, Color> coloredEvents;
 	
 	private Controller mainController;
 	private State currentState;
@@ -293,6 +295,7 @@ public class MainWindow {
 										   170);
 			randomColors.add(currentColor);			
 		}
+		coloredEvents = new HashMap<String, Color>();
 		
 	}
 	
@@ -330,14 +333,6 @@ public class MainWindow {
 	}
 	
 	private void initializeInfoSection() {
-		infoPanel = new JPanel();
-		infoPanel.setBackground(lightGray);
-		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-		
-		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
-		infoPanel.setBounds(119, 0, 286, 761);
-	        
-		frame.getContentPane().add(infoPanel);	
 	}
 	
 	private void displayEventDetails(Event currentEvent) {	
@@ -470,17 +465,18 @@ public class MainWindow {
 		mainTab = new JPanel();
 		mainTab.setBackground(Color.WHITE);
 		mainTab.setLayout(null);
-		mainTab.setBounds(402, 0, 1182, 761);
+		mainTab.setBounds(117, 0, 1467, 761);
 		frame.getContentPane().add(mainTab);
 	}
 	
 	private void initializeInputField() {
-		toggleButton = new JToggleButton("GO");
-		toggleButton.setForeground(Color.WHITE);
-		toggleButton.setBorder(null);
-		toggleButton.setBackground(new Color(28, 192, 159));
-		toggleButton.setBounds(1109, 730, 64, 20);
-		mainTab.add(toggleButton);
+		infoPanel = new JPanel();
+		infoPanel.setBounds(0, 0, 286, 425);
+		mainTab.add(infoPanel);
+		infoPanel.setBackground(lightGray);
+		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+		
+		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
 		
 		textField = new JTextField();
 		textField.setBorder(new LineBorder(borderColor));
@@ -488,7 +484,7 @@ public class MainWindow {
 		textField.addKeyListener(new ChangeMonthListener());
 		
 		textField.setColumns(10);
-		textField.setBounds(10, 730, 1100, 20);
+		textField.setBounds(285, 460, 1100, 20);
 		mainTab.add(textField);
 	}
 	
@@ -595,7 +591,7 @@ public class MainWindow {
 		areaScrollPane = new JScrollPane(actionsTextArea);
 		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		areaScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, borderColor));
-		areaScrollPane.setBounds(10, 686, 1162, 44);
+		areaScrollPane.setBounds(285, 424, 1162, 37);
 	    
 		mainTab.add(areaScrollPane);
 	}
@@ -628,7 +624,7 @@ public class MainWindow {
 		
 		stblCalendar.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		stblCalendar.setBackground(Color.WHITE);
-		stblCalendar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		stblCalendar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		calendarPanel = new JPanel();
 		calendarPanel.setBackground(Color.WHITE);
 		calendarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
@@ -653,16 +649,22 @@ public class MainWindow {
 	}
 	
 	private void addCalendarComponents() {
+		toggleButton = new JToggleButton("GO");
+		toggleButton.setBounds(1383, 460, 64, 20);
+		mainTab.add(toggleButton);
+		toggleButton.setForeground(Color.WHITE);
+		toggleButton.setBorder(null);
+		toggleButton.setBackground(new Color(28, 192, 159));
 		mainTab.add(calendarPanel);
 		calendarPanel.setLayout(null);
+		calendarPanel.add(stblCalendar);
 		lblMonth = new JLabel();
-		lblMonth.setBounds(0, 0, 782, 45);
-		calendarPanel.add(lblMonth);
+		lblMonth.setBounds(0, 436, 286, 44);
+		mainTab.add(lblMonth);
 		lblMonth.setForeground(fontColor);
 		lblMonth.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblMonth.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMonth.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
-		calendarPanel.add(stblCalendar);
 
 		refreshMonth();
 	}
@@ -737,7 +739,14 @@ public class MainWindow {
 		double eventWidth = getEventWidth();
 		int dayDifference, hour, minute, yOffset, xOffset;
 		double xMultiplier;
-		Color currentColor = randomColors.get((int)(Math.random() * randomColors.size()));
+		Color currentColor;
+		// TODO: Create a dictionary String: Color for each event
+		if (coloredEvents.containsKey(specificEvent.getName())) {
+			currentColor = coloredEvents.get(specificEvent.getName());
+		} else {
+			currentColor = randomColors.get((int)(Math.random() * randomColors.size()));
+			coloredEvents.put(specificEvent.getName(), currentColor);
+		}
 		
 		while (startEventCalendar.get(Calendar.DAY_OF_YEAR) < endEventCalendar.get(Calendar.DAY_OF_YEAR)) {
 			double currentEventWidth = eventWidth;
@@ -786,9 +795,9 @@ public class MainWindow {
 	}
 	
 	private void setBoundsCalendarComponents() {
-		calendarPanel.setBounds(0, 0, 1184, 675);
+		calendarPanel.setBounds(0, 482, 1467, 279);
 		tblCalendar.setSize(100, 100);
-		stblCalendar.setBounds(10, 54, 1164, 610);
+		stblCalendar.setBounds(10, 11, 1447, 260);
 	}
 	
 	private void setCalendarHeaders() {
