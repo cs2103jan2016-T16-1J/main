@@ -294,13 +294,13 @@ public class MainWindow {
 		darkGreen = new Color(42,157,143, 160);
 		randomColors = new ArrayList<Color>();
 		
-		Color1 = new Color(255,150,180,150);
+		//Color1 = new Color(255,150,180,150);
 		Color2 = new Color(182, 166, 202, 150);
 		Color3 = new Color(134,222,183,150);
 		Color4 = new Color(255, 241, 208, 150);
 		Color5 = new Color(192, 246, 255, 150);
 		
-		randomColors.add(Color1);
+		//randomColors.add(Color1);
 		randomColors.add(Color2);
 		randomColors.add(Color3);
 		randomColors.add(Color4);
