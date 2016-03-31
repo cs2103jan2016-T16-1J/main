@@ -62,6 +62,7 @@ public class Parser {
 	private final String TAB_UNDETERMINED = "UNDETERMINE";
 	private final String TAB_COMPLETED = "COMPLETE";
 	private final String TAB_INCOMPLETE = "INCOMPLETE";
+	private final int DAYS_IN_WEEK = 7;
 
 	public Command parseCommand(String input){
 		Command cmdInterface = null;
@@ -74,7 +75,7 @@ public class Parser {
 			oldEvent = null;
 		} else if(tempCmd == CommandType.ADD){
 			Event event = new Event();
-			event = decodeAddData(event, removeFirstWord(input));
+			decodeAddData(event, removeFirstWord(input));
 			oldEvent = event;
 			cmdInterface = new Add(event);
 		} else if(tempCmd == CommandType.DELETE){
@@ -87,7 +88,7 @@ public class Parser {
 			Event event = new Event();
 			event = oldEvent;
 
-			realOldEvent = cloneEvent(oldEvent, realOldEvent);
+			cloneEvent(oldEvent, realOldEvent);
 
 			isEdit = true;
 			event = decodeEditData(event , removeFirstWord(input));
@@ -128,7 +129,7 @@ public class Parser {
 			cmdInterface = new Export(event);
 		} else if(tempCmd == CommandType.CHANGETAB){
 			Status tab = decodeChangeTab(removeFirstWord(input));
-			//cmdInterface = new ChangeTab(tab);
+			cmdInterface = new ChangeTab(tab);
 		}
 		return cmdInterface;
 	}
@@ -148,8 +149,9 @@ public class Parser {
 		if (tempCmd == CommandType.INVALID){
 			return null;
 		} else if(tempCmd == CommandType.ADD){
-			oldEvent = decodeAddData(task, removeFirstWord(input));
-			return oldEvent;
+			decodeAddData(task, removeFirstWord(input));
+			oldEvent = task;
+			return task;
 		} else if(tempCmd == CommandType.DELETE){
 			oldEvent = null;
 			return decodeDeleteData(task, removeFirstWord(input));
@@ -206,7 +208,7 @@ public class Parser {
 	 * @param eventCloned
 	 * @return the cloned event
 	 */
-	public Event cloneEvent(Event eventToBeCloned, Event eventCloned){
+	public void cloneEvent(Event eventToBeCloned, Event eventCloned){
 		eventCloned.setName(eventToBeCloned.getName());
 		eventCloned.setDescription(eventToBeCloned.getDescription());
 		eventCloned.setCategory(eventToBeCloned.getCategory());
@@ -214,8 +216,6 @@ public class Parser {
 		eventCloned.setStartTime(eventToBeCloned.getStartTime());
 		eventCloned.setLocation(eventToBeCloned.getLocation());
 		eventCloned.setStatus(eventToBeCloned.getStatus());
-		
-		return eventCloned;
 	}
 
 	private GenericEvent.Category classifyCategory(String userInput){
@@ -249,10 +249,10 @@ public class Parser {
 	 * @param input
 	 * @return Event object with updated values
 	 */
-	private Event decodeAddData(Event task, String input){
+	private void decodeAddData(Event task, String input){
 		String remainingInput = extractDescription(task, input);
 		task =  determineQuotedInput(task, remainingInput);
-		return decodeDataFromInput(task, input);
+		task =  decodeDataFromInput(task, input);
 	}
 	
 	/**
@@ -717,7 +717,7 @@ public class Parser {
 				task.setEndTime(DateChecker.writeTime(stringDate, time));
 				task.setCategory(GenericEvent.Category.DEADLINE);
 				
-				if(cal.getTime().after(todayDate)){
+				if(cal.getTime().after(task.getEndTime())){
 					int interval = 7;
 					task.setEndTime(DateChecker.findDate(interval));
 
@@ -733,9 +733,13 @@ public class Parser {
 
 				task.setEndTime(DateChecker.writeTime(dateTime[0], time));				
 				task.setCategory(GenericEvent.Category.DEADLINE);				
-				if(cal.getTime().after(todayDate)){
-					int interval = 7;
-					task.setEndTime(DateChecker.findDate(interval));
+				if(cal.getTime().after(task.getEndTime())){
+					/*int intDaySet = task.getEndTime().getDay();
+					Calendar calendar = Calendar.getInstance();
+					Date dateToday = new Date();
+					calendar.setTime(dateToday);
+					int intToday = calendar.get(Calendar.DAY_OF_WEEK);*/
+					task.setEndTime(DateChecker.findDate(DAYS_IN_WEEK));
 
 					String writtenDate = formatToString.format(task.getEndTime());
 					task.setEndTime(DateChecker.writeTime(writtenDate, time));
