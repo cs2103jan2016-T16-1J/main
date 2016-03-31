@@ -290,15 +290,9 @@ public class Storage {
 			return GenericEvent.Category.DEADLINE;
 		} else if (jsonObj.get("category").equals(Constant.CATEGORY_EVENT)){
 			return GenericEvent.Category.EVENT;
-		} else if (jsonObj.get("category").equals(Constant.CATEGORY_FLOATING)){
+		} else {
 			return GenericEvent.Category.FLOATING;
-		} else if (jsonObj.get("category").equals(Constant.CATEGORY_UNDETERMINED_EVENT)){
-			return GenericEvent.Category.UNDETERMINED_EVENT;
-		}  else if (jsonObj.get("category").equals(Constant.CATEGORY_UNDETERMINED_DEADLINE)){
-			return GenericEvent.Category.UNDETERMINED_DEADLINE;
-		} else{
-			return GenericEvent.Category.UNDETERMINED_FLOATING;
-		}
+		} 
 	}
 
 	private void updatedDisplayedEvents(State completeState){

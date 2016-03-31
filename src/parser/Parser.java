@@ -26,12 +26,12 @@ import main.GenericEvent;
 import main.ReservedEvent;
 import main.TimePair;
 import main.GenericEvent.Category;
+import main.GenericEvent.Status;
 
 public class Parser {
 
 	private static Event oldEvent;
 	private boolean isNameDefined = true;
-	private boolean isBlock = false;
 	private boolean isEdit = false;
 	private final String PATTERN_SPACE = "(\\s)";
 	private final String PATTERN_AM_OR_PM = "(\\b(am)\\b|\\b(pm)\\b)";
@@ -100,7 +100,6 @@ public class Parser {
 		} else if(tempCmd == CommandType.BLOCK){
 			Event event = new Event();
 			event = decodeAddData(event, removeFirstWord(input));
-			isBlock = true;
 			oldEvent = event;
 			cmdInterface = new Add(event);
 		} else if(tempCmd == CommandType.UNBLOCK){
@@ -115,6 +114,7 @@ public class Parser {
 		} else if(tempCmd == CommandType.CONFIRM){
 			Event event = new Event();
 			event = determineQuotedInput(event, removeFirstWord(input));
+			event = decodeDataFromInput(event, input);
 			event = determineCategory(event);
 			oldEvent = event;
 		} else if(tempCmd == CommandType.IMPORT) {
@@ -126,8 +126,8 @@ public class Parser {
 			event = decodeImportExportData(event, removeFirstWord(input));
 			cmdInterface = new Export(event);
 		} else if(tempCmd == CommandType.CHANGETAB){
-			int tab = decodeChangeTab(removeFirstWord(input));
-			cmdInterface = new ChangeTab(tab);
+			Status tab = decodeChangeTab(removeFirstWord(input));
+			//cmdInterface = new ChangeTab(tab);
 		}
 		return cmdInterface;
 	}
@@ -166,10 +166,10 @@ public class Parser {
 			task = decodeEditData(task , removeFirstWord(input));
 			oldEvent = task;
 			return task;
-		} else if(tempCmd == CommandType.SELECT){
-			task = decodeSelectData(task, removeFirstWord(input));
-			return task;
 		} else if(tempCmd == CommandType.EXPORT){
+			task = decodeImportExportData(task, removeFirstWord(input));
+			return task;
+		} else if(tempCmd == CommandType.IMPORT){
 			task = decodeImportExportData(task, removeFirstWord(input));
 			return task;
 		}
@@ -183,7 +183,6 @@ public class Parser {
 		if(tempCmd == CommandType.BLOCK){
 			ReservedEvent reserved = new ReservedEvent();
 			reserved = decodeReservedData(task, removeFirstWord(input));
-			isBlock = true;
 			return reserved;
 		} else if(tempCmd == CommandType.UNBLOCK){
 			
@@ -212,64 +211,6 @@ public class Parser {
 		return eventCloned;
 	}
 
-	private GenericEvent setCategoryForBlockedEvent(Event task) {
-		if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() == Constant.MAX_DATE){
-			task.setCategory(GenericEvent.Category.UNDETERMINED_FLOATING);
-		} else if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() != Constant.MAX_DATE){
-			task.setCategory(GenericEvent.Category.UNDETERMINED_DEADLINE);
-		} else if(task.getStartTime() != Constant.MIN_DATE && task.getEndTime() != Constant.MAX_DATE){
-			task.setCategory(GenericEvent.Category.UNDETERMINED_EVENT);
-		}
-		return task;
-	}
-	/**
-	 * This method finds the pattern provided which is used in data extraction
-	 * @param desiredPattern-RegEx Pattern for matching the specific preposition
-	 * @param input- user's input without the description or note
-	 * @return an integer array which contains indexes of the first occurrence of the desired word
-	 * 			[0] - start index  , [1] - end index
-	 */
-	private int[] matchPatternOfFirstOccurrence(String desiredPattern, String input){
-		int startIndex = 0;
-		int endIndex = 0;
-
-		Pattern pattern = Pattern.compile(desiredPattern,Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(input);
-
-		if(matcher.find()){
-			startIndex = matcher.start();
-			endIndex = matcher.end();
-		}
-
-		int[] resultedIndex = new int[]{startIndex, endIndex};
-
-		return resultedIndex;
-	}
-
-	/**
-	 * This method finds the pattern provided which is used in data extraction
-	 * @param desiredPattern-RegEx Pattern for matching the specific preposition
-	 * @param input- user's input without the description or note
-	 * @return an integer array which contains indexes of the last occurrence of the desired word
-	 * 			[0] - start index  , [1] - end index
-	 */
-	private static int[] matchPatternOfLastOccurrence(String desiredPattern, String input){
-		int startIndex = 0;
-		int endIndex = 0;
-
-		Pattern pattern = Pattern.compile(desiredPattern,Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(input);
-
-		while(matcher.find()){
-			startIndex = matcher.start();
-			endIndex = matcher.end();
-		}
-
-		int[] resultedIndex = new int[]{startIndex, endIndex};
-
-		return resultedIndex;
-	}
-
 	private GenericEvent.Category classifyCategory(String userInput){
 		
 		if(userInput.equalsIgnoreCase(Constant.CATEGORY_DEADLINE)){
@@ -278,12 +219,6 @@ public class Parser {
 			return GenericEvent.Category.EVENT;
 		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_FLOATING)){
 			return GenericEvent.Category.FLOATING;
-		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_UNDETERMINED_DEADLINE)){
-			return GenericEvent.Category.UNDETERMINED_DEADLINE;
-		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_UNDETERMINED_EVENT)){
-			return GenericEvent.Category.UNDETERMINED_EVENT;
-		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_UNDETERMINED_FLOATING)){
-			return GenericEvent.Category.UNDETERMINED_FLOATING;
 		}
 		
 		return GenericEvent.Category.NULL;
@@ -309,7 +244,8 @@ public class Parser {
 	 */
 	private Event decodeAddData(Event task, String input){
 		String remainingInput = extractDescription(task, input);
-		return determineQuotedInput(task, remainingInput);
+		task =  determineQuotedInput(task, remainingInput);
+		return decodeDataFromInput(task, input);
 	}
 	
 	/**
@@ -321,54 +257,75 @@ public class Parser {
 	private ReservedEvent decodeReservedData(Event task, String input){
 		int startIndex = 0;
 		int endIndex = startIndex;
-
 		ArrayList<String> choppedInputData = new ArrayList<>();
 		ArrayList<TimePair> reservedTimes = new ArrayList<>();
-		String remainingInput = extractDescription(task, input).trim();
 		
+		/**extract notes from the input if it is declared**/
+		String remainingInput = extractDescription(task, input);
+		
+		/**extract location from the input if it is declared**/
+		remainingInput = extractLocation(task, remainingInput);
+		
+		/**extract "task name that has preposition on, from, to, by, at" **/
+		task = determineQuotedInput(task, remainingInput);
+		
+		/**to find AND in a sentence**/
 		Pattern pattern = Pattern.compile(PATTERN_AND,Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(input);
-		
+		Matcher matcher = pattern.matcher(remainingInput);
+				
 		while(matcher.find()){
 			endIndex = matcher.start();
-			choppedInputData.add(input.substring(startIndex, endIndex).trim());
+			choppedInputData.add(remainingInput.substring(startIndex, endIndex).trim());
 			startIndex = matcher.end();
 		}
-		
-		choppedInputData.add(input.substring(startIndex,input.length()).trim());
-		task = determineQuotedInput(task, remainingInput);
-
-		for(int i = 0; i < choppedInputData.size(); i++){
-			DateChecker.validateDate(choppedInputData.get(i));
-		}
+		choppedInputData.add(remainingInput.substring(startIndex,remainingInput.length()).trim());
+	
+		/**decode all the other information like name, location from input**/
+		task = decodeDataFromInput(task, choppedInputData.get(0));
 		TimePair reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
 		reservedTimes.add(reservedTime);
+		
+		/**check if the connected data are date time **/
+		for(int i = 1; i < choppedInputData.size(); i++){
+			task.setStartTime(Constant.MIN_DATE);
+			task.setEndTime(Constant.MAX_DATE);
+			task = decodeDataFromInput(task, choppedInputData.get(i));
 
+			if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() == Constant.MAX_DATE){
+				task.setName(task.getName() + " " + choppedInputData.get(i));
+			} else{
+				reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
+				reservedTimes.add(reservedTime);
+			}
+		}
 		ReservedEvent reserved = new ReservedEvent(task.getName(), task.getLocation(),
-				task.getDescription(), task.getCategory(), reservedTimes, task.getStatus());
+				task.getDescription(), task.getCategory(), reservedTimes, GenericEvent.Status.UNDETERMINED);
 		return reserved;
 	}
 	
 	private Event decodeImportExportData(Event task, String input){
-		
-		String directory = input.replace('\\', '/');
-		task.setName(directory);
-		
+
+		if(input.indexOf('\\') >= 0){
+			return null;
+		} else{
+			task.setName(input);
+		}
 		return task;
 	}
 	
-	private int decodeChangeTab(String input){
+	private Status decodeChangeTab(String input){
 		input = input.toUpperCase();
 		if(input.contains(TAB_UNDETERMINED)){
 			return Constant.TAB_UNDETERMINED;
 		} else if(input.contains(TAB_COMPLETED)){
-			return Constant.TAB_COMPLETED;
+			return Constant.TAB_COMPLETE;
 		} else if(input.contains(TAB_INCOMPLETE)){
 			return Constant.TAB_INCOMPLETE;
 		}
 		
 		return Constant.TAB_INCOMPLETE;
 	}
+	
 	/**
 	 * Decodes the user input for selecting task
 	 * @param task
@@ -420,6 +377,7 @@ public class Parser {
 			task.setSelection(indexes);
 		} else{
 			task = determineQuotedInput(task, remainingInput);
+			task = decodeDataFromInput(task, input);
 		}
 		
 		if(isCategoryDefined){
@@ -461,7 +419,8 @@ public class Parser {
 			isCategoryDefined = true;
 		}
 		
-		task =  determineQuotedInput(task, remainingInput);
+		task = determineQuotedInput(task, remainingInput);
+		task = decodeDataFromInput(task, input);
 		
 		if(isCategoryDefined){
 			task.setCategory(null);
@@ -483,7 +442,8 @@ public class Parser {
 		if(remainingInput.isEmpty()){
 			return task;
 		}
-		return determineQuotedInput(task, remainingInput);
+		task = determineQuotedInput(task, remainingInput);
+		return decodeDataFromInput(task, input);
 	}
 
 	/**
@@ -525,9 +485,10 @@ public class Parser {
 		}else if (isEdit && isNameDefined){
 			task.setName(input.substring(0, indexes[0]).trim());
 		}
-
-		return decodeDataFromInput(task, input);
+		return task;
 	}
+	
+	
 
 	/**
 	 * Extract information out from user input based on the structure of the input
@@ -586,6 +547,7 @@ public class Parser {
 		return task;
 	}
 
+	
 	private Event classifyDataFromPreposition(Event task, String input, String preposition,
 			int startIndex, int endIndex) throws ParseException{
 		Date inputDate;
@@ -946,10 +908,14 @@ public class Parser {
 		} else if(matchedColumn[1] > matchedLastSpace[1]){
 			endIndex = date.length();
 			dateTime[0] = date.substring(0,matchedLastSpace[0]).trim();
+			if(DateChecker.convertDayToDate(dateTime[0]) != null){
+				startIndex = matchedLastSpace[0];
+			}
 		}
 
 		if(matchedColumn[0] > 0){
 			dateTime[1] = date.substring(startIndex, endIndex).trim();
+
 		} else{
 			dateTime[1] = null;
 		}
@@ -957,7 +923,19 @@ public class Parser {
 		return dateTime;
 	}
 
-	
+	private String extractLocation(Event event, String input){
+		String location = "";
+		int[] indexes = matchPatternOfLastOccurrence(PATTERN_AT, input);
+		
+		if(indexes[0] != 0 && indexes[1] != 0 && indexes[0] != indexes[1]){
+			location = input.substring(indexes[1], input.length()).trim();
+			if(DateChecker.validateDate(location) ==null){
+				event.setLocation(location);
+				return (input.substring(0, indexes[0]).trim());
+			}
+		} 
+		return input;
+	}
 
 	/**
 	 * This method extracts the description out of the input and set the value to the Event object
@@ -979,6 +957,54 @@ public class Parser {
 		event.setDescription(description);
 
 		return (input.substring(0,startIndex).trim());
+	}
+	
+	/**
+	 * This method finds the pattern provided which is used in data extraction
+	 * @param desiredPattern-RegEx Pattern for matching the specific preposition
+	 * @param input- user's input without the description or note
+	 * @return an integer array which contains indexes of the first occurrence of the desired word
+	 * 			[0] - start index  , [1] - end index
+	 */
+	private int[] matchPatternOfFirstOccurrence(String desiredPattern, String input){
+		int startIndex = 0;
+		int endIndex = 0;
+
+		Pattern pattern = Pattern.compile(desiredPattern,Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(input);
+
+		if(matcher.find()){
+			startIndex = matcher.start();
+			endIndex = matcher.end();
+		}
+
+		int[] resultedIndex = new int[]{startIndex, endIndex};
+
+		return resultedIndex;
+	}
+
+	/**
+	 * This method finds the pattern provided which is used in data extraction
+	 * @param desiredPattern-RegEx Pattern for matching the specific preposition
+	 * @param input- user's input without the description or note
+	 * @return an integer array which contains indexes of the last occurrence of the desired word
+	 * 			[0] - start index  , [1] - end index
+	 */
+	private static int[] matchPatternOfLastOccurrence(String desiredPattern, String input){
+		int startIndex = 0;
+		int endIndex = 0;
+
+		Pattern pattern = Pattern.compile(desiredPattern,Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(input);
+
+		while(matcher.find()){
+			startIndex = matcher.start();
+			endIndex = matcher.end();
+		}
+
+		int[] resultedIndex = new int[]{startIndex, endIndex};
+
+		return resultedIndex;
 	}
 	
 	/**

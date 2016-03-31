@@ -13,8 +13,7 @@ public abstract class GenericEvent {
 	}
 
 	public enum Category {
-		NULL, DEADLINE, EVENT, FLOATING, UNDETERMINED_EVENT, UNDETERMINED_DEADLINE,
-		UNDETERMINED_FLOATING
+		NULL, DEADLINE, EVENT, FLOATING
 	}
 
 	private String name;
