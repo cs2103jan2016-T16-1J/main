@@ -1,1 +1,20 @@
-{"startTime":"Sat Apr 02 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"yoyo","endTime":"Sat Apr 02 23:59:01 SGT 2016"}
+{"startTime":"Wed Mar 30 08:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"presentation","endTime":"Wed Mar 30 10:00:00 SGT 2016"}
+{"startTime":"Fri Apr 01 15:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"lecture","endTime":"Fri Apr 01 17:00:00 SGT 2016"}
+{"startTime":"Fri Apr 01 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"April Fools Day","endTime":"Fri Apr 01 23:59:01 SGT 2016"}
+{"startTime":"Thu Mar 31 18:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"fishhead steamboat","endTime":"Thu Mar 31 20:00:00 SGT 2016"}
+{"startTime":"Thu Mar 31 20:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"movie","endTime":"Thu Mar 31 23:00:00 SGT 2016"}
+{"startTime":"Mon Apr 04 12:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"EL1101","endTime":"Mon Apr 04 14:00:00 SGT 2016"}
+{"startTime":"Sat Apr 02 17:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"gambling","endTime":"Sun Apr 03 03:00:00 SGT 2016"}
+{"startTime":"Tue Apr 05 12:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"CH2293","endTime":"Tue Apr 05 14:00:00 SGT 2016"}
+{"startTime":"Tue Apr 05 14:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"EL1101TUT","endTime":"Tue Apr 05 16:00:00 SGT 2016"}
+{"startTime":"Wed Apr 06 14:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"JS2230","endTime":"Wed Apr 06 16:00:00 SGT 2016"}
+{"startTime":"Wed Apr 06 16:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"cs2103 meeting","endTime":"Wed Apr 06 19:00:00 SGT 2016"}
+{"startTime":"Thu Mar 31 16:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"CS2103 TUT","endTime":"Thu Mar 31 17:00:00 SGT 2016"}
+{"startTime":"Mon Apr 04 13:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"yoyo","endTime":"Mon Apr 04 15:00:00 SGT 2016"}
+{"startTime":"Thu Apr 07 14:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"CH2293 presentation","endTime":"Thu Apr 07 16:00:00 SGT 2016"}
+{"startTime":"Thu Apr 07 16:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"CS2103 TUT","endTime":"Thu Apr 07 17:00:00 SGT 2016"}
+{"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"class enrolment","endTime":"Thu Apr 07 02:00:00 SGT 2016"}
+{"startTime":"Sat Apr 09 02:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"class enrolment","endTime":"Sat Apr 09 03:00:00 SGT 2016"}
+{"startTime":"Mon Apr 11 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"GE1101 DUE","endTime":"Mon Apr 11 23:59:01 SGT 2016"}
+{"startTime":"Tue Apr 19 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"CH2293 DUE","endTime":"Tue Apr 19 23:59:01 SGT 2016"}
+{"startTime":"Sun Apr 03 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"someone's birthday","endTime":"Sun Apr 03 23:59:01 SGT 2016"}

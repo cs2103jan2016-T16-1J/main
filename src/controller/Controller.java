@@ -74,7 +74,7 @@ public class Controller{
 		if(null == userCommand){
 			completeState.setStatusMessage(State.MESSAGE_PARSE_ERROR);
 		}
-		//System.out.println(completeState.incompletedEvents.size());
+		
 		userCommand.execute(completeState);
 		assert isValidCommand(userCommand);
 		//assert false;
@@ -82,6 +82,16 @@ public class Controller{
 		return completeState;
 	}
 	
+	/**
+	 * For integration testing only
+	 * 
+	 * @param commandText
+	 * @param directory
+	 * @param state
+	 * @return
+	 * @throws IOException
+	 * @throws JSONException
+	 */
 	public State executeCommand(String commandText, String directory, State state) throws IOException, JSONException{
 		state.setStatusMessage(null);
 		Command userCommand;
@@ -89,7 +99,7 @@ public class Controller{
 		if(null == userCommand){
 			state.setStatusMessage(State.MESSAGE_PARSE_ERROR);
 		}
-		//System.out.println(completeState.incompletedEvents.size());
+		
 		userCommand.execute(state);
 		assert isValidCommand(userCommand);
 		//assert false;
