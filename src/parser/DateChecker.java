@@ -170,7 +170,7 @@ public class DateChecker {
 	}
 
 
-	private static Date convertDayToDate(String stringDateInput){
+	public static Date convertDayToDate(String stringDateInput){
 		int beginIndex = 0;
 		int endIndex = 3;
 		String dayAbbreviation = stringDateInput.substring(beginIndex, endIndex);

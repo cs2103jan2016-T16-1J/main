@@ -3,13 +3,14 @@ package command;
 import java.io.IOException;
 
 import json.JSONException;
+import main.GenericEvent.Status;
 import main.State;
 
 public class ChangeTab implements Command{
-	int newTab;
+	Status newTab;
 	State completeState;
 	
-	public ChangeTab(int newTab){
+	public ChangeTab(Status newTab){
 		this.newTab = newTab;
 	}
 	
