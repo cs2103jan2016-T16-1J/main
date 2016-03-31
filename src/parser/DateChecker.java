@@ -173,8 +173,9 @@ public class DateChecker {
 	public static Date convertDayToDate(String stringDateInput){
 		int beginIndex = 0;
 		int endIndex = 3;
+		Initialization();
+		
 		String dayAbbreviation = stringDateInput.substring(beginIndex, endIndex);
-
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
 		String stringToday = dateFormat.format(dateToday);
 

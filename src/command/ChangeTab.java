@@ -15,7 +15,13 @@ public class ChangeTab implements Command{
 	}
 	
 	public State execute(State completeState) throws IOException, JSONException{
-		
+		if(newTab == Status.COMPLETE){
+			completeState.isCompletedSelected();
+		} else if(newTab == Status.INCOMPLETE){
+			completeState.isIncompletedSelected();
+		} else if(newTab == Status.UNDETERMINED){
+			completeState.isUndeterminedSelected();
+		}
 		return completeState;
 	}
 
