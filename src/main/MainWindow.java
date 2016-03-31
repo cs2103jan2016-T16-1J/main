@@ -136,6 +136,11 @@ public class MainWindow {
 	private JTextArea lblAdd;
 	
 	private String defaultStorage = "./storage/storage.txt";
+	private Color Color1;
+	private Color Color2;
+	private Color Color3;
+	private Color Color4;
+	private Color Color5;
 
 
 	/**
@@ -285,16 +290,30 @@ public class MainWindow {
 		lightGray = new Color(244, 246, 250);
 		borderColor = new Color(231, 234, 236);
 		fontColor = new Color(103, 106, 108);
-		lightRed = new Color (231,111,81,170);
-		darkGreen = new Color(42,157,143, 170);
+		lightRed = new Color (231,111,81,160);
+		darkGreen = new Color(42,157,143, 160);
 		randomColors = new ArrayList<Color>();
+		
+		Color1 = new Color(255,150,180,150);
+		Color2 = new Color(182, 166, 202, 150);
+		Color3 = new Color(134,222,183,150);
+		Color4 = new Color(255, 241, 208, 150);
+		Color5 = new Color(192, 246, 255, 150);
+		
+		randomColors.add(Color1);
+		randomColors.add(Color2);
+		randomColors.add(Color3);
+		randomColors.add(Color4);
+		randomColors.add(Color5);
+		
+		/*
 		for (int i = 0; i < 300; i++) {
 			Color currentColor = new Color((int) (Math.random() * 255),
 										   (int) (Math.random() * 255),
 										   (int) (Math.random() * 255),
-										   170);
+										   160);
 			randomColors.add(currentColor);			
-		}
+		}*/
 		coloredEvents = new HashMap<String, Color>();
 		
 	}
@@ -790,7 +809,7 @@ public class MainWindow {
 		currentEvent.setHorizontalAlignment(JTextField.CENTER);
 		currentEvent.setBorder(null);
 		currentEvent.setEditable(false);
-		currentEvent.setForeground(Color.WHITE);
+		currentEvent.setForeground(Color.BLACK);
 		return currentEvent;
 	}
 	
