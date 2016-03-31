@@ -803,7 +803,18 @@ public class MainWindow {
 	
 	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight, Color color) {
 		JTextField currentEvent = new JTextField();
-		currentEvent.setText(name);
+		double ratio = 8.42;	// the ratio of the name that would fits in one block
+	
+		System.out.println(name + name.length());
+		if (name.length() != 0){
+			if (eventWidth/name.length() < ratio) {
+				System.out.println((int)(eventWidth/ratio));
+				currentEvent.setText(name.substring(0, ((int)(eventWidth/ratio)-2)) + "...");
+			} else {
+				currentEvent.setText(name);
+			}
+		}
+		
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
 		currentEvent.setBackground(color);
 		currentEvent.setHorizontalAlignment(JTextField.CENTER);
@@ -812,6 +823,7 @@ public class MainWindow {
 		currentEvent.setForeground(Color.BLACK);
 		return currentEvent;
 	}
+	
 	
 	private void setBoundsCalendarComponents() {
 		calendarPanel.setBounds(0, 482, 1467, 279);
