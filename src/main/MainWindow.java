@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -103,7 +104,9 @@ public class MainWindow {
 	public static Color fontColor;
 	public static Color lightGray;
 	public static Color borderColor;
+	public static Color transperantColor;
 	private static ArrayList<Color> randomColors;
+	private static HashMap<String, Color> coloredEvents;
 	
 	private Controller mainController;
 	private State currentState;
@@ -134,6 +137,11 @@ public class MainWindow {
 	private JTextArea lblAdd;
 	
 	private String defaultStorage = "./storage/storage.txt";
+	private Color Color1;
+	private Color Color2;
+	private Color Color3;
+	private Color Color4;
+	private Color Color5;
 
 
 	/**
@@ -283,16 +291,32 @@ public class MainWindow {
 		lightGray = new Color(244, 246, 250);
 		borderColor = new Color(231, 234, 236);
 		fontColor = new Color(103, 106, 108);
-		lightRed = new Color (231,111,81,170);
-		darkGreen = new Color(42,157,143, 170);
+		lightRed = new Color (231,111,81,160);
+		darkGreen = new Color(42,157,143, 160);
+		transperantColor = new Color(42,157,143, 0);
 		randomColors = new ArrayList<Color>();
+		
+		//Color1 = new Color(255,150,180,150);
+		Color2 = new Color(182, 166, 202, 150);
+		Color3 = new Color(134,222,183,150);
+		Color4 = new Color(255, 241, 208, 150);
+		Color5 = new Color(192, 246, 255, 150);
+		
+		//randomColors.add(Color1);
+		randomColors.add(Color2);
+		randomColors.add(Color3);
+		randomColors.add(Color4);
+		randomColors.add(Color5);
+		
+		/*
 		for (int i = 0; i < 300; i++) {
 			Color currentColor = new Color((int) (Math.random() * 255),
 										   (int) (Math.random() * 255),
 										   (int) (Math.random() * 255),
-										   170);
+										   160);
 			randomColors.add(currentColor);			
-		}
+		}*/
+		coloredEvents = new HashMap<String, Color>();
 		
 	}
 	
@@ -330,14 +354,6 @@ public class MainWindow {
 	}
 	
 	private void initializeInfoSection() {
-		infoPanel = new JPanel();
-		infoPanel.setBackground(lightGray);
-		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-		
-		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
-		infoPanel.setBounds(119, 0, 286, 761);
-	        
-		frame.getContentPane().add(infoPanel);	
 	}
 	
 	private void displayEventDetails(Event currentEvent) {	
@@ -470,17 +486,18 @@ public class MainWindow {
 		mainTab = new JPanel();
 		mainTab.setBackground(Color.WHITE);
 		mainTab.setLayout(null);
-		mainTab.setBounds(402, 0, 1182, 761);
+		mainTab.setBounds(117, 0, 1467, 761);
 		frame.getContentPane().add(mainTab);
 	}
 	
 	private void initializeInputField() {
-		toggleButton = new JToggleButton("GO");
-		toggleButton.setForeground(Color.WHITE);
-		toggleButton.setBorder(null);
-		toggleButton.setBackground(new Color(28, 192, 159));
-		toggleButton.setBounds(1109, 730, 64, 20);
-		mainTab.add(toggleButton);
+		infoPanel = new JPanel();
+		infoPanel.setBounds(0, 0, 286, 425);
+		mainTab.add(infoPanel);
+		infoPanel.setBackground(lightGray);
+		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+		
+		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
 		
 		textField = new JTextField();
 		textField.setBorder(new LineBorder(borderColor));
@@ -488,7 +505,7 @@ public class MainWindow {
 		textField.addKeyListener(new ChangeMonthListener());
 		
 		textField.setColumns(10);
-		textField.setBounds(10, 730, 1100, 20);
+		textField.setBounds(285, 460, 1100, 20);
 		mainTab.add(textField);
 	}
 	
@@ -595,7 +612,7 @@ public class MainWindow {
 		areaScrollPane = new JScrollPane(actionsTextArea);
 		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		areaScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, borderColor));
-		areaScrollPane.setBounds(10, 686, 1162, 44);
+		areaScrollPane.setBounds(285, 424, 1162, 37);
 	    
 		mainTab.add(areaScrollPane);
 	}
@@ -628,7 +645,7 @@ public class MainWindow {
 		
 		stblCalendar.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		stblCalendar.setBackground(Color.WHITE);
-		stblCalendar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		stblCalendar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		calendarPanel = new JPanel();
 		calendarPanel.setBackground(Color.WHITE);
 		calendarPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
@@ -653,16 +670,22 @@ public class MainWindow {
 	}
 	
 	private void addCalendarComponents() {
+		toggleButton = new JToggleButton("GO");
+		toggleButton.setBounds(1383, 460, 64, 20);
+		mainTab.add(toggleButton);
+		toggleButton.setForeground(Color.WHITE);
+		toggleButton.setBorder(null);
+		toggleButton.setBackground(new Color(28, 192, 159));
 		mainTab.add(calendarPanel);
 		calendarPanel.setLayout(null);
+		calendarPanel.add(stblCalendar);
 		lblMonth = new JLabel();
-		lblMonth.setBounds(0, 0, 782, 45);
-		calendarPanel.add(lblMonth);
+		lblMonth.setBounds(0, 436, 286, 44);
+		mainTab.add(lblMonth);
 		lblMonth.setForeground(fontColor);
 		lblMonth.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblMonth.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMonth.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
-		calendarPanel.add(stblCalendar);
 
 		refreshMonth();
 	}
@@ -699,12 +722,14 @@ public class MainWindow {
 		double eventWidth = getEventWidth();
 		int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 		int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
-		int xOffset = (int) (eventWidth * hour) + 1;
+		int xOffset = (int) (eventWidth * hour);
 		int yOffset = (int) eventHeight * dayDifference ;
 		
-		JTextField currentEvent = createEventBlock(deadline.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight, lightRed);
-		
+		JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) eventWidth, (int) eventHeight, lightRed);
+		JTextField currentEventName = createEventBlock(deadline.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight, transperantColor);
 		tblCalendar.add(currentEvent);
+		tblCalendar.add(currentEventName);
+		tblCalendar.setComponentZOrder(currentEventName, 1);
 	}
 	
 	private double getEventHeight() {
@@ -737,7 +762,14 @@ public class MainWindow {
 		double eventWidth = getEventWidth();
 		int dayDifference, hour, minute, yOffset, xOffset;
 		double xMultiplier;
-		Color currentColor = randomColors.get((int)(Math.random() * randomColors.size()));
+		Color currentColor;
+		// TODO: Create a dictionary String: Color for each event
+		if (coloredEvents.containsKey(specificEvent.getName())) {
+			currentColor = coloredEvents.get(specificEvent.getName());
+		} else {
+			currentColor = randomColors.get((int)(Math.random() * randomColors.size()));
+			coloredEvents.put(specificEvent.getName(), currentColor);
+		}
 		
 		while (startEventCalendar.get(Calendar.DAY_OF_YEAR) < endEventCalendar.get(Calendar.DAY_OF_YEAR)) {
 			double currentEventWidth = eventWidth;
@@ -745,11 +777,11 @@ public class MainWindow {
 			hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
 			minute = startEventCalendar.get(Calendar.MINUTE);
 			yOffset = (int) eventHeight * dayDifference;
-			xOffset = (int) (eventWidth * (hour + minute / 60.0)) + 1;
+			xOffset = (int) (eventWidth * (hour + minute / 60.0));
 			xMultiplier = (24 - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 					(60 - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 			currentEventWidth *= xMultiplier;
-			JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) Math.ceil(currentEventWidth), (int) eventHeight, currentColor);
+			JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) currentEventWidth, (int) eventHeight, currentColor);
 
 			tblCalendar.add(currentEvent);
 			startEventCalendar.set(Calendar.DAY_OF_YEAR, startEventCalendar.get(Calendar.DAY_OF_YEAR) + 1);
@@ -763,32 +795,49 @@ public class MainWindow {
 		hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
 		minute = startEventCalendar.get(Calendar.MINUTE);
 		yOffset = (int) eventHeight * dayDifference;
-		xOffset = (int) (eventWidth * (hour + minute / 60.0)) + 1;
+		xOffset = (int) (eventWidth * (hour + minute / 60.0));
 
 		xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 		eventWidth *= xMultiplier;
-		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight, currentColor);
-		
+		JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) eventWidth, (int) eventHeight, currentColor);
+		JTextField currentEventName = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight, transperantColor);
 		tblCalendar.add(currentEvent);
+		tblCalendar.add(currentEventName);
+		tblCalendar.setComponentZOrder(currentEventName, 1);
+
 	}
 	
 	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight, Color color) {
 		JTextField currentEvent = new JTextField();
-		currentEvent.setText(name);
+		double ratio = 8.42;	// the ratio of the name that would fits in one block
+	
+		System.out.println(name + name.length());
+		if (name.length() != 0){
+			if (eventWidth/name.length() < ratio) {
+				System.out.println((int)(eventWidth/ratio));
+				currentEvent.setText(name.substring(0, ((int)(eventWidth/ratio)-2)) + "...");
+			} else {
+				currentEvent.setText(name);
+			}
+		}
+		
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
-		currentEvent.setBackground(color);
+		if (color != null) {
+			currentEvent.setBackground(color);
+		}
 		currentEvent.setHorizontalAlignment(JTextField.CENTER);
 		currentEvent.setBorder(null);
 		currentEvent.setEditable(false);
-		currentEvent.setForeground(Color.WHITE);
+		currentEvent.setForeground(Color.BLACK);
 		return currentEvent;
 	}
 	
+	
 	private void setBoundsCalendarComponents() {
-		calendarPanel.setBounds(0, 0, 1184, 675);
+		calendarPanel.setBounds(0, 482, 1467, 279);
 		tblCalendar.setSize(100, 100);
-		stblCalendar.setBounds(10, 54, 1164, 610);
+		stblCalendar.setBounds(10, 11, 1447, 260);
 	}
 	
 	private void setCalendarHeaders() {
