@@ -14,6 +14,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,6 +28,7 @@ import java.util.Locale;
 
 import constant.Constant;
 import json.*;
+import static java.nio.file.StandardCopyOption.*;
 
 /**
  * Storage class- handle storage between state class and local file
@@ -50,12 +54,12 @@ public class Storage {
 		storageFile = s;
 	}
 	
-	public void changeDirectory(String newDirectory){
-		createFile(newDirectory);
-		setDirectory(newDirectory);
+	public void exportDirectory(String newDirectory){
+		String newStorage = newDirectory;
+		createFile(newStorage);
+		copyStorage(newStorage);
 	}
-	
-	
+
 	/** 
 	 * Check if the file is exist. If not, create a new file
 	 */
@@ -173,10 +177,6 @@ public class Storage {
 	
 	
 	
-	
-	
-	
-
 	private void storageToState(State state, Event event) {
 		if (event.getStatus() == GenericEvent.Status.COMPLETE){
 			state.addToCompletedList(event);
@@ -300,6 +300,18 @@ public class Storage {
 		completeState.displayedEvents.addAll(completeState.completedEvents);
 		completeState.displayedEvents.addAll(completeState.incompletedEvents);
 		completeState.displayedEvents.addAll(completeState.floatingEvents);		
+	}
+	
+	private void copyStorage(String destinationFileName) {
+		Path source = Paths.get(getDirectory());
+		Path output = Paths.get(destinationFileName);
+		
+		try {
+			Files.copy(source, output, REPLACE_EXISTING);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

@@ -8,10 +8,12 @@ import main.State;
 import storage.Storage;
 
 public class Export implements Command {
+
+	Event modifiedEvent;
 	State completeState;
 	
-	public Export(Event event) {
-		// TODO Auto-generated constructor stub
+	public Export(Event modifiedEvent){
+		this.modifiedEvent = modifiedEvent;
 	}
 
 	@Override
@@ -19,7 +21,7 @@ public class Export implements Command {
 		this.completeState = completeState;
 		
 		Storage storage = new Storage();
-		//storage.changeDirectory(completeState.gnewDirectory);
+		storage.exportDirectory(modifiedEvent.getName());
 		
 		return null;
 	}
