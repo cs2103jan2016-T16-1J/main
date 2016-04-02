@@ -95,7 +95,7 @@ public class Parser {
 
 			isEdit = true;
 			event = decodeEditData(event , removeFirstWord(input));
-			cmdInterface = new Edit(realOldEvent, event);
+			cmdInterface = new Edit(event);
 			oldEvent = event;
 		} else if(tempCmd == CommandType.SELECT){		
 			Event event = new Event();
@@ -568,6 +568,7 @@ public class Parser {
 		int newEndIndex = 0;
 		SimpleDateFormat formatToString = new SimpleDateFormat("dd/MM/yyyy H:mm:ss");
 		
+		
 		return task;
 	}
 	
@@ -607,12 +608,17 @@ public class Parser {
 			
 			/*check date time in Day of the week format e.g. "on Sun 11 am" */
 			if(isDay){
-				if(dateTime[1] != null){ /*check date time in day time format, e.g. Friday 11 pm*/
+				if(dateTime[0] != null && dateTime[1] != null){ /*check date time in day time format, e.g. Friday 11 pm*/
+					task.setStartTime(Constant.MIN_DATE);
+					task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
+					task.setCategory(GenericEvent.Category.DEADLINE);
+					return task;
+				} else if(dateTime[0] == null && dateTime[1] != null){
 					task.setStartTime(Constant.MIN_DATE);
 					task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
 					task.setCategory(GenericEvent.Category.DEADLINE);
 					return task;
-				}	
+				}
 			} else if(dateTime[0] == null && dateTime[1] != null){
 				task.setStartTime(Constant.MIN_DATE);
 				task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
@@ -887,6 +893,11 @@ public class Parser {
 					task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
 
 				}
+			} else if(dateTime[0] == null && dateTime[1] != null && matchAmPm[0] == matchAmPm[1]){
+				
+				
+			} else if(dateTime[0] != null && dateTime[1] != null && matchAmPm[0] == matchAmPm[1]){
+				
 			}
 		}
 
