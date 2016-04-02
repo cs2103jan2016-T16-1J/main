@@ -65,12 +65,10 @@ public class Storage {
 	 */
 	public void createFile(String fileName)  {
 		File file = new File(fileName);
-		System.out.println(fileName);
 		if (!file.exists()){
 			 PrintWriter writer;
 			try {
 				writer = new PrintWriter(fileName);
-				System.out.println("yes!");
 				 writer.close();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
