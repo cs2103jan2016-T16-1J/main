@@ -18,7 +18,7 @@ public class Edit implements Command{
 	 * @param originalEvent the original event located in completeState
 	 * @param editedEvent new information in the form of an Event object that will replace the original event
 	 */
-	public Edit(Event originalEvent, Event editedEvent){
+	public Edit(Event editedEvent){
 		this.originalEvent = originalEvent;
 		this.editedEvent = editedEvent;
 		
