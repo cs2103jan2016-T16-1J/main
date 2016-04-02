@@ -104,6 +104,7 @@ public class MainWindow {
 	public static Color fontColor;
 	public static Color lightGray;
 	public static Color borderColor;
+	public static Color transperantColor;
 	private static ArrayList<Color> randomColors;
 	private static HashMap<String, Color> coloredEvents;
 	
@@ -292,6 +293,7 @@ public class MainWindow {
 		fontColor = new Color(103, 106, 108);
 		lightRed = new Color (231,111,81,160);
 		darkGreen = new Color(42,157,143, 160);
+		transperantColor = new Color(42,157,143, 0);
 		randomColors = new ArrayList<Color>();
 		
 		//Color1 = new Color(255,150,180,150);
@@ -720,12 +722,14 @@ public class MainWindow {
 		double eventWidth = getEventWidth();
 		int dayDifference = deadlineCalendar.get(Calendar.DAY_OF_YEAR) - startCalendar.get(Calendar.DAY_OF_YEAR);
 		int hour = deadlineCalendar.get(Calendar.HOUR_OF_DAY);
-		int xOffset = (int) (eventWidth * hour) + 1;
+		int xOffset = (int) (eventWidth * hour);
 		int yOffset = (int) eventHeight * dayDifference ;
 		
-		JTextField currentEvent = createEventBlock(deadline.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight, lightRed);
-		
+		JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) eventWidth, (int) eventHeight, lightRed);
+		JTextField currentEventName = createEventBlock(deadline.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight, transperantColor);
 		tblCalendar.add(currentEvent);
+		tblCalendar.add(currentEventName);
+		tblCalendar.setComponentZOrder(currentEventName, 1);
 	}
 	
 	private double getEventHeight() {
@@ -773,11 +777,11 @@ public class MainWindow {
 			hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
 			minute = startEventCalendar.get(Calendar.MINUTE);
 			yOffset = (int) eventHeight * dayDifference;
-			xOffset = (int) (eventWidth * (hour + minute / 60.0)) + 1;
+			xOffset = (int) (eventWidth * (hour + minute / 60.0));
 			xMultiplier = (24 - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 					(60 - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 			currentEventWidth *= xMultiplier;
-			JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) Math.ceil(currentEventWidth), (int) eventHeight, currentColor);
+			JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) currentEventWidth, (int) eventHeight, currentColor);
 
 			tblCalendar.add(currentEvent);
 			startEventCalendar.set(Calendar.DAY_OF_YEAR, startEventCalendar.get(Calendar.DAY_OF_YEAR) + 1);
@@ -791,14 +795,17 @@ public class MainWindow {
 		hour = startEventCalendar.get(Calendar.HOUR_OF_DAY);
 		minute = startEventCalendar.get(Calendar.MINUTE);
 		yOffset = (int) eventHeight * dayDifference;
-		xOffset = (int) (eventWidth * (hour + minute / 60.0)) + 1;
+		xOffset = (int) (eventWidth * (hour + minute / 60.0));
 
 		xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 		eventWidth *= xMultiplier;
-		JTextField currentEvent = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) Math.ceil(eventWidth), (int) eventHeight, currentColor);
-		
+		JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) eventWidth, (int) eventHeight, currentColor);
+		JTextField currentEventName = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight, transperantColor);
 		tblCalendar.add(currentEvent);
+		tblCalendar.add(currentEventName);
+		tblCalendar.setComponentZOrder(currentEventName, 1);
+
 	}
 	
 	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight, Color color) {
@@ -816,7 +823,9 @@ public class MainWindow {
 		}
 		
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
-		currentEvent.setBackground(color);
+		if (color != null) {
+			currentEvent.setBackground(color);
+		}
 		currentEvent.setHorizontalAlignment(JTextField.CENTER);
 		currentEvent.setBorder(null);
 		currentEvent.setEditable(false);
