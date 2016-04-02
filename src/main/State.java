@@ -90,6 +90,10 @@ public class State {
 		return tabStatus;
 	}
 	
+	public void setSelectedTab(Status tabStatus){
+		this.tabStatus = tabStatus;
+	}
+	
 	public boolean isCompletedSelected(){
 		return tabStatus == Constant.TAB_COMPLETE;
 	}
