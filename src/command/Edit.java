@@ -10,7 +10,7 @@ import main.State;
  */
 public class Edit implements Command{
 	Event originalEvent;
-	Event editedEvent;
+	Event selectedParameters;
 	State completeState;
 
 	/**
@@ -18,8 +18,17 @@ public class Edit implements Command{
 	 * @param originalEvent the original event located in completeState
 	 * @param editedEvent new information in the form of an Event object that will replace the original event
 	 */
-	public Edit(Event editedEvent){
-		this.editedEvent = editedEvent;
+
+	public Edit(Event selectedParameters){
+		this.selectedParameters = selectedParameters;
+	}
+	
+	private boolean checkForSelectedEvent(){
+		if(completeState.hasEventSelected()){
+			originalEvent = completeState.getAllSelectedEvents().get(0);
+		}
+		
+		return true;
 	}
 
 	/**
@@ -29,13 +38,16 @@ public class Edit implements Command{
 	 */
 	public State execute(State completeState){
 		this.completeState = completeState;
+		
+		checkForSelectedEvent();
+
 		int index = findIndexOfEvent();
 		
 		if(index == -1){
 			completeState.setStatusMessage(State.MESSAGE_EVENT_NOT_FOUND);
 			return completeState;
 		}
-		
+				
 		switch (originalEvent.getStatus()){
 		case COMPLETE:
 			editInCompletedEventList(index);
@@ -58,7 +70,7 @@ public class Edit implements Command{
 	 * @param index the index of the event
 	 */
 	public void editInCompletedEventList(int index){
-		completeState.completedEvents.set(index, editedEvent);
+		completeState.completedEvents.set(index, selectedParameters);
 	}
 	
 	/**
@@ -66,7 +78,7 @@ public class Edit implements Command{
 	 * @param index the index of the event
 	 */
 	public void editInIncompletedEventList(int index){
-		completeState.incompletedEvents.set(index, editedEvent);
+		completeState.incompletedEvents.set(index, selectedParameters);
 	}
 	
 	/**
@@ -74,7 +86,7 @@ public class Edit implements Command{
 	 * @param index the index of the event
 	 */
 	public void editInFloatingEventList(int index){
-		completeState.floatingEvents.set(index, editedEvent);
+		completeState.floatingEvents.set(index, selectedParameters);
 	}
 	
 	/**
