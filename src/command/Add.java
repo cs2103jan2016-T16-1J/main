@@ -47,9 +47,11 @@ public class Add implements Command{
 		case INCOMPLETE:
 			addToIncompleteList();
 			break;
+			
+			/*This will be fulfilled by Reseve Command
 		case UNDETERMINED:
 			addToFloatingList();
-			break;
+			break;*/
 			
 		}
 
@@ -83,11 +85,12 @@ public class Add implements Command{
 
 	/**
 	 * adds the given task to the floating list in State
+	 * This method will be fulfilled by the Reserve Command rather than Add
 	 */
-	public void addToFloatingList(){
+	/*public void addToFloatingList(){
 		completeState.floatingEvents.add(modifiedEvent);
 		
-	}
+	}*/
 	
 	/**
 	 * updates the displayedEvents with new information
