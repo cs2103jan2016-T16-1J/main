@@ -30,7 +30,8 @@ import main.GenericEvent.Status;
 
 public class Parser {
 
-	private static GenericEvent oldEvent;
+	private static Event oldEvent;
+	private static ReservedEvent oldReservedEvent;
 	private static String recordedDate;
 	private boolean isNameDefined = true;
 	private boolean isEdit = false;
@@ -76,27 +77,39 @@ public class Parser {
 			Event event = new Event();
 			event = null;
 			oldEvent = null;
+			oldReservedEvent = null;
 		} else if(tempCmd == CommandType.ADD){
 			Event event = new Event();
 			decodeAddData(event, removeFirstWord(input));
 			oldEvent = event;
+			oldReservedEvent = null;
 			cmdInterface = new Add(event);
 		} else if(tempCmd == CommandType.DELETE){
 			Event event = new Event();
 			event = decodeDeleteData(event, removeFirstWord(input));
 			oldEvent = null;
+			oldReservedEvent = null;
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.EDIT){
-			Event realOldEvent = new Event();
-			Event event = new Event();
-			event = (Event) oldEvent;
+			if(oldEvent != null){
+				Event event = new Event();
+				event = oldEvent;
+				
+				cloneEvent(oldEvent, event);
+				event = decodeEditData(event , removeFirstWord(input));
+				oldEvent = event;
+			} else{
+				ReservedEvent event = new ReservedEvent();
+				event = oldReservedEvent;
+				
+				cloneReservedEvent(oldReservedEvent, event);
+				//event = decodeEditData(event , removeFirstWord(input));
+				oldReservedEvent = event;
 
-			cloneEvent(oldEvent, realOldEvent);
-
+			}
+		
 			isEdit = true;
-			event = decodeEditData(event , removeFirstWord(input));
-			cmdInterface = new Edit(event);
-			oldEvent = event;
+			//cmdInterface = new Edit(event);
 		} else if(tempCmd == CommandType.SELECT){		
 			Event event = new Event();
 			event = decodeSelectData(event, removeFirstWord(input));
@@ -105,14 +118,16 @@ public class Parser {
 			Event event = new Event();
 			ReservedEvent reserved = new ReservedEvent();
 			reserved = decodeReservedData(event, removeFirstWord(input));
-			oldEvent = reserved;
+			oldReservedEvent = reserved;
+			oldEvent = null;
 			//cmdInterface = new Add(event);
 		} else if(tempCmd == CommandType.UNBLOCK){
 			Event event = new Event();
 			ReservedEvent reserved = new ReservedEvent();
 			reserved = decodeUnblockData(event, removeFirstWord(input));
 			reserved.setStatus(GenericEvent.Status.UNDETERMINED);
-			oldEvent = reserved;
+			oldReservedEvent = reserved;
+			oldEvent = null;
 			//cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.UNDO){
 			
@@ -178,7 +193,7 @@ public class Parser {
 		if(tempCmd == CommandType.BLOCK){
 			ReservedEvent reserved = new ReservedEvent();
 			reserved = decodeReservedData(task, removeFirstWord(input));
-			oldEvent = reserved;
+			//oldEvent = reserved;
 			return reserved;
 		} else if(tempCmd == CommandType.UNBLOCK){
 			GenericEvent event = new Event();
@@ -200,12 +215,21 @@ public class Parser {
 	 * @param eventCloned
 	 * @return the cloned event
 	 */
-	public void cloneEvent(GenericEvent eventToBeCloned, Event eventCloned){
+	public void cloneEvent(Event eventToBeCloned, Event eventCloned){
 		eventCloned.setName(eventToBeCloned.getName());
 		eventCloned.setDescription(eventToBeCloned.getDescription());
 		eventCloned.setCategory(eventToBeCloned.getCategory());
 		eventCloned.setEndTime(((Event) eventToBeCloned).getEndTime());
 		eventCloned.setStartTime(((Event) eventToBeCloned).getStartTime());
+		eventCloned.setLocation(eventToBeCloned.getLocation());
+		eventCloned.setStatus(eventToBeCloned.getStatus());
+	}
+	
+	public void cloneReservedEvent(ReservedEvent eventToBeCloned, ReservedEvent eventCloned){
+		eventCloned.setName(eventToBeCloned.getName());
+		eventCloned.setDescription(eventToBeCloned.getDescription());
+		eventCloned.setCategory(eventToBeCloned.getCategory());
+		
 		eventCloned.setLocation(eventToBeCloned.getLocation());
 		eventCloned.setStatus(eventToBeCloned.getStatus());
 	}
