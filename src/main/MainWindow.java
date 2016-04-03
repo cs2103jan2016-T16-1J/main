@@ -85,6 +85,7 @@ public class MainWindow {
 	private JFrame frame;
 	private JPanel mainTab;
 	private int DISPLAYED_DAYS_NUM = 7;
+	private int DISPLAYED_FLOATING_TASKS_NUM = 6;
 	private int WINDOW_X = 100;
 	private int WINDOW_Y = 100;
 	private int WINDOW_WIDTH = 1600;
@@ -93,6 +94,7 @@ public class MainWindow {
 	private JTable calendarTable;
 	private JPanel calendarPanel;
 	private JPanel infoPanel;
+	private JPanel floatingTasksPanel;
 	private JPanel infoSectionWrapper;
 	private static JTextArea actionsTextArea;
 	
@@ -255,12 +257,14 @@ public class MainWindow {
 		
 		initializeTabButtons();
 		
-		//initializeInfoSection();
-		
 		initializeMainTab();
 				
 		initializeInputField();
 		
+		initializeInfoSection();
+		
+		initializeFloatingSection();
+
 		initializeOutputField();
 		
 		initializeCalendar();
@@ -354,6 +358,21 @@ public class MainWindow {
 	}
 	
 	private void initializeInfoSection() {
+		infoPanel = new JPanel();
+		infoPanel.setBounds(0, 0, 286, 425);
+		infoPanel.setBackground(lightGray);
+		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
+		mainTab.add(infoPanel);
+	}
+	
+	private void initializeFloatingSection() {
+		floatingTasksPanel = new JPanel();
+		floatingTasksPanel.setBounds(1181, 0, 286, 425);
+		floatingTasksPanel.setBackground(lightGray);
+		floatingTasksPanel.setLayout(new BoxLayout(floatingTasksPanel, BoxLayout.Y_AXIS));
+		floatingTasksPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
+		mainTab.add(floatingTasksPanel);
 	}
 	
 	private void displayEventDetails(Event currentEvent) {	
@@ -367,7 +386,7 @@ public class MainWindow {
 		addEventDetails(infoSectionWrapper, currentEvent);	
 	}
 	
-	private void displayMultipleEventsDetails(ArrayList<Event> events) {
+	private void displayMultipleEventsDetails(ArrayList<GenericEvent> arrayList) {
 		JPanel infoSectionWrapper = new JPanel();
 		infoSectionWrapper.setLayout(null);
 		infoSectionWrapper.setSize(new Dimension(infoPanel.getWidth(), 200));
@@ -375,8 +394,8 @@ public class MainWindow {
 		
 		infoPanel.add(infoSectionWrapper);
 		int counter = 0;
-		for (Event currentEvent : events) {
-			addEventDetails(infoSectionWrapper, currentEvent, counter);
+		for (GenericEvent currentEvent : arrayList) {
+			addEventDetails(infoSectionWrapper, (Event) currentEvent, counter);
 			counter++;
 			if (counter >= 6) {
 				break;
@@ -491,14 +510,6 @@ public class MainWindow {
 	}
 	
 	private void initializeInputField() {
-		infoPanel = new JPanel();
-		infoPanel.setBounds(0, 0, 286, 425);
-		mainTab.add(infoPanel);
-		infoPanel.setBackground(lightGray);
-		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-		
-		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
-		
 		textField = new JTextField();
 		textField.setBorder(new LineBorder(borderColor));
 		
@@ -563,6 +574,8 @@ public class MainWindow {
 		
 		this.renderTabSection();
 		
+		this.renderFloatingSection();
+		
 		tblCalendar.revalidate();
 		tblCalendar.repaint();
     	
@@ -571,9 +584,9 @@ public class MainWindow {
 	}
 	
 	private void renderEvents() {
-		ArrayList<Event> displayedEvents = currentState.displayedEvents;
+		ArrayList<GenericEvent> displayedEvents = currentState.displayedEvents;
 		for (int i = 0; i < displayedEvents.size(); i++) {
-			Event event = displayedEvents.get(i);
+			Event event = (Event) displayedEvents.get(i);
 			if (event.isDeadline()) {
 	    		createDeadlineEvent(event);
 	    	} else if (event.isEvent()) {
@@ -584,10 +597,30 @@ public class MainWindow {
 	
 	private void renderInfoSection() {
 		if (currentState.hasSingleEventSelected()) {
-			displayEventDetails(currentState.getSingleSelectedEvent());
+			displayEventDetails((Event) currentState.getSingleSelectedEvent());
 		} else if (currentState.hasMultipleEventSelected()) {
 			displayMultipleEventsDetails(currentState.getAllSelectedEvents());
 		}
+	}
+	
+	private void renderFloatingSection() {
+		ArrayList<GenericEvent> displayedEvents = currentState.displayedEvents;
+		int counter = 0;
+		while (counter < displayedEvents.size() && counter < 5) {
+			Event event = (Event) displayedEvents.get(counter);
+			addFloatingEvent(event, counter);
+			counter++;
+		}
+	}
+	
+	private void addFloatingEvent(Event event, int offsetNum) {
+		double eventHeight = floatingTasksPanel.getHeight() / (double) DISPLAYED_DAYS_NUM;
+		double eventWidth = getEventWidth();
+		int xOffset = 0;
+		int yOffset = (int) (eventHeight  + (eventHeight * offsetNum));
+		
+		JTextField currentEvent = createEventBlock(event.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight, lightRed, false);
+		floatingTasksPanel.add(currentEvent);		
 	}
 	
 	private void renderTabSection() {
@@ -610,8 +643,8 @@ public class MainWindow {
 		actionsTextArea.setEditable(false);
 		
 		areaScrollPane = new JScrollPane(actionsTextArea);
-		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		areaScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 0, borderColor));
+		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		areaScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0,1, borderColor));
 		areaScrollPane.setBounds(285, 424, 1162, 37);
 	    
 		mainTab.add(areaScrollPane);
@@ -725,8 +758,8 @@ public class MainWindow {
 		int xOffset = (int) (eventWidth * hour);
 		int yOffset = (int) eventHeight * dayDifference ;
 		
-		JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) eventWidth, (int) eventHeight, lightRed);
-		JTextField currentEventName = createEventBlock(deadline.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight, transperantColor);
+		JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) eventWidth, (int) eventHeight, lightRed, true);
+		JTextField currentEventName = createEventBlock(deadline.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight, transperantColor, true);
 		tblCalendar.add(currentEvent);
 		tblCalendar.add(currentEventName);
 		tblCalendar.setComponentZOrder(currentEventName, 1);
@@ -781,7 +814,7 @@ public class MainWindow {
 			xMultiplier = (24 - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 					(60 - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 			currentEventWidth *= xMultiplier;
-			JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) currentEventWidth, (int) eventHeight, currentColor);
+			JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) currentEventWidth, (int) eventHeight, currentColor, true);
 
 			tblCalendar.add(currentEvent);
 			startEventCalendar.set(Calendar.DAY_OF_YEAR, startEventCalendar.get(Calendar.DAY_OF_YEAR) + 1);
@@ -800,26 +833,29 @@ public class MainWindow {
 		xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
 		eventWidth *= xMultiplier;
-		JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) eventWidth, (int) eventHeight, currentColor);
-		JTextField currentEventName = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight, transperantColor);
+		JTextField currentEvent = createEventBlock(EMPTY_STRING, xOffset, yOffset, (int) eventWidth, (int) eventHeight, currentColor, true);
+		JTextField currentEventName = createEventBlock(specificEvent.getName(), xOffset, yOffset, (int) eventWidth, (int) eventHeight, transperantColor, true);
 		tblCalendar.add(currentEvent);
 		tblCalendar.add(currentEventName);
 		tblCalendar.setComponentZOrder(currentEventName, 1);
 
 	}
 	
-	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight, Color color) {
+	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight, Color color, boolean elipsis) {
 		JTextField currentEvent = new JTextField();
-		double ratio = 8.42;	// the ratio of the name that would fits in one block
-	
-		System.out.println(name + name.length());
-		if (name.length() != 0){
-			if (eventWidth/name.length() < ratio) {
-				System.out.println((int)(eventWidth/ratio));
-				currentEvent.setText(name.substring(0, ((int)(eventWidth/ratio)-2)) + "...");
-			} else {
-				currentEvent.setText(name);
+		if (elipsis) {
+			double ratio = 8.42;	// the ratio of the name that would fits in one block
+			System.out.println(name + name.length());
+			if (name.length() != 0){
+				if (eventWidth/name.length() < ratio) {
+					System.out.println((int)(eventWidth/ratio));
+					currentEvent.setText(name.substring(0, ((int)(eventWidth/ratio)-2)) + "...");
+				} else {
+					currentEvent.setText(name);
+				}
 			}
+		} else {
+			currentEvent.setText(name);
 		}
 		
 		currentEvent.setBounds(xOffset, yOffset, (int) eventWidth, (int) eventHeight);
