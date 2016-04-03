@@ -30,7 +30,7 @@ import main.GenericEvent.Status;
 
 public class Parser {
 
-	private static Event oldEvent;
+	private static GenericEvent oldEvent;
 	private static String recordedDate;
 	private boolean isNameDefined = true;
 	private boolean isEdit = false;
@@ -89,7 +89,7 @@ public class Parser {
 		} else if(tempCmd == CommandType.EDIT){
 			Event realOldEvent = new Event();
 			Event event = new Event();
-			event = oldEvent;
+			event = (Event) oldEvent;
 
 			cloneEvent(oldEvent, realOldEvent);
 
@@ -102,15 +102,17 @@ public class Parser {
 			event = decodeSelectData(event, removeFirstWord(input));
 			cmdInterface = new Select(event);
 		} else if(tempCmd == CommandType.BLOCK){
-			GenericEvent event = new Event();
-			event = decodeReservedData((Event) event, removeFirstWord(input));
-			oldEvent = (Event) event;
+			Event event = new Event();
+			ReservedEvent reserved = new ReservedEvent();
+			reserved = decodeReservedData(event, removeFirstWord(input));
+			oldEvent = reserved;
 			//cmdInterface = new Add(event);
 		} else if(tempCmd == CommandType.UNBLOCK){
-			GenericEvent event = new Event();
-			event = decodeDeleteData((Event) event, removeFirstWord(input));
-			event.setStatus(GenericEvent.Status.UNDETERMINED);
-			oldEvent = (Event) event;
+			Event event = new Event();
+			ReservedEvent reserved = new ReservedEvent();
+			reserved = decodeUnblockData(event, removeFirstWord(input));
+			reserved.setStatus(GenericEvent.Status.UNDETERMINED);
+			oldEvent = reserved;
 			//cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.UNDO){
 			
@@ -122,14 +124,10 @@ public class Parser {
 			event = decodeDataFromInput(event, input);
 			event = determineCategory(event);
 			oldEvent = event;
-		} else if(tempCmd == CommandType.IMPORT) {
+		} else if(tempCmd == CommandType.CHANGDIR) {
 			Event event = new Event();
 			event = decodeImportExportData(event, removeFirstWord(input));
 			cmdInterface = new Import(event);
-		} else if(tempCmd == CommandType.EXPORT){
-			Event event = new Event();
-			event = decodeImportExportData(event, removeFirstWord(input));
-			cmdInterface = new Export(event);
 		} else if(tempCmd == CommandType.CHANGETAB){
 			Status tab = decodeChangeTab(removeFirstWord(input));
 			cmdInterface = new ChangeTab(tab);
@@ -160,25 +158,16 @@ public class Parser {
 			return decodeDeleteData(task, removeFirstWord(input));
 		} else if(tempCmd == CommandType.EDIT){
 			Event oldTask = new Event();
-			oldTask = oldEvent;
-			task.setName(oldEvent.getName());
-			task.setDescription(oldEvent.getDescription());
-			task.setCategory(oldEvent.getCategory());
-			task.setEndTime(oldEvent.getEndTime());
-			task.setStartTime(oldEvent.getStartTime());
-			task.setLocation(oldEvent.getLocation());
-			task.setStatus(oldEvent.getStatus());
+			oldTask = (Event) oldEvent;
+		
 			isEdit = true;
 			task = decodeEditData(task , removeFirstWord(input));
 			oldEvent = task;
 			return task;
-		} else if(tempCmd == CommandType.EXPORT){
+		} else if(tempCmd == CommandType.CHANGDIR){
 			task = decodeImportExportData(task, removeFirstWord(input));
 			return task;
-		} else if(tempCmd == CommandType.IMPORT){
-			task = decodeImportExportData(task, removeFirstWord(input));
-			return task;
-		}
+		} 
 		return null;
 	}
 	
@@ -187,9 +176,9 @@ public class Parser {
 		CommandType tempCmd = getCommandType(command);
 		Event task = new Event();
 		if(tempCmd == CommandType.BLOCK){
-			GenericEvent reserved = new ReservedEvent();
+			ReservedEvent reserved = new ReservedEvent();
 			reserved = decodeReservedData(task, removeFirstWord(input));
-			oldEvent = (Event) reserved;
+			oldEvent = reserved;
 			return reserved;
 		} else if(tempCmd == CommandType.UNBLOCK){
 			GenericEvent event = new Event();
@@ -211,12 +200,12 @@ public class Parser {
 	 * @param eventCloned
 	 * @return the cloned event
 	 */
-	public void cloneEvent(Event eventToBeCloned, Event eventCloned){
+	public void cloneEvent(GenericEvent eventToBeCloned, Event eventCloned){
 		eventCloned.setName(eventToBeCloned.getName());
 		eventCloned.setDescription(eventToBeCloned.getDescription());
 		eventCloned.setCategory(eventToBeCloned.getCategory());
-		eventCloned.setEndTime(eventToBeCloned.getEndTime());
-		eventCloned.setStartTime(eventToBeCloned.getStartTime());
+		eventCloned.setEndTime(((Event) eventToBeCloned).getEndTime());
+		eventCloned.setStartTime(((Event) eventToBeCloned).getStartTime());
 		eventCloned.setLocation(eventToBeCloned.getLocation());
 		eventCloned.setStatus(eventToBeCloned.getStatus());
 	}
@@ -440,6 +429,61 @@ public class Parser {
 		
 		return task;
 	}
+	
+	private ReservedEvent decodeUnblockData(Event task, String input){
+		boolean isCategoryDefined = false;
+		String name = null;
+		int startIndex = 0;
+		int endIndex = startIndex;		
+		ArrayList<String> choppedInputData = new ArrayList<>();
+		ArrayList<TimePair> reservedTimes = new ArrayList<>();
+		
+		/**extract notes from the input if it is declared**/
+		String remainingInput = extractDescription(task, input);
+		
+		if(remainingInput.isEmpty()){
+			return null;
+		}
+		
+		/**extract location from the input if it is declared**/
+		remainingInput = extractLocation(task, remainingInput);
+		
+		/**extract "task name that has preposition on, from, to, by, at" **/
+		task = determineQuotedInput(task, remainingInput);
+		
+		/**to find AND in a sentence**/
+		Pattern pattern = Pattern.compile(PATTERN_AND,Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(remainingInput);
+				
+		while(matcher.find()){
+			endIndex = matcher.start();
+			choppedInputData.add(remainingInput.substring(startIndex, endIndex).trim());
+			startIndex = matcher.end();
+		}
+		choppedInputData.add(remainingInput.substring(startIndex,remainingInput.length()).trim());
+	
+		/**decode all the other information like name, location from input**/
+		task = decodeDataFromInput(task, choppedInputData.get(0));
+		TimePair reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
+		reservedTimes.add(reservedTime);
+		name = task.getName().trim();
+		/**check if the connected data are date time **/
+		for(int i = 1; i < choppedInputData.size(); i++){
+			task.setStartTime(Constant.MIN_DATE);
+			task.setEndTime(Constant.MAX_DATE);
+			task = decodeDataFromInput(task, choppedInputData.get(i));
+
+			if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() == Constant.MAX_DATE){
+				name = name + " "+ task.getName().trim();
+			} else{
+				reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
+				reservedTimes.add(reservedTime);
+			}
+		}
+		ReservedEvent reserved = new ReservedEvent(name, task.getLocation(),
+				task.getDescription(), task.getCategory(), reservedTimes, GenericEvent.Status.UNDETERMINED);
+		return reserved;
+	} 
 
 	/**
 	 * Decodes the user input for Editing task either by name or date time or location or note
@@ -567,6 +611,7 @@ public class Parser {
 		int newStartIndex = 0;
 		int newEndIndex = 0;
 		SimpleDateFormat formatToString = new SimpleDateFormat("dd/MM/yyyy H:mm:ss");
+		
 		
 		
 		return task;
@@ -1075,6 +1120,7 @@ public class Parser {
 
 
 	private CommandType getCommandType(String command){
+		command = command.toLowerCase();
 		if (command.equalsIgnoreCase("add")){
 			return CommandType.ADD;
 		}else if (command.equalsIgnoreCase("delete")){
@@ -1082,10 +1128,8 @@ public class Parser {
 		}else if (command.equalsIgnoreCase("edit") || 
 				command.equalsIgnoreCase("e")){
 			return CommandType.EDIT;
-		}else if (command.equalsIgnoreCase("import")){
-			return CommandType.IMPORT;
-		}else if (command.equalsIgnoreCase("export")){
-			return CommandType.EXPORT;
+		}else if (command.contains("changedir")){
+			return CommandType.CHANGDIR;
 		}else if (command.equalsIgnoreCase("block") || command.equalsIgnoreCase("reserve")){
 			return CommandType.BLOCK;
 		}else if (command.equalsIgnoreCase("unblock") || command.equalsIgnoreCase("release")){
