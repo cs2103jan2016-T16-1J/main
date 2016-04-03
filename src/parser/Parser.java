@@ -91,25 +91,23 @@ public class Parser {
 			oldReservedEvent = null;
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.EDIT){
+			GenericEvent event;
 			if(oldEvent != null){
-				Event event = new Event();
+				event = new Event();
 				event = oldEvent;
 				
 				cloneEvent(oldEvent, event);
-				event = decodeEditData(event , removeFirstWord(input));
-				oldEvent = event;
+				
 			} else{
-				ReservedEvent event = new ReservedEvent();
+				event = new ReservedEvent();
 				event = oldReservedEvent;
 				
 				cloneReservedEvent(oldReservedEvent, event);
-				//event = decodeEditData(event , removeFirstWord(input));
-				oldReservedEvent = event;
-
+				
 			}
 		
 			isEdit = true;
-			//cmdInterface = new Edit(event);
+			cmdInterface = new Edit(event);
 		} else if(tempCmd == CommandType.SELECT){		
 			Event event = new Event();
 			event = decodeSelectData(event, removeFirstWord(input));
@@ -212,26 +210,26 @@ public class Parser {
 	/**
 	 * 
 	 * @param eventToBeCloned
-	 * @param eventCloned
+	 * @param event
 	 * @return the cloned event
 	 */
-	public void cloneEvent(Event eventToBeCloned, Event eventCloned){
-		eventCloned.setName(eventToBeCloned.getName());
-		eventCloned.setDescription(eventToBeCloned.getDescription());
-		eventCloned.setCategory(eventToBeCloned.getCategory());
-		eventCloned.setEndTime(((Event) eventToBeCloned).getEndTime());
-		eventCloned.setStartTime(((Event) eventToBeCloned).getStartTime());
-		eventCloned.setLocation(eventToBeCloned.getLocation());
-		eventCloned.setStatus(eventToBeCloned.getStatus());
+	public void cloneEvent(Event eventToBeCloned, GenericEvent event){
+		event.setName(eventToBeCloned.getName());
+		event.setDescription(eventToBeCloned.getDescription());
+		event.setCategory(eventToBeCloned.getCategory());
+		((Event) event).setEndTime(eventToBeCloned.getEndTime());
+		((Event) event).setStartTime(eventToBeCloned.getStartTime());
+		event.setLocation(eventToBeCloned.getLocation());
+		event.setStatus(eventToBeCloned.getStatus());
 	}
 	
-	public void cloneReservedEvent(ReservedEvent eventToBeCloned, ReservedEvent eventCloned){
-		eventCloned.setName(eventToBeCloned.getName());
-		eventCloned.setDescription(eventToBeCloned.getDescription());
-		eventCloned.setCategory(eventToBeCloned.getCategory());
+	public void cloneReservedEvent(ReservedEvent eventToBeCloned, GenericEvent event){
+		event.setName(eventToBeCloned.getName());
+		event.setDescription(eventToBeCloned.getDescription());
+		event.setCategory(eventToBeCloned.getCategory());
 		
-		eventCloned.setLocation(eventToBeCloned.getLocation());
-		eventCloned.setStatus(eventToBeCloned.getStatus());
+		event.setLocation(eventToBeCloned.getLocation());
+		event.setStatus(eventToBeCloned.getStatus());
 	}
 
 	private GenericEvent.Category classifyCategory(String userInput){
