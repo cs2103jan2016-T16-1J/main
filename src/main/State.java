@@ -23,7 +23,9 @@ public class State {
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
 	public static ArrayList<Event> completedEvents;
 	public static ArrayList<Event> incompletedEvents;
+	//Decide- do we create a new event class for floating Events which does not have dates?
 	public static ArrayList<Event> floatingEvents;
+	public static ArrayList<ReservedEvent> undeterminedEvents;
 	
 	public ArrayList<Event> displayedEvents;
 	public ArrayList<Event> selectedEvents;

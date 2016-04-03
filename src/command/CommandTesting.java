@@ -27,17 +27,33 @@ public class CommandTesting {
 	private static final String VALID_NAME = "Test Event Name";
 	private static final String VALID_DESCRIPTION = "Test Event Description";
 	private static final String VALID_LOCATION = "Supahotfire's house";
-	private static final GenericEvent.Status VALID_STATUS = GenericEvent.Status.COMPLETE;
+	private static final GenericEvent.Status VALID_STATUS = GenericEvent.Status.INCOMPLETE;
 	private static final GenericEvent.Category VALID_CATEGORY = GenericEvent.Category.EVENT;
 	private static final String EMPTY_STRING = "";
 	private static final Date MAX_DATE = new Date(Long.MAX_VALUE);
 
 	State testState;
 
-	public void test() {
+	public void test() throws IOException, JSONException {
 
 		testAdd();
 		testDelete();
+		testEdit();
+	}
+
+//	public Event(String name, String location, String description, Category category, Date startTime, Date endTime, Status status){
+
+	@Test
+	public void testEdit() throws IOException, JSONException{
+		testState = new State();
+
+		Event editedParameters = new Event();
+		editedParameters.setCategory(VALID_CATEGORY);
+		editedParameters.setName(VALID_NAME);
+		editedParameters.setDescription(VALID_DESCRIPTION);
+		editedParameters.setLocation(VALID_LOCATION);
+		Command editing = new Edit(editedParameters);
+		editing.execute(testState);
 		
 	}
 	
@@ -60,7 +76,6 @@ public class CommandTesting {
 	}
 	
 	
-	@Test
 	public void testDeleteInvalidEvent(){
 		Event testNewEvent = null;
 		testState = new State();
@@ -81,7 +96,6 @@ public class CommandTesting {
 	
 	}
 	
-	@Test
 	public void testDeleteValidEvent(){
 		ArrayList<Event> emptyArray = new ArrayList<Event>();
 
@@ -104,7 +118,6 @@ public class CommandTesting {
 
 	}
 	
-	@Test
 	public void testAddInvalidEvent(){
 		Event testNewEvent = null;
 		testState = new State();
@@ -123,7 +136,6 @@ public class CommandTesting {
 		
 	}
 	
-	@Test
 	public void testAddWithMultipleInputs(){
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
 		String dateInString = "31-08-1982 10:20:56";
@@ -167,7 +179,6 @@ public class CommandTesting {
 		}
 	}
 	
-	@Test
 	public void testAddValidEvent(){
 		testState = new State();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
