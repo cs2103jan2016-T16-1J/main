@@ -24,14 +24,14 @@ public class State {
 	public static ArrayList<Event> completedEvents;
 	public static ArrayList<Event> incompletedEvents;
 	//Decide- do we create a new event class for floating Events which does not have dates?
-	public static ArrayList<Event> floatingEvents;
+	public static ArrayList<ReservedEvent> floatingEvents;
 	public static ArrayList<ReservedEvent> undeterminedEvents;
 	
-	public ArrayList<Event> displayedEvents;
-	public ArrayList<Event> selectedEvents;
-	Stack<Event> eventHistory;
+	public ArrayList<GenericEvent> displayedEvents;
+	public ArrayList<GenericEvent> selectedEvents;
+	Stack<GenericEvent> eventHistory;
 	
-	public Event selectedEvent;
+	public GenericEvent selectedEvent;
 	
 	
 	//indicates whether an event is selected and if more than one is selected
@@ -46,9 +46,9 @@ public class State {
 	public State(){
 		completedEvents = new ArrayList<Event>();
 		incompletedEvents = new ArrayList<Event>();
-		floatingEvents = new ArrayList<Event>();
-		displayedEvents = new ArrayList<Event>();
-		selectedEvents = new ArrayList<Event>();
+		floatingEvents = new ArrayList<ReservedEvent>();
+		displayedEvents = new ArrayList<GenericEvent>();
+		selectedEvents = new ArrayList<GenericEvent>();
 		
 		statusMessage = new String();
 		
@@ -56,20 +56,20 @@ public class State {
 
 	}
 	
-	public Event getSingleSelectedEvent(){
+	public GenericEvent getSingleSelectedEvent(){
 		return selectedEvent;
 	}
 	
-	public ArrayList<Event> getAllSelectedEvents(){
+	public ArrayList<GenericEvent> getAllSelectedEvents(){
 		return filterByTab();
 	}
 	
-	public ArrayList<Event> filterByTab(){
-		ArrayList<Event> filteredEvents = new ArrayList<Event>();
+	public ArrayList<GenericEvent> filterByTab(){
+		ArrayList<GenericEvent> filteredEvents = new ArrayList<GenericEvent>();
 		
-		for(Event e: selectedEvents){
+		for(GenericEvent e: selectedEvents){
 			if(e.getStatus().equals(getSelectedTab())){
-				filteredEvents.add(e);
+
 			}
 		}
 		
@@ -132,8 +132,8 @@ public class State {
 		return this.statusMessage;
 	}
 	
-	public ArrayList<Event> getAllEvents(){
-		ArrayList<Event> allEvents = new ArrayList<Event>();
+	public ArrayList<GenericEvent> getAllEvents(){
+		ArrayList<GenericEvent> allEvents = new ArrayList<GenericEvent>();
 		allEvents.addAll(this.completedEvents);
 		allEvents.addAll(this.incompletedEvents);
 		allEvents.addAll(this.floatingEvents);	
@@ -149,12 +149,12 @@ public class State {
 		incompletedEvents.add(event);
 	}
 	
-	public  void addToFloatingList(Event event){
+	public  void addToFloatingList(ReservedEvent event){
 		floatingEvents.add(event);
 	}
 	
 	public void sortDisplayedEvents() {
-		Collections.sort(this.displayedEvents, new CustomEndTimeComparator());
+		//Collections.sort(this.displayedEvents, new CustomEndTimeComparator());
 	}
 	
 	private class CustomEndTimeComparator implements Comparator<Event> {
