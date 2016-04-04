@@ -38,7 +38,7 @@ public class IntegrationTesting {
 	@Test
 	public void testExecuteCommandAdd(){
 		testState = new State();
-		testController = new Controller(testStorage, testState);
+		testController = new Controller(testStorage);
 		testParser = new Parser();
 		
 		String addCommand = "add Test Event Name on sunday at Supahotfire's house";
@@ -56,7 +56,7 @@ public class IntegrationTesting {
 		
 		try {
 			
-			testState = testController.executeCommand(addCommand, testStorage, testState);
+			testState = testController.executeCommand(addCommand, testStorage);
 		} catch (IOException | JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -84,7 +84,7 @@ public class IntegrationTesting {
 	@Test
 	public void testExecuteCommandSelect(){
 		testState = new State();
-		testController = new Controller(testStorage, testState);
+		testController = new Controller(testStorage);
 		testParser = new Parser();
 		
 		String selectCommand = "select Test Event Name";
@@ -101,8 +101,8 @@ public class IntegrationTesting {
 			e.printStackTrace();
 		}
 		try {
-			testState = testController.executeCommand(addCommand, testStorage, testState);
-			testState = testController.executeCommand(selectCommand, testStorage, testState);
+			testState = testController.executeCommand(addCommand, testStorage);
+			testState = testController.executeCommand(selectCommand, testStorage);
 		} catch (IOException | JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -123,7 +123,7 @@ public class IntegrationTesting {
 	@Test
 	public void executeCommandDelete(){
 		testState = new State();
-		testController = new Controller(testStorage, testState);
+		testController = new Controller(testStorage);
 		testParser = new Parser();
 		
 		String addCommand = "add Test Event Name on sunday at Supahotfire's house";
@@ -141,9 +141,9 @@ public class IntegrationTesting {
 			e.printStackTrace();
 		}
 		try {
-			testState = testController.executeCommand(addCommand, testStorage, testState);
-			testState = testController.executeCommand(selectCommand, testStorage, testState);
-			testState = testController.executeCommand(deleteCommand, testStorage, testState);
+			testState = testController.executeCommand(addCommand, testStorage);
+			testState = testController.executeCommand(selectCommand, testStorage);
+			testState = testController.executeCommand(deleteCommand, testStorage);
 		} catch (IOException | JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
