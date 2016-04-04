@@ -58,7 +58,7 @@ public class Controller{
 	public void setCompleteState(State state){
 		this.completeState = state;
 	}
-
+	
 	/**
 	 * This method is invoked from the UI when the user gives a command
 	 * It calls the parser and receives a Command object in return.
@@ -76,6 +76,7 @@ public class Controller{
 		}
 		
 		userCommand.execute(completeState);
+		System.out.println(directory);
 		assert isValidCommand(userCommand);
 		//assert false;
 		storage.stateToStorage(completeState, directory);

@@ -6,12 +6,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import command.Add;
+import command.ChangeDir;
 import command.ChangeTab;
 import command.Command;
 import command.Delete;
 import command.Edit;
-import command.Export;
-import command.Import;
 import command.Select;
 
 import java.util.ArrayList;
@@ -142,7 +141,7 @@ public class Parser {
 		} else if(tempCmd == CommandType.CHANGDIR) {
 			Event event = new Event();
 			event = decodeImportExportData(event, removeFirstWord(input));
-			cmdInterface = new Import(event);
+			cmdInterface = new ChangeDir(event);
 		} else if(tempCmd == CommandType.CHANGETAB){
 			Status tab = decodeChangeTab(removeFirstWord(input));
 			cmdInterface = new ChangeTab(tab);

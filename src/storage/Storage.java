@@ -55,10 +55,18 @@ public class Storage {
 		storageFile = s;
 	}
 	
-	public void exportDirectory(String newDirectory){
-		String newStorage = newDirectory;
-		createFile(newStorage);
-		copyStorage(newStorage);
+	
+	
+	
+	public void changeDirectory(String newDirectory){
+		createFile(newDirectory);
+		setDirectory(newDirectory);
+	
+	}
+	
+	public void backUp(String newDirectory){
+		createFile(newDirectory);
+		copyStorage(newDirectory);
 	}
 
 	
@@ -72,10 +80,9 @@ public class Storage {
 		if (!file.exists()){
 			 PrintWriter writer;
 			try {
-				writer = new PrintWriter(fileName);
+				 writer = new PrintWriter(fileName);
 				 writer.close();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -7,12 +7,12 @@ import main.Event;
 import main.State;
 import storage.Storage;
 
-public class Export implements Command {
+public class ChangeDir implements Command {
 
 	Event modifiedEvent;
 	State completeState;
 	
-	public Export(Event modifiedEvent){
+	public ChangeDir(Event modifiedEvent){
 		this.modifiedEvent = modifiedEvent;
 	}
 
@@ -21,9 +21,9 @@ public class Export implements Command {
 		this.completeState = completeState;
 		
 		Storage storage = new Storage();
-		storage.exportDirectory(modifiedEvent.getName());
+		storage.changeDirectory(modifiedEvent.getName());
 		
-		return null;
+		return completeState;
 	}
 
 }
