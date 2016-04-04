@@ -1,6 +1,7 @@
 package command;
 
 import main.Event;
+import main.GenericEvent;
 import main.State;
 
 /**
@@ -19,8 +20,8 @@ public class Edit implements Command{
 	 * @param editedEvent new information in the form of an Event object that will replace the original event
 	 */
 
-	public Edit(Event selectedParameters){
-		this.selectedParameters = selectedParameters;
+	public Edit(Event event){
+		this.selectedParameters = event;
 	}
 	
 	private boolean checkForSelectedEvent(){
