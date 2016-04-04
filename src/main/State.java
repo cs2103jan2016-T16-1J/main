@@ -25,7 +25,6 @@ public class State {
 	public static ArrayList<Event> incompletedEvents;
 	public static ArrayList<Event> undeterminedEvents;
 	
-	//Decide- do we create a new event class for floating Events which does not have dates?
 	public static ArrayList<ReservedEvent> reservedEvents;
 	//public static ArrayList<ReservedEvent> undeterminedEvents;
 	
@@ -74,7 +73,7 @@ public class State {
 		
 		for(GenericEvent e: selectedEvents){
 			if(e.getStatus().equals(getSelectedTab())){
-
+				filteredEvents.add(e);
 			}
 		}
 		

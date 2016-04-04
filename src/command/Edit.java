@@ -25,7 +25,7 @@ public class Edit implements Command{
 	
 	private boolean checkForSelectedEvent(){
 		if(completeState.hasEventSelected()){
-			originalEvent = completeState.getAllSelectedEvents().get(0);
+			originalEvent = (Event)completeState.getAllSelectedEvents().get(0);
 		}
 		
 		return true;
@@ -86,7 +86,7 @@ public class Edit implements Command{
 	 * @param index the index of the event
 	 */
 	public void editInFloatingEventList(int index){
-		completeState.floatingEvents.set(index, selectedParameters);
+		//completeState.floatingEvents.set(index, selectedParameters);
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class Edit implements Command{
 			completeState.incompletedEvents.indexOf(originalEvent);
 			break;
 		case UNDETERMINED:
-			completeState.floatingEvents.indexOf(originalEvent);
+			//completeState.floatingEvents.indexOf(originalEvent);
 			break;
 		}
 		
@@ -118,6 +118,6 @@ public class Edit implements Command{
 		completeState.displayedEvents.clear();
 		completeState.displayedEvents.addAll(completeState.completedEvents);
 		completeState.displayedEvents.addAll(completeState.incompletedEvents);
-		completeState.displayedEvents.addAll(completeState.floatingEvents);		
+		//completeState.displayedEvents.addAll(completeState.floatingEvents);		
 	}
 }
