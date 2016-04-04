@@ -192,7 +192,7 @@ public class StorageTesting {
 	}*/
 	
 	public void setUpState(){
-		testState.addToFloatingList(testFloatingEvent);
+		//testState.addToFloatingList(testFloatingEvent);
 		testState.addToCompletedList(testCompletedEvent);
 		testState.addToIncompletedList(testIncompletedEvent);
 	}
