@@ -695,6 +695,7 @@ public class Parser {
 		/*if preposition describing other fields is not found */
 		if(!isFound){
 			task.setName(input.substring(startIndex, input.length()));
+			task.setStatus(Status.UNDETERMINED);
 		}
 
 		return task;
@@ -928,15 +929,15 @@ public class Parser {
 			}
 			
 			stringDate = input.substring(newStartIndex, newEndIndex).trim();
-			recordedDate = stringDate;
 			inputDate = DateChecker.validateDate(stringDate);
 			isDay = DateChecker.isDay;
-			if(inputDate != null){
+			if(inputDate != null){			/*12/6/16 1:00 or 1:00 12/6/16*/
 				task.setStartTime(inputDate);
 				task.setCategory(GenericEvent.Category.EVENT);
 			}
 
 			String[] dateTime = extractTimeFromDate(stringDate);
+			recordedDate = dateTime[0];
 			int[] matchAmPm = {0,0};
 			if(dateTime[1] != null){
 				matchAmPm = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, dateTime[1]);
@@ -952,7 +953,7 @@ public class Parser {
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
 					task.setStartTime(DateChecker.writeTime(stringDate, time));
 					task.setCategory(GenericEvent.Category.EVENT);
-				} else if(dateTime[0] != null && dateTime[1] != null){
+				} else if(dateTime[0] != null && dateTime[1] != null){			/*from friday 1:00*/
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
 					task.setStartTime(DateChecker.writeTime(dateTime[0], time));
 					task.setCategory(Category.EVENT);
@@ -998,14 +999,13 @@ public class Parser {
 			if(isDay){
 				if(dateTime[0] == null && dateTime[1] != null){    		/*to friday 3 am or to friday 13:00*/
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
-					/*to 3 am or 13:00*/
-					if(stringDate.equals(time)){
+					if(stringDate.equals(time)){  					/*to 3 am or 13:00*/
 						task.setEndTime(DateChecker.writeTime(recordedDate, time));
 					} else{
 						task.setEndTime(DateChecker.writeTime(stringDate, time));
 					}
 					
-				} else if(dateTime[0] != null && dateTime[1] != null){
+				} else if(dateTime[0] != null && dateTime[1] != null){		/* to friday 12:00 */
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
 					task.setEndTime(DateChecker.writeTime(dateTime[0], time));
 				} else if(dateTime[0] == null && dateTime[1] == null){    /* to friday */
@@ -1020,7 +1020,6 @@ public class Parser {
 				
 				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT)){
 					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
-
 				} else{
 				/*to 3:00 or 3 pm */
 					task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
@@ -1028,18 +1027,27 @@ public class Parser {
 				
 			} else if(dateTime[0] != null && dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
 				
-				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT) || dateTime[1].contains("11:59 pm")){
+				if(dateTime[1].contains("11:59 pm") || dateTime[1].contains(TIME_BEFORE_MIDNIGHT)){
 					task.setEndTime(DateChecker.writeTime(dateTime[0], TIME_BEFORE_MIDNIGHT_SEC));
-
 				}else{
 					task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
 
 				}
-			} else if(dateTime[0] == null && dateTime[1] != null && matchAmPm[0] == matchAmPm[1]){
+			} else if(dateTime[0] == null && dateTime[1] != null && matchAmPm[0] == matchAmPm[1]){	/*12:00*/
 				
+				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT)){
+					task.setEndTime(DateChecker.writeTime(recordedDate, TIME_BEFORE_MIDNIGHT_SEC));
+				} else{
+					task.setEndTime(DateChecker.writeTime(recordedDate, dateTime[1]));
+				}
 				
-			} else if(dateTime[0] != null && dateTime[1] != null && matchAmPm[0] == matchAmPm[1]){
+			} else if(dateTime[0] != null && dateTime[1] != null && matchAmPm[0] == matchAmPm[1]){ /*12/6/16 12:00*/
 				
+				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT)){
+					task.setEndTime(DateChecker.writeTime(dateTime[0], TIME_BEFORE_MIDNIGHT_SEC));
+				} else{
+					task.setEndTime(DateChecker.writeTime(dateTime[0], dateTime[1]));
+				}
 			}
 		}
 
@@ -1049,7 +1057,7 @@ public class Parser {
 	/**
 	 * extract time from date, the method looks for pattern such as 11 am, 11 pm, 23:00 
 	 * @param date - input date
-	 * @return string array of size 2 with date value at index 0 and time value at index 1 
+	 * @return dateTme[] with dateTime[0] contains date, dateTime[1] contains time
 	 */
 	private String[] extractTimeFromDate(String date){
 		int startIndex = 0;
