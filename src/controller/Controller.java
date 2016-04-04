@@ -83,6 +83,14 @@ public class Controller{
 		return false;
 	}
 	
+	
+	
+	/**
+	 * May need to move this method to State.java
+	 * Returns all the events in the State ordered by their similarity to the String userInput
+	 * @param userInput
+	 * @return matches
+	 */
 	public ArrayList<GenericEvent> bestMatchingOrder(String userInput){
 		ArrayList<GenericEvent> allEvents = completeState.getAllEvents();
 		
