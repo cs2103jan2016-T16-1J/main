@@ -40,10 +40,7 @@ public class Parser {
 	private final String PATTERN_AT_OR_BY = "(\\b(at)\\b|\\b(by)\\b)";
 	private final String PATTERN_COLUMN = "(\\b(:)\\b)";
 	private final String PATTERN_AND = "(\\b(and)\\b|\\b(&)\\b)";
-	private final String PATTERN_FROM = "(\\bfrom\\b)";
 	private final String PATTERN_TO = "(\\bto\\b)";
-	private final String PATTERN_ON = "(\\bon\\b)";
-	private final String PATTERN_BY = "(\\bby\\b)";
 	private final String PATTERN_BEFORE = "(\\bbefore\\b)";
 	private final String PATTERN_AFTER = "(\\bafter\\b)";
 	private final String PATTERN_NEXT = "(\\bnext\\b)";
@@ -54,8 +51,20 @@ public class Parser {
 	private final String PATTERN_TOM = "(\\btom\\b)";
 	private final String PATTERN_YES = "(\\byes\\b)";
 	private final String PATTERN_PREP_ALL = "(\\b(on)\\b|\\b(by)\\b|\\b(from)\\b|\\b(at)\\b)";
-	private final String PATTERN_ALL = "(\\b(starttime)\\b|\\b(startdate)\\b|\\b(endtime)\\b"
+	private final String PATTERN_KEYWORD_ALL = "(\\b(starttime)\\b|\\b(startdate)\\b|\\b(endtime)\\b"
 			+ "|\\b(enddate)\\b|\\b(location)\\b|\\b(note)\\b)";
+
+	private final String PREP_ON = "on";
+	private final String PREP_AT = "at";
+	private final String PREP_BY = "by";
+	private final String PREP_FROM = "from";
+	
+	private final String KEY_START_TIME = "starttime";
+	private final String KEY_START_DATE = "startdate";
+	private final String KEY_END_TIME = "endtime";
+	private final String KEY_END_DATE = "enddate";
+	private final String KEY_NOTE = "note";
+	private final String KEY_LOCATION = "location";
 	
 	private final String TIME_BEFORE_MIDNIGHT = "23:59";
 	private final String TIME_BEFORE_MIDNIGHT_SEC = "23:59:01";
@@ -91,7 +100,6 @@ public class Parser {
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.EDIT){
 			isEdit = true;
-
 			if(oldEvent != null){
 				Event event = new Event();
 				cloneEvent(oldEvent, event);
@@ -223,7 +231,7 @@ public class Parser {
 
 	
 	/**
-	 * 
+	 * clone Event to Event type object
 	 * @param eventToBeCloned
 	 * @param event
 	 * @return the cloned event
@@ -238,6 +246,11 @@ public class Parser {
 		event.setStatus(eventToBeCloned.getStatus());
 	}
 	
+	/**
+	 * clone ReservedEvent to Event type object
+	 * @param eventToBeCloned
+	 * @param event
+	 */
 	public void cloneReservedEvent(ReservedEvent eventToBeCloned, Event event){
 		event.setName(eventToBeCloned.getName());
 		event.setDescription(eventToBeCloned.getDescription());
@@ -245,10 +258,16 @@ public class Parser {
 		event.setLocation(eventToBeCloned.getLocation());
 		event.setStatus(eventToBeCloned.getStatus());
 	}
-	public void cloneReservedTimePair(ArrayList<TimePair> times, ReservedEvent event){		
-		for(int i=0 ; i< event.getReservedTimes().size(); i++){
-			TimePair time = new TimePair(event.getReservedTimes().get(i).getStartTime(),
-					event.getReservedTimes().get(i).getEndTime());
+	
+	/**
+	 * clone TimePairs Arraylist from ReservedEvent
+	 * @param times
+	 * @param reservedEvent
+	 */
+	public void cloneReservedTimePair(ArrayList<TimePair> times, ReservedEvent reservedEvent){		
+		for(int i=0 ; i< reservedEvent.getReservedTimes().size(); i++){
+			TimePair time = new TimePair(reservedEvent.getReservedTimes().get(i).getStartTime(),
+					reservedEvent.getReservedTimes().get(i).getEndTime());
 			times.add(time);
 		}
 	}
@@ -263,7 +282,7 @@ public class Parser {
 	private void decodeAddData(Event task, String input){
 		String remainingInput = extractDescription(task, input);
 		task =  determineQuotedInput(task, remainingInput);
-		task =  decodeDataFromInput(task, input);
+		task =  decodeDataFromInput(task, remainingInput);
 	}
 	
 	/**
@@ -389,7 +408,6 @@ public class Parser {
 	 * @return event object with directory location in name field
 	 */
 	private Event decodeImportExportData(Event task, String input){
-
 		if(input.indexOf('\\') >= 0){
 			return null;
 		} else{
@@ -642,30 +660,40 @@ public class Parser {
 	
 
 	/**
-	 * Extract information out from user input based on the structure of the input
+	 * Extract information out from user input into name, start time, end time, location, note 
+	 * based on the structure of the input
 	 * @param task
 	 * @param input
 	 * @return Event object with updated fields
 	 */
 	private Event decodeDataFromInput(Event task, String input){
-		String preposition = "";
+		String word = "";
 		boolean isFound = false;
-		int count = 0;
+		boolean isPreposition = false;
 		int startIndex = 0;
 		int endIndex = startIndex;
-
+		Pattern pattern;
+		Matcher matcher;
+		int[] matchPattern;
+		
 		input = input.trim();
 		if(input.isEmpty()){
 			task = null;
 			return task;
 		}
-
-		Pattern pattern = Pattern.compile(PATTERN_PREP_ALL,Pattern.CASE_INSENSITIVE);
-		Matcher matcher = pattern.matcher(input);
-
-		int[] matchPattern = matchPatternOfFirstOccurrence(PATTERN_PREP_ALL, input);
 		
-		if(matchPattern[0] == 0 && matchPattern[1]!=0){
+		pattern = Pattern.compile(PATTERN_KEYWORD_ALL, Pattern.CASE_INSENSITIVE);
+		matcher = pattern.matcher(input);
+		matchPattern = matchPatternOfFirstOccurrence(PATTERN_KEYWORD_ALL, input);
+
+		if(matchPattern[0] == 0 && matchPattern[1] == 0){		/*No Keyword found*/
+			pattern = Pattern.compile(PATTERN_PREP_ALL,Pattern.CASE_INSENSITIVE);
+			matcher = pattern.matcher(input);
+			matchPattern = matchPatternOfFirstOccurrence(PATTERN_PREP_ALL, input);		
+			isPreposition = true;
+		} 
+		
+		if(matchPattern[0] == 0 && matchPattern[1]!=0){			
 			isNameDefined = false;
 		} else if(matchPattern[0] == 0 && matchPattern[1] ==0){
 			isNameDefined = true;
@@ -675,10 +703,13 @@ public class Parser {
 				
 		while(matcher.find()){
 			endIndex = matcher.start();
-	
-			preposition = input.substring(matcher.start(), matcher.end()).trim();
+			word = input.substring(matcher.start(), matcher.end()).trim();
 			try {
-				task = classifyDataFromPreposition(task, input, preposition, startIndex, endIndex);
+				if(isPreposition){
+					task = classifyDataFromPreposition(task, input, word, startIndex, endIndex);
+				} else{
+					task = classifyDataFromKeyword(task, input, word, startIndex, endIndex);
+				}
 			} catch (ParseException e) {
 			
 			}
@@ -700,16 +731,174 @@ public class Parser {
 		return task;
 	}
 
-	private Event classifyDataFromFormat(Event task, String input, String pattern, int startIndex, int endIndex){
+	private Event classifyDataFromKeyword(Event task, String input, String keyword, int startIndex, int endIndex){
 		Date inputDate;
 		String stringDate = null;
+		String data = null;
 		String time = null;
 		boolean isDay = false;
 		int newStartIndex = 0;
 		int newEndIndex = 0;
 		SimpleDateFormat formatToString = new SimpleDateFormat("dd/MM/yyyy H:mm:ss");
 		
-		
+		if(keyword.equalsIgnoreCase(KEY_START_DATE) || keyword.equalsIgnoreCase(KEY_START_TIME)){
+			if(task.getName().isEmpty() && isNameDefined){
+				String name = input.substring(startIndex , endIndex).trim();
+				task.setName(name);
+			}
+
+			newStartIndex = endIndex + KEY_START_DATE.length() + 1;
+			String choppedInput = input.substring(newStartIndex, input.length()).trim();
+			newEndIndex = matchPatternOfFirstOccurrence(PATTERN_KEYWORD_ALL, choppedInput)[0] + newStartIndex;
+			if(newEndIndex == 0){
+				newEndIndex = input.length();
+			} else if(newEndIndex < newStartIndex){
+				newEndIndex = input.length();
+			} else if(newEndIndex > input.length()){
+				newEndIndex = input.length();
+			} else if(newStartIndex == newEndIndex){
+				newEndIndex = input.length();
+			}
+			stringDate = input.substring(newStartIndex, newEndIndex).trim();
+			inputDate = DateChecker.validateDate(stringDate);
+			isDay = DateChecker.isDay;
+			if(inputDate != null){
+				task.setStartTime(inputDate);
+			}
+			/*extract time from the date if it is declared otherwise, dateTime[1] = null*/
+			String[] dateTime = extractTimeFromDate(stringDate);
+			recordedDate = dateTime[0];
+			if(isDay){
+				if(dateTime[0] == null && dateTime[1] != null && !stringDate.equals(dateTime[1])){
+					task.setStartTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
+				} else if(dateTime[0] == null && dateTime[1] != null && stringDate.equals(dateTime[1])){
+					time = DateChecker.convertAmPmToTime(dateTime[1]);
+					Calendar cal = Calendar.getInstance();
+					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+					String today = sdf.format(new Date());
+					Date todayDate = DateChecker.writeTime(today, time);
+					task.setStartTime(todayDate);
+					recordedDate = today;
+					
+					if(cal.getTime().after(todayDate)){
+						int interval = 1;
+						task.setStartTime(DateChecker.findDate(interval));
+
+						String writtenDate = formatToString.format(task.getStartTime());
+						task.setStartTime(DateChecker.writeTime(writtenDate, time));
+						recordedDate = writtenDate;
+					}
+				} else if(dateTime[0] != null && dateTime[1] != null){
+					task.setStartTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
+				}
+			} else if(dateTime[0] != null && dateTime[1] != null){
+				task.setStartTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
+			}
+		} else if(keyword.equalsIgnoreCase(KEY_END_DATE) || keyword.equalsIgnoreCase(KEY_END_TIME)){
+			if(task.getName().isEmpty() && isNameDefined){
+				String name = input.substring(startIndex , endIndex).trim();
+				task.setName(name);
+			}
+
+			newStartIndex = endIndex + KEY_END_DATE.length() + 1;
+			String choppedInput = input.substring(newStartIndex, input.length()).trim();
+			newEndIndex = matchPatternOfFirstOccurrence(PATTERN_KEYWORD_ALL, choppedInput)[0] + newStartIndex;
+			if(newEndIndex == 0){
+				newEndIndex = input.length();
+			} else if(newEndIndex < newStartIndex){
+				newEndIndex = input.length();
+			} else if(newEndIndex > input.length()){
+				newEndIndex = input.length();
+			} else if(newStartIndex == newEndIndex){
+				newEndIndex = input.length();
+			}
+			stringDate = input.substring(newStartIndex, newEndIndex).trim();
+			inputDate = DateChecker.validateDate(stringDate);
+			isDay = DateChecker.isDay;
+			if(inputDate != null){
+				task.setEndTime(inputDate);
+			}
+			
+			String[] dateTime = extractTimeFromDate(stringDate);
+			
+			if(isDay){
+				if(dateTime[0] == null && dateTime[1] != null && !stringDate.equals(dateTime[1])){
+					time = DateChecker.convertAmPmToTime(dateTime[1]);
+					task.setEndTime(DateChecker.writeTime(stringDate, time));
+				} else if(dateTime[0] == null && dateTime[1] != null && stringDate.equals(dateTime[1])){
+					time = DateChecker.convertAmPmToTime(dateTime[1]);
+					Calendar cal = Calendar.getInstance();
+					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+					String today = sdf.format(new Date());
+					Date todayDate = DateChecker.writeTime(today, time);
+					task.setStartTime(todayDate);
+
+					if(cal.getTime().after(todayDate)){
+						int interval = 1;
+						task.setStartTime(DateChecker.findDate(interval));
+
+						String writtenDate = formatToString.format(task.getStartTime());
+						task.setStartTime(DateChecker.writeTime(writtenDate, time));
+					}
+				} else if(dateTime[0] != null && dateTime[1] != null){
+					time = DateChecker.convertAmPmToTime(dateTime[1]);
+					task.setEndTime(DateChecker.writeTime(dateTime[0], time));
+				} else if(dateTime[0] != null && dateTime[1] == null){
+					task.setEndTime(DateChecker.writeTime(dateTime[0], TIME_BEFORE_MIDNIGHT));
+				}
+			} else if(dateTime[0] != null && dateTime[1] == null ){
+				task.setEndTime(DateChecker.writeTime(dateTime[0], TIME_BEFORE_MIDNIGHT));
+			} else if (dateTime[0] == null && dateTime[1] == null){
+				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT));
+			} else if(dateTime[0] == null && dateTime[1] != null && !stringDate.equals(dateTime[1])){
+				task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
+			} else if(dateTime[0] == null && dateTime[1] != null && stringDate.equals(dateTime[1])){
+				task.setEndTime(DateChecker.writeTime(recordedDate, DateChecker.convertAmPmToTime(dateTime[1])));
+			} else if(dateTime[0] != null && dateTime[1] != null){
+				task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
+			}
+
+		} else if(keyword.equalsIgnoreCase(KEY_LOCATION)){
+			if(task.getName().isEmpty() && isNameDefined){
+				String name = input.substring(startIndex , endIndex).trim();
+				task.setName(name);
+			}
+			newStartIndex = endIndex + KEY_LOCATION.length() + 1;
+			String choppedInput = input.substring(newStartIndex, input.length()).trim();
+			newEndIndex = matchPatternOfFirstOccurrence(PATTERN_KEYWORD_ALL, choppedInput)[0] + newStartIndex;
+			if(newEndIndex == 0){
+				newEndIndex = input.length();
+			} else if(newEndIndex < newStartIndex){
+				newEndIndex = input.length();
+			} else if(newEndIndex > input.length()){
+				newEndIndex = input.length();
+			} else if(newStartIndex == newEndIndex){
+				newEndIndex = input.length();
+			}
+			
+			data = input.substring(newStartIndex, newEndIndex).trim();
+			task.setLocation(data);
+		} else if(keyword.equalsIgnoreCase(KEY_NOTE)){
+			if(task.getName().isEmpty() && isNameDefined){
+				String name = input.substring(startIndex , endIndex).trim();
+				task.setName(name);
+			}
+			newStartIndex = endIndex + KEY_NOTE.length() + 1;
+			String choppedInput = input.substring(newStartIndex, input.length()).trim();
+			newEndIndex = matchPatternOfFirstOccurrence(PATTERN_KEYWORD_ALL, choppedInput)[0] + newStartIndex;
+			if(newEndIndex == 0){
+				newEndIndex = input.length();
+			} else if(newEndIndex < newStartIndex){
+				newEndIndex = input.length();
+			} else if(newEndIndex > input.length()){
+				newEndIndex = input.length();
+			} else if(newStartIndex == newEndIndex){
+				newEndIndex = input.length();
+			}
+			 
+			data = input.substring(newStartIndex, newEndIndex).trim();
+			task.setDescription(data);
+		}
 		
 		return task;
 	}
@@ -724,14 +913,14 @@ public class Parser {
 		int newEndIndex = 0;
 		SimpleDateFormat formatToString = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-		if(preposition.equalsIgnoreCase("on")){
+		if(preposition.equalsIgnoreCase(PREP_ON)){
 
 			if(task.getName().isEmpty() && isNameDefined){
 				String name = input.substring(startIndex , endIndex).trim();
 				task.setName(name);
 			}
 			
-			newStartIndex = endIndex + 3;
+			newStartIndex = endIndex + PREP_ON.length() + 1;
 			newEndIndex = matchPatternOfFirstOccurrence(PATTERN_AT_OR_BY, input)[0];
 			if(newEndIndex == 0){
 				newEndIndex = input.length();
@@ -778,7 +967,7 @@ public class Parser {
 			} else if(task.getEndTime() == null){
 				return null;
 			}
-		} else if(preposition.equalsIgnoreCase("at")){
+		} else if(preposition.equalsIgnoreCase(PREP_AT)){
 
 			if(task == null){
 				String name = input.substring(startIndex, endIndex).trim();
@@ -792,7 +981,7 @@ public class Parser {
 			} 
 			
 			/*check for anymore preposition 'at' which describe location*/
-			newStartIndex = endIndex + 3;
+			newStartIndex = endIndex + PREP_AT.length() + 1;
 			newEndIndex = matchPatternOfLastOccurrence(PATTERN_AT, input)[0];
 			if(newEndIndex == 0){
 				newEndIndex = input.length();
@@ -847,14 +1036,14 @@ public class Parser {
 				}
 			}
 		
-		} else if(preposition.equalsIgnoreCase("by")){
+		} else if(preposition.equalsIgnoreCase(PREP_BY)){
 			if(task.getName().isEmpty() && isNameDefined){
 				String name = input.substring(startIndex, endIndex).trim();
 				task.setName(name);
 				task.setCategory(GenericEvent.Category.DEADLINE);
 			} 
 
-			newStartIndex = endIndex + 3;
+			newStartIndex = endIndex + PREP_BY.length() + 1;
 			newEndIndex =  matchPatternOfLastOccurrence(PATTERN_AT, input)[0];
 			/* no more preposition, the end of the line*/
 			if(newEndIndex == 0){
@@ -913,14 +1102,14 @@ public class Parser {
 			
 			return task;
 
-		} else if(preposition.equalsIgnoreCase("from")){
+		} else if(preposition.equalsIgnoreCase(PREP_FROM)){
 			if(task.getName().isEmpty() && isNameDefined){
 				String name = input.substring(startIndex, endIndex).trim();
 				task.setName(name);
 				task.setCategory(GenericEvent.Category.EVENT);
 			}
 			
-			newStartIndex = endIndex + 5;
+			newStartIndex = endIndex + PREP_FROM.length() + 1;
 			newEndIndex = matchPatternOfFirstOccurrence(PATTERN_TO, input)[0];
 			
 			if(newEndIndex == 0){
@@ -930,124 +1119,94 @@ public class Parser {
 			stringDate = input.substring(newStartIndex, newEndIndex).trim();
 			inputDate = DateChecker.validateDate(stringDate);
 			isDay = DateChecker.isDay;
-			if(inputDate != null){			/*12/6/16 1:00 or 1:00 12/6/16*/
+		
+			if(inputDate != null){
 				task.setStartTime(inputDate);
-				task.setCategory(GenericEvent.Category.EVENT);
 			}
-
 			String[] dateTime = extractTimeFromDate(stringDate);
 			recordedDate = dateTime[0];
-			int[] matchAmPm = {0,0};
-			if(dateTime[1] != null){
-				matchAmPm = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, dateTime[1]);
-			}
+		
 			if(isDay){
 				
-				if(dateTime[0] == null && dateTime[1] != null && dateTime[1].contains("11:59 pm")
-						|| dateTime[1].contains(TIME_BEFORE_MIDNIGHT_SEC)){
-					time = TIME_BEFORE_MIDNIGHT_SEC;
-					task.setStartTime(DateChecker.writeTime(stringDate, time));
-					task.setCategory(Category.EVENT);
-				} else if(dateTime[0] == null && dateTime[1] != null){
+				if(dateTime[0] == null && dateTime[1] != null && stringDate.equals(dateTime[1])){
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
-					task.setStartTime(DateChecker.writeTime(stringDate, time));
+					Calendar cal = Calendar.getInstance();
+					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+					String today = sdf.format(new Date());
+					Date todayDate = DateChecker.writeTime(today, time);
+					task.setStartTime(todayDate);
+					recordedDate = today;
+					
+					if(cal.getTime().after(todayDate)){
+						int interval = 1;
+						task.setStartTime(DateChecker.findDate(interval));
+
+						String writtenDate = formatToString.format(task.getStartTime());
+						task.setStartTime(DateChecker.writeTime(writtenDate, time));
+						recordedDate = writtenDate;
+					} 
+					task.setCategory(GenericEvent.Category.EVENT);
+				} else if(dateTime[0] == null && dateTime[1] != null && !stringDate.equals(dateTime[1])){
+					task.setStartTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
 					task.setCategory(GenericEvent.Category.EVENT);
 				} else if(dateTime[0] != null && dateTime[1] != null){			/*from friday 1:00*/
-					time = DateChecker.convertAmPmToTime(dateTime[1]);
-					task.setStartTime(DateChecker.writeTime(dateTime[0], time));
+					task.setStartTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
 					task.setCategory(Category.EVENT);
-
 				}
-			} else if(dateTime[0] == null && dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
-				
-				if(dateTime[1].contains("11:59 pm") || dateTime[1].contains(TIME_BEFORE_MIDNIGHT_SEC)){
-					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
-				} else{
-					task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
-				}
-				
-			} else if(dateTime[0] != null && dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){ /*12/6/16 2 am*/
-					task.setEndTime(DateChecker.writeTime(dateTime[0],TIME_BEFORE_MIDNIGHT_SEC));
+			} else if(dateTime[0] != null && dateTime[1] != null ){
+				task.setStartTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
+				task.setCategory(GenericEvent.Category.EVENT);
 			}
-				
+			
 			newStartIndex = matchPatternOfFirstOccurrence(PATTERN_TO, input)[1] + 1;
 			newEndIndex = matchPatternOfFirstOccurrence(PATTERN_AT, input)[0];
 			
 			if(newEndIndex == 0){
 				newEndIndex = input.length();
 			}
-			stringDate = input.substring(newStartIndex, newEndIndex).trim();
-			
-			if(stringDate.contains(TIME_BEFORE_MIDNIGHT)){
-				inputDate = DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC);
-			} else{
-				inputDate = DateChecker.validateDate(stringDate);
-			}
-			
-			if(inputDate != null){
-				task.setEndTime(inputDate);
-			} 
+			stringDate = input.substring(newStartIndex, newEndIndex).trim();		
+			inputDate = DateChecker.validateDate(stringDate);
+			isDay = DateChecker.isDay;
 			
 			dateTime = extractTimeFromDate(stringDate);
-			matchAmPm[0] = 0;
-			matchAmPm[1] = 0;
-			if(dateTime[1] != null){
-				matchAmPm = matchPatternOfFirstOccurrence(PATTERN_AM_OR_PM, dateTime[1]);
-			}
-			
+
 			if(isDay){
-				if(dateTime[0] == null && dateTime[1] != null){    		/*to friday 3 am or to friday 13:00*/
-					time = DateChecker.convertAmPmToTime(dateTime[1]);
-					if(stringDate.equals(time)){  					/*to 3 am or 13:00*/
-						task.setEndTime(DateChecker.writeTime(recordedDate, time));
-					} else{
-						task.setEndTime(DateChecker.writeTime(stringDate, time));
-					}
-					
+				if(dateTime[0] == null && dateTime[1] != null && stringDate.equals(dateTime[1])){    		/*to 3 am or to 13:00*/
+					task.setEndTime(DateChecker.writeTime(recordedDate, DateChecker.convertAmPmToTime(dateTime[1])));
+				} else if(dateTime[0] == null && dateTime[1] != null && !stringDate.equals(dateTime[1])){	/*to friday 3 am or to friday 13:00*/
+					task.setEndTime(DateChecker.writeTime(stringDate, time));
 				} else if(dateTime[0] != null && dateTime[1] != null){		/* to friday 12:00 */
-					time = DateChecker.convertAmPmToTime(dateTime[1]);
-					task.setEndTime(DateChecker.writeTime(dateTime[0], time));
-				} else if(dateTime[0] == null && dateTime[1] == null){    /* to friday */
-					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
+					task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
 				} else if(dateTime[0] != null && dateTime[1] == null){
+					task.setEndTime(DateChecker.writeTime(dateTime[0], TIME_BEFORE_MIDNIGHT_SEC));
+				} else if(dateTime[0] == null && dateTime[1] == null){
 					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
-				} 
+				}
 			} else if (dateTime[1] == null){
 				task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
 
-			} else if (dateTime[0] == null && dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
+			} else if(dateTime[0] == null && dateTime[1] != null && !stringDate.equals(dateTime[1])){
 				
-				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT)){
+				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT) || dateTime[1].contains("11:59 pm")){
 					task.setEndTime(DateChecker.writeTime(stringDate, TIME_BEFORE_MIDNIGHT_SEC));
 				} else{
-				/*to 3:00 or 3 pm */
 					task.setEndTime(DateChecker.writeTime(stringDate, DateChecker.convertAmPmToTime(dateTime[1])));
 				}
+			} else if(dateTime[0] == null && dateTime[1] != null && stringDate.equals(dateTime[1])){
 				
-			} else if(dateTime[0] != null && dateTime[1] != null && matchAmPm[0] != matchAmPm[1]){
-				
-				if(dateTime[1].contains("11:59 pm") || dateTime[1].contains(TIME_BEFORE_MIDNIGHT)){
-					task.setEndTime(DateChecker.writeTime(dateTime[0], TIME_BEFORE_MIDNIGHT_SEC));
-				}else{
-					task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
-
-				}
-			} else if(dateTime[0] == null && dateTime[1] != null && matchAmPm[0] == matchAmPm[1]){	/*12:00*/
-				
-				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT)){
+				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT) || dateTime[1].contains("11:59 pm")){
 					task.setEndTime(DateChecker.writeTime(recordedDate, TIME_BEFORE_MIDNIGHT_SEC));
 				} else{
-					task.setEndTime(DateChecker.writeTime(recordedDate, dateTime[1]));
+					task.setEndTime(DateChecker.writeTime(recordedDate, DateChecker.convertAmPmToTime(dateTime[1])));
 				}
-				
-			} else if(dateTime[0] != null && dateTime[1] != null && matchAmPm[0] == matchAmPm[1]){ /*12/6/16 12:00*/
-				
-				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT)){
+			} else if(dateTime[0] != null && dateTime[1] != null){
+				if(dateTime[1].contains(TIME_BEFORE_MIDNIGHT) || dateTime[1].contains("11:59 pm")){
 					task.setEndTime(DateChecker.writeTime(dateTime[0], TIME_BEFORE_MIDNIGHT_SEC));
 				} else{
-					task.setEndTime(DateChecker.writeTime(dateTime[0], dateTime[1]));
+					task.setEndTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
 				}
 			}
+	
 		}
 
 		return task;
