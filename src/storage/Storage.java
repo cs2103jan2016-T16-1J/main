@@ -7,6 +7,7 @@ import main.Event;
 import main.GenericEvent;
 import main.GenericEvent.Category;
 import main.GenericEvent.Status;
+import main.ReservedEvent;
 import main.State;
 
 import java.io.FileNotFoundException;
@@ -60,6 +61,9 @@ public class Storage {
 		copyStorage(newStorage);
 	}
 
+	
+	
+	
 	/** 
 	 * Check if the file is exist. If not, create a new file
 	 */
@@ -77,6 +81,9 @@ public class Storage {
 		}
 	}
 	
+	
+	
+	
 	/** 
 	 * Clean up every content in file
 	 */
@@ -91,19 +98,23 @@ public class Storage {
 		 
 	}
 	
+	
+	
+	
 	/** 
 	 * Import all the events under every lists in state class into storage
 	 * @param completeState
 	 */
 	public void stateToStorage(State completeState, String fileName){
 		clearFile(fileName);
+		
 		for (Event e: completeState.completedEvents){
 			addToStorage(e, fileName);
 		}
 		for (Event e: completeState.incompletedEvents){
 			addToStorage(e, fileName);
 		}
-		for (Event e: completeState.floatingEvents){
+		for (ReservedEvent e: completeState.floatingEvents){
 			addToStorage(e, fileName);
 		}
 	}
@@ -125,6 +136,25 @@ public class Storage {
 		}
 		
 	}
+	
+	
+	//overloading addToStorage
+	public void addToStorage(ReservedEvent event, String fileName) {
+		JSONObject jsonObj = castReservedEventToJSONObj(event);
+		
+		try {
+			FileWriter fw = new FileWriter(fileName, true);
+			PrintWriter pw = new PrintWriter(fw);
+			pw.println(jsonObj.toString());
+			pw.close();
+		} catch(IOException ex) {
+			ex.printStackTrace();
+		}
+		
+	}
+	
+	
+	
 	
 	/**
 	 * Read storage and cast every JSONObject into event, then add to the specific list
@@ -177,14 +207,24 @@ public class Storage {
 	
 	
 	
-	private void storageToState(State state, Event event) {
+	private void storageToState(State state, GenericEvent event) {
+		if (event.getStatus() == GenericEvent.Status.COMPLETE){
+			state.addToCompletedList((Event)event);
+		} else if (event.getStatus() == GenericEvent.Status.INCOMPLETE){
+			state.addToIncompletedList((Event)event);
+		} else if (event.getStatus() == GenericEvent.Status.UNDETERMINED){
+			state.addToFloatingList((ReservedEvent)event);
+		} 
+		
+		
+		/*
 		if (event.getStatus() == GenericEvent.Status.COMPLETE){
 			state.addToCompletedList(event);
 		} else if (event.getStatus() == GenericEvent.Status.INCOMPLETE){
 			state.addToIncompletedList(event);
 		} else if (event.getStatus() == GenericEvent.Status.UNDETERMINED){
 			state.addToFloatingList(event);
-		}
+		}*/
 	}
 	
 	private JSONObject castEventToJSONObj(Event event){
@@ -192,11 +232,10 @@ public class Storage {
 		
 		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
 		Date deadLine = null;
+		
 		try {
 			 deadLine = dfDeadline.parse("1970-01-01");
-			 //System.out.println(deadLine);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -205,17 +244,56 @@ public class Storage {
 			jsonObj.put("name", event.getName());
 			jsonObj.put("description", event.getDescription());
 			jsonObj.put("category", event.getCategory());
+			jsonObj.put("status", event.getStatus());
+			jsonObj.put("location", event.getLocation());
 			
-			//jsonObj.put("startTime", event.getStartTime());
-			//	System.out.println(event.getStartTime());
-			jsonObj.put("endTime", event.getEndTime());
+			if (event.getCategory().equals(GenericEvent.Category.DEADLINE)){
+				jsonObj.put("startTime", deadLine);
+			} else if (event.getCategory().equals(GenericEvent.Category.FLOATING)){
+				jsonObj.put("startTime", "null");
+			} else {
+				jsonObj.put("startTime", event.getStartTime());
+			}
+			
+			if (event.getCategory().equals(GenericEvent.Category.FLOATING)){
+				jsonObj.put("endTime", "null");
+			} else {
+				jsonObj.put("endTime", event.getEndTime());
+			}
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return jsonObj;
+	
+	}
+	
+	////////////////////////
+	private JSONObject castReservedEventToJSONObj(ReservedEvent event){
+		JSONObject jsonObj = new JSONObject();
+		
+		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
+		Date deadLine = null;
+		try {
+			 deadLine = dfDeadline.parse("1970-01-01");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		
+		try {
+			jsonObj.put("name", event.getName());
+			jsonObj.put("description", event.getDescription());
+			jsonObj.put("category", event.getCategory());
+			jsonObj.put("endTime", "");
 			jsonObj.put("status", event.getStatus());
 			jsonObj.put("location", event.getLocation());
 			
 			if (event.getCategory().equals(GenericEvent.Category.DEADLINE)){
 				jsonObj.put("startTime", deadLine);
 			} else {
-				jsonObj.put("startTime", event.getStartTime());
+				jsonObj.put("startTime", "");
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -229,15 +307,14 @@ public class Storage {
 	public Event castJSONObjToEvent(JSONObject jsonObj){
 		Event event = new Event();
 		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+		/*
 		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
 		Date deadLine = null;
 		try {
 			 deadLine = dfDeadline.parse("1970-01-01");
-			 //System.out.println(deadLine);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
 		try {
 			String startTime = jsonObj.get("startTime").toString();
@@ -245,33 +322,29 @@ public class Storage {
 			
 			event.setName(jsonObj.getString("name"));
 			event.setDescription(jsonObj.getString("description"));
-			//event.setCategory(jsonObj.getString("category"));
 			event.setCategory(getCategory(jsonObj));
 			event.setStatus(getStatus(jsonObj));
 			event.setLocation(jsonObj.getString("location"));
-			event.setStartTime(df.parse(startTime));
-			event.setEndTime(df.parse(endTime));
 			
-			/*
-			if (jsonObj.getString("category").equals("DEADLINE")){
-				event.setStartTime(dfDeadline.parse(startTime));
-				
-					System.out.println(dfDeadline.parse(startTime));
-				event.setEndTime(df.parse(endTime));
-					System.out.println(df.parse(endTime));
+			if (event.getCategory().equals(GenericEvent.Category.FLOATING)){
+				//doesn't set start time and end time
 			} else {
-				
-			}*/
+				event.setStartTime(df.parse(startTime));
+				event.setEndTime(df.parse(endTime));
+			}
+			
 		} catch (JSONException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
 		return event;
 	}
+	
+	
+	
+	
 	
 	private GenericEvent.Status getStatus(JSONObject jsonObj) throws JSONException{
 		if (jsonObj.get("status").equals("COMPLETE")){
