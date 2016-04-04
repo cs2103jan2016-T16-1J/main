@@ -59,7 +59,7 @@ public class CommandTesting {
 	
 	public void testDelete(){
 		testDeleteValidEvent();
-		testDeleteInvalidEvent();
+		//testDeleteInvalidEvent();
 	}
 	
 	public void testAdd(){
@@ -75,7 +75,7 @@ public class CommandTesting {
 		testAddWithMultipleInputs();
 	}
 	
-	
+/*	
 	public void testDeleteInvalidEvent(){
 		Event testNewEvent = null;
 		testState = new State();
@@ -94,7 +94,7 @@ public class CommandTesting {
 		assertEquals(existingEvents, testState.getAllEvents());
 
 	
-	}
+	}*/
 	
 	public void testDeleteValidEvent(){
 		ArrayList<Event> emptyArray = new ArrayList<Event>();
