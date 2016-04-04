@@ -23,9 +23,11 @@ public class State {
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
 	public static ArrayList<Event> completedEvents;
 	public static ArrayList<Event> incompletedEvents;
+	public static ArrayList<Event> undeterminedEvents;
+	
 	//Decide- do we create a new event class for floating Events which does not have dates?
-	public static ArrayList<ReservedEvent> floatingEvents;
-	public static ArrayList<ReservedEvent> undeterminedEvents;
+	public static ArrayList<ReservedEvent> reservedEvents;
+	//public static ArrayList<ReservedEvent> undeterminedEvents;
 	
 	public ArrayList<GenericEvent> displayedEvents;
 	public ArrayList<GenericEvent> selectedEvents;
@@ -46,7 +48,10 @@ public class State {
 	public State(){
 		completedEvents = new ArrayList<Event>();
 		incompletedEvents = new ArrayList<Event>();
-		floatingEvents = new ArrayList<ReservedEvent>();
+		undeterminedEvents = new ArrayList<Event>();
+		reservedEvents = new ArrayList<ReservedEvent>(); 
+		
+		//floatingEvents = new ArrayList<ReservedEvent>();
 		displayedEvents = new ArrayList<GenericEvent>();
 		selectedEvents = new ArrayList<GenericEvent>();
 		
@@ -136,7 +141,8 @@ public class State {
 		ArrayList<GenericEvent> allEvents = new ArrayList<GenericEvent>();
 		allEvents.addAll(this.completedEvents);
 		allEvents.addAll(this.incompletedEvents);
-		allEvents.addAll(this.floatingEvents);	
+		allEvents.addAll(this.undeterminedEvents);
+		allEvents.addAll(this.reservedEvents);
 		
 		return allEvents;
 	}
@@ -149,8 +155,17 @@ public class State {
 		incompletedEvents.add(event);
 	}
 	
+	public  void addToUndeterminedList(Event event){
+		undeterminedEvents.add(event);
+	}
+	
+	/*
 	public  void addToFloatingList(ReservedEvent event){
 		floatingEvents.add(event);
+	}*/
+	
+	public  void addToReservedList(ReservedEvent event){
+		reservedEvents.add(event);
 	}
 	
 	public void sortDisplayedEvents() {

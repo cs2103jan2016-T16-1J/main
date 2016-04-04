@@ -48,6 +48,10 @@ public class Add implements Command{
 			addToIncompleteList();
 			break;
 			
+		case UNDETERMINED:
+			addToUndeterminedList();
+			break;
+			
 			/*This will be fulfilled by Reseve Command
 		case UNDETERMINED:
 			addToFloatingList();
@@ -60,7 +64,7 @@ public class Add implements Command{
 		return completeState;
 	}
 
-	
+
 	private boolean isNewEventValid(){
 		if(null == modifiedEvent){
 			completeState.setStatusMessage(State.MESSAGE_PARSE_ERROR);
@@ -83,6 +87,10 @@ public class Add implements Command{
 		completeState.incompletedEvents.add(modifiedEvent);
 	}
 
+	public void addToUndeterminedList(){
+		completeState.undeterminedEvents.add(modifiedEvent);
+	}
+	
 	/**
 	 * adds the given task to the floating list in State
 	 * This method will be fulfilled by the Reserve Command rather than Add
@@ -99,7 +107,7 @@ public class Add implements Command{
 		completeState.displayedEvents.clear();
 		completeState.displayedEvents.addAll(completeState.completedEvents);
 		completeState.displayedEvents.addAll(completeState.incompletedEvents);
-		completeState.displayedEvents.addAll(completeState.floatingEvents);		
+		completeState.displayedEvents.addAll(completeState.undeterminedEvents);		
 	}
 
 }

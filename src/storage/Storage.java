@@ -121,7 +121,10 @@ public class Storage {
 		for (Event e: completeState.incompletedEvents){
 			addToStorage(e, fileName);
 		}
-		for (ReservedEvent e: completeState.floatingEvents){
+		for (Event e: completeState.undeterminedEvents){
+			addToStorage(e, fileName);
+		}
+		for (ReservedEvent e: completeState.reservedEvents){
 			addToStorage(e, fileName);
 		}
 	}
@@ -220,8 +223,12 @@ public class Storage {
 		} else if (event.getStatus() == GenericEvent.Status.INCOMPLETE){
 			state.addToIncompletedList((Event)event);
 		} else if (event.getStatus() == GenericEvent.Status.UNDETERMINED){
-			state.addToFloatingList((ReservedEvent)event);
-		} 
+				if (event.getCategory() == GenericEvent.Category.FLOATING){
+					state.addToUndeterminedList((Event)event);
+				} else {
+					state.addToReservedList((ReservedEvent)event);
+				}
+		}
 		
 		
 		/*
@@ -254,6 +261,17 @@ public class Storage {
 			jsonObj.put("status", event.getStatus());
 			jsonObj.put("location", event.getLocation());
 			
+			if (event.getCategory().equals(GenericEvent.Category.FLOATING)){
+				jsonObj.put("startTime", "null");
+				jsonObj.put("endTime", "null");
+			} else if (event.getCategory().equals(GenericEvent.Category.DEADLINE)){
+				jsonObj.put("startTime", deadLine);
+				jsonObj.put("endTime", event.getEndTime());
+			} else {
+				jsonObj.put("startTime", event.getStartTime());
+				jsonObj.put("endTime", event.getEndTime());
+			}
+			/*
 			if (event.getCategory().equals(GenericEvent.Category.DEADLINE)){
 				jsonObj.put("startTime", deadLine);
 			} else if (event.getCategory().equals(GenericEvent.Category.FLOATING)){
@@ -266,7 +284,7 @@ public class Storage {
 				jsonObj.put("endTime", "null");
 			} else {
 				jsonObj.put("endTime", event.getEndTime());
-			}
+			}*/
 			
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -379,7 +397,7 @@ public class Storage {
 		completeState.displayedEvents.clear();
 		completeState.displayedEvents.addAll(completeState.completedEvents);
 		completeState.displayedEvents.addAll(completeState.incompletedEvents);
-		completeState.displayedEvents.addAll(completeState.floatingEvents);		
+		completeState.displayedEvents.addAll(completeState.undeterminedEvents);		
 	}
 	
 	private void copyStorage(String destinationFileName) {
