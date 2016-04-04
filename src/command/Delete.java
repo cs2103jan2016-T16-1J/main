@@ -10,6 +10,7 @@ import main.State;
 import main.GenericEvent;
 import main.GenericEvent.Category;
 import main.GenericEvent.Status;
+import main.ReservedEvent;
 import storage.Storage;
 
 /**
@@ -18,14 +19,14 @@ import storage.Storage;
  *
  */
 public class Delete implements Command{
-	Event selectedParameters;
+	GenericEvent selectedParameters;
 	State completeState;
 
 	/**
 	 * Delete class constructor. 
 	 * @param modifiedEvent the event that will be deleted
 	 */
-	public Delete(Event selectedParameters){
+	public Delete(GenericEvent selectedParameters){
 		this.selectedParameters = selectedParameters;
 	}
 	
@@ -45,8 +46,9 @@ public class Delete implements Command{
 			return completeState;
 		}
 		
-		ArrayList<Event> allEvents = completeState.getAllEvents();
-		ArrayList<Event> eventsToDelete = getMatchingEvents(allEvents);
+		ArrayList<GenericEvent> allEvents = completeState.getAllEvents();
+		ArrayList<GenericEvent> eventsToDelete = getMatchingEvents(allEvents);
+
 		
 		if(!hasMatchingEvents(eventsToDelete)){
 			return completeState;
@@ -79,8 +81,8 @@ public class Delete implements Command{
 
 	}
 	
-	private void deleteMatchedEvents(ArrayList<Event> eventsToDelete){
-		for(Event e: eventsToDelete ){
+	private void deleteMatchedEvents(ArrayList<GenericEvent> eventsToDelete){
+		for(GenericEvent e: eventsToDelete ){
 			deleteFromCorrespondingArray(e);
 		}
 	}
@@ -89,16 +91,16 @@ public class Delete implements Command{
 	 * Deletes the event from the corresponding array, which is based on the event's status
 	 * @param e
 	 */
-	private void deleteFromCorrespondingArray(Event e){
+	private void deleteFromCorrespondingArray(GenericEvent e){
 		switch (e.getStatus()){
 		case COMPLETE:
-			removeFromCompleteList(e);
+			removeFromCompleteList((Event)e);
 			break;
 		case INCOMPLETE:
-			removeFromIncompleteList(e);
+			removeFromIncompleteList((Event)e);
 			break;
 		case UNDETERMINED:
-			removeFromFloatingList(e);
+			//removeFromFloatingList(e);
 			break;
 			
 		}
@@ -112,11 +114,11 @@ public class Delete implements Command{
 		completeState.incompletedEvents.remove(e);
 	}
 	
-	private void removeFromFloatingList(Event e){
-		completeState.floatingEvents.remove(e);
+	private void removeFromFloatingList(ReservedEvent e){
+	//	completeState.floatingEvents.remove(e);
 	}
 	
-	private boolean hasMatchingEvents(ArrayList<Event> eventsToDelete){
+	private boolean hasMatchingEvents(ArrayList<GenericEvent> eventsToDelete){
 		if(eventsToDelete.isEmpty()){
 			completeState.setStatusMessage(State.MESSAGE_EVENT_NOT_FOUND);
 			return false;
@@ -125,29 +127,29 @@ public class Delete implements Command{
 		return true;
 	}
 	
-	private ArrayList<Event> getMatchingEvents(ArrayList<Event> allEvents){
-		ArrayList<Event> matchingEvents = new ArrayList<Event>();
+	private ArrayList<GenericEvent> getMatchingEvents(ArrayList<GenericEvent> allEvents){
+		ArrayList<GenericEvent> matchingEvents = new ArrayList<GenericEvent>();
 		
-		for(Event e: allEvents){
+		for(GenericEvent e: allEvents){
 			if(isMatchingEvent(e)){
-				matchingEvents.add(e);
-				
+				matchingEvents.add(e);				
 			}
 		}
 		
 		return matchingEvents;
 	}
 	
-	private boolean isMatchingEvent(Event currentEvent){
+	
+	private boolean isMatchingEvent(GenericEvent currentEvent){
 		boolean isMatch = true;
 		
 		
 		isMatch = isStringMatching(currentEvent.getName(), selectedParameters.getName()) &&
 				isStringMatching(currentEvent.getLocation(), selectedParameters.getLocation()) &&
 				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
-				&&
+				//&&
 				//isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory())&&
-				isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
+				//isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
 				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
 				;
 		
@@ -221,6 +223,6 @@ public class Delete implements Command{
 		completeState.displayedEvents.clear();
 		completeState.displayedEvents.addAll(completeState.completedEvents);
 		completeState.displayedEvents.addAll(completeState.incompletedEvents);
-		completeState.displayedEvents.addAll(completeState.floatingEvents);		
+		//completeState.displayedEvents.addAll(completeState.floatingEvents);		
 	}
 }

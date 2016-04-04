@@ -31,7 +31,7 @@ public class Select implements Command{
 		
 		completeState.clearSelections();
 		
-		ArrayList<Event> allEvents = completeState.getAllEvents();
+		ArrayList<GenericEvent> allEvents = completeState.getAllEvents();
 		///for each event in allEvents check if it matches selectedParameters
 		//if the event does, clone it and add it to completeState.selectedEvents
 		getMatchingEvents(allEvents);
@@ -59,10 +59,10 @@ public class Select implements Command{
 	//getMatchingEvents
 	
 
-	private void getMatchingEvents(ArrayList<Event> allEvents){
+	private void getMatchingEvents(ArrayList<GenericEvent> allEvents){
 	
-		for(Event e: allEvents){
-			if(isMatchingEvent(e)){
+		for(GenericEvent e: allEvents){
+			if(isMatchingEvent((Event)e)){
 				completeState.selectedEvents.add(e);
 				
 			}
