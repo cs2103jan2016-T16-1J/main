@@ -91,23 +91,24 @@ public class Parser {
 			oldReservedEvent = null;
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.EDIT){
-			GenericEvent event;
+			isEdit = true;
+
 			if(oldEvent != null){
-				event = new Event();
-				event = oldEvent;
-				
+				Event event = new Event();
 				cloneEvent(oldEvent, event);
-				
+				event = decodeEditData(event, removeFirstWord(input));
+				oldEvent = event;
 			} else{
-				event = new ReservedEvent();
-				event = oldReservedEvent;
-				
+				ArrayList<TimePair> reservedTimes = new ArrayList<>();
+				Event event = new Event();
 				cloneReservedEvent(oldReservedEvent, event);
+				cloneReservedTimePair(reservedTimes, oldReservedEvent);
 				
+				ReservedEvent reserved = decodeEditReservedData(event, reservedTimes, removeFirstWord(input));			
+				oldReservedEvent = reserved;
 			}
 		
-			isEdit = true;
-			cmdInterface = new Edit(event);
+			//cmdInterface = new Edit(event);
 		} else if(tempCmd == CommandType.SELECT){		
 			Event event = new Event();
 			event = decodeSelectData(event, removeFirstWord(input));
@@ -155,29 +156,43 @@ public class Parser {
 	 * @param input
 	 * @return
 	 */
-	public Event testingDeterminedStuff(String input){
+	public GenericEvent testingDeterminedStuff(String input){
 		String command = getFirstWord(input);
 		CommandType tempCmd = getCommandType(command);
-		Event task = new Event();
 
 		if (tempCmd == CommandType.INVALID){
 			return null;
 		} else if(tempCmd == CommandType.ADD){
+			Event task = new Event();
 			decodeAddData(task, removeFirstWord(input));
 			oldEvent = task;
 			return task;
 		} else if(tempCmd == CommandType.DELETE){
+			Event task = new Event();
 			oldEvent = null;
 			return decodeDeleteData(task, removeFirstWord(input));
 		} else if(tempCmd == CommandType.EDIT){
-			Event oldTask = new Event();
-			oldTask = (Event) oldEvent;
-		
 			isEdit = true;
-			task = decodeEditData(task , removeFirstWord(input));
-			oldEvent = task;
-			return task;
+			
+			if(oldEvent != null){
+				Event event = new Event();
+				cloneEvent(oldEvent, (Event) event);
+				event = decodeEditData((Event) event, removeFirstWord(input));
+				oldEvent = (Event) event;
+				return event;
+
+			} else{
+				ArrayList<TimePair> reservedTimes = new ArrayList<>();
+				Event event = new Event();
+				cloneReservedEvent(oldReservedEvent, (Event) event);
+				cloneReservedTimePair(reservedTimes, oldReservedEvent);
+				
+				ReservedEvent reserved = decodeEditReservedData((Event) event, reservedTimes, removeFirstWord(input));			
+				oldReservedEvent = reserved;
+				return reserved;
+			}
 		} else if(tempCmd == CommandType.CHANGDIR){
+			Event task = new Event();
 			task = decodeImportExportData(task, removeFirstWord(input));
 			return task;
 		} 
@@ -191,13 +206,14 @@ public class Parser {
 		if(tempCmd == CommandType.BLOCK){
 			ReservedEvent reserved = new ReservedEvent();
 			reserved = decodeReservedData(task, removeFirstWord(input));
-			//oldEvent = reserved;
+			oldReservedEvent = reserved;
+			oldEvent = null;
 			return reserved;
 		} else if(tempCmd == CommandType.UNBLOCK){
 			GenericEvent event = new Event();
 			event = decodeReservedData((Event) event, removeFirstWord(input));
 			event.setStatus(GenericEvent.Status.UNDETERMINED);
-			oldEvent = (Event) event;
+			
 			return event;
 		} else if(tempCmd == CommandType.CONFIRM){
 			GenericEvent event = new Event();
@@ -213,50 +229,32 @@ public class Parser {
 	 * @param event
 	 * @return the cloned event
 	 */
-	public void cloneEvent(Event eventToBeCloned, GenericEvent event){
+	public void cloneEvent(Event eventToBeCloned, Event event){
 		event.setName(eventToBeCloned.getName());
 		event.setDescription(eventToBeCloned.getDescription());
 		event.setCategory(eventToBeCloned.getCategory());
-		((Event) event).setEndTime(eventToBeCloned.getEndTime());
-		((Event) event).setStartTime(eventToBeCloned.getStartTime());
+		event.setEndTime(eventToBeCloned.getEndTime());
+		event.setStartTime(eventToBeCloned.getStartTime());
 		event.setLocation(eventToBeCloned.getLocation());
 		event.setStatus(eventToBeCloned.getStatus());
 	}
 	
-	public void cloneReservedEvent(ReservedEvent eventToBeCloned, GenericEvent event){
+	public void cloneReservedEvent(ReservedEvent eventToBeCloned, Event event){
 		event.setName(eventToBeCloned.getName());
 		event.setDescription(eventToBeCloned.getDescription());
 		event.setCategory(eventToBeCloned.getCategory());
-		
 		event.setLocation(eventToBeCloned.getLocation());
 		event.setStatus(eventToBeCloned.getStatus());
 	}
-
-	private GenericEvent.Category classifyCategory(String userInput){
-		
-		if(userInput.equalsIgnoreCase(Constant.CATEGORY_DEADLINE)){
-			return GenericEvent.Category.DEADLINE;
-		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_EVENT)){
-			return GenericEvent.Category.EVENT;
-		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_FLOATING)){
-			return GenericEvent.Category.FLOATING;
+	public void cloneReservedTimePair(ArrayList<TimePair> times, ReservedEvent event){		
+		for(int i=0 ; i< event.getReservedTimes().size(); i++){
+			TimePair time = new TimePair(event.getReservedTimes().get(i).getStartTime(),
+					event.getReservedTimes().get(i).getEndTime());
+			times.add(time);
 		}
-		
-		return GenericEvent.Category.NULL;
 	}
-	
-	private GenericEvent.Status classifyStatus(String userInput){
-		
-		if(userInput.equalsIgnoreCase(Constant.STATUS_INCOMPLETE)){
-			return GenericEvent.Status.INCOMPLETE;
-		}else if(userInput.equalsIgnoreCase(Constant.STATUS_COMPLETE)){
-			return GenericEvent.Status.COMPLETE;
-		}else if(userInput.equalsIgnoreCase(Constant.STATUS_UNDETERMINED)){
-			return GenericEvent.Status.UNDETERMINED;
-		}
-		return GenericEvent.Status.NULL;
 
-	}
+
 	/**
 	 * Decodes the user input for Adding new task
 	 * @param task
@@ -271,9 +269,9 @@ public class Parser {
 	
 	/**
 	 * Decodes the user input for Reserving new task
-	 * @param task
+	 * @param event
 	 * @param input
-	 * @return
+	 * @return reserved event
 	 */
 	private ReservedEvent decodeReservedData(Event task, String input){
 		int startIndex = 0;
@@ -325,6 +323,72 @@ public class Parser {
 		return reserved;
 	}
 	
+	/**
+	 * Decode the user input for releasing reserved task
+	 * @param event
+	 * @param input	
+	 * @return reserved event
+	 */
+	private ReservedEvent decodeUnblockData(Event task, String input){
+		String name = null;
+		int startIndex = 0;
+		int endIndex = startIndex;		
+		ArrayList<String> choppedInputData = new ArrayList<>();
+		ArrayList<TimePair> reservedTimes = new ArrayList<>();
+		
+		/**extract notes from the input if it is declared**/
+		String remainingInput = extractDescription(task, input);
+		
+		if(remainingInput.isEmpty()){
+			return null;
+		}
+		
+		/**extract location from the input if it is declared**/
+		remainingInput = extractLocation(task, remainingInput);
+		
+		/**extract "task name that has preposition on, from, to, by, at" **/
+		task = determineQuotedInput(task, remainingInput);
+		
+		/**to find AND in a sentence**/
+		Pattern pattern = Pattern.compile(PATTERN_AND,Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(remainingInput);
+				
+		while(matcher.find()){
+			endIndex = matcher.start();
+			choppedInputData.add(remainingInput.substring(startIndex, endIndex).trim());
+			startIndex = matcher.end();
+		}
+		choppedInputData.add(remainingInput.substring(startIndex,remainingInput.length()).trim());
+	
+		/**decode all the other information like name, location from input**/
+		task = decodeDataFromInput(task, choppedInputData.get(0));
+		TimePair reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
+		reservedTimes.add(reservedTime);
+		name = task.getName().trim();
+		/**check if the connected data are date time **/
+		for(int i = 1; i < choppedInputData.size(); i++){
+			task.setStartTime(Constant.MIN_DATE);
+			task.setEndTime(Constant.MAX_DATE);
+			task = decodeDataFromInput(task, choppedInputData.get(i));
+
+			if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() == Constant.MAX_DATE){
+				name = name + " "+ task.getName().trim();
+			} else{
+				reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
+				reservedTimes.add(reservedTime);
+			}
+		}
+		ReservedEvent reserved = new ReservedEvent(name, task.getLocation(),
+				task.getDescription(), task.getCategory(), reservedTimes, GenericEvent.Status.UNDETERMINED);
+		return reserved;
+	} 
+	
+	/**
+	 * Extract the directory location that the user wants to work with
+	 * @param task
+	 * @param input
+	 * @return event object with directory location in name field
+	 */
 	private Event decodeImportExportData(Event task, String input){
 
 		if(input.indexOf('\\') >= 0){
@@ -335,6 +399,7 @@ public class Parser {
 		return task;
 	}
 	
+
 	private Status decodeChangeTab(String input){
 		input = input.toUpperCase();
 		if(input.contains(TAB_UNDETERMINED)){
@@ -452,11 +517,29 @@ public class Parser {
 		return task;
 	}
 	
-	private ReservedEvent decodeUnblockData(Event task, String input){
-		boolean isCategoryDefined = false;
-		String name = null;
+	
+
+	/**
+	 * Decodes the user input for Editing task either by name or date time or location or note
+	 * @param task
+	 * @param input
+	 * @return Event object with updated field of which the user choose to edit, other fields that are not
+	 * 			edited remain as initial values
+	 */
+	private Event decodeEditData(Event task, String input){
+		String remainingInput = extractDescription(task, input);
+		if(remainingInput.isEmpty()){
+			return null;
+		}
+		task = determineQuotedInput(task, remainingInput);
+		return decodeDataFromInput(task, input);
+	}
+	
+	private ReservedEvent decodeEditReservedData(Event task, ArrayList<TimePair> prevReservedTimes,String input){
+		ReservedEvent reserved;
 		int startIndex = 0;
 		int endIndex = startIndex;		
+		String name = null;
 		ArrayList<String> choppedInputData = new ArrayList<>();
 		ArrayList<TimePair> reservedTimes = new ArrayList<>();
 		
@@ -489,6 +572,7 @@ public class Parser {
 		TimePair reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
 		reservedTimes.add(reservedTime);
 		name = task.getName().trim();
+		
 		/**check if the connected data are date time **/
 		for(int i = 1; i < choppedInputData.size(); i++){
 			task.setStartTime(Constant.MIN_DATE);
@@ -502,25 +586,16 @@ public class Parser {
 				reservedTimes.add(reservedTime);
 			}
 		}
-		ReservedEvent reserved = new ReservedEvent(name, task.getLocation(),
-				task.getDescription(), task.getCategory(), reservedTimes, GenericEvent.Status.UNDETERMINED);
-		return reserved;
-	} 
-
-	/**
-	 * Decodes the user input for Editing task either by name or date time or location or note
-	 * @param task
-	 * @param input
-	 * @return Event object with updated field of which the user choose to edit, other fields that are not
-	 * 			edited remain as initial values
-	 */
-	private Event decodeEditData(Event task, String input){
-		String remainingInput = extractDescription(task, input);
-		if(remainingInput.isEmpty()){
-			return null;
+		
+		if(reservedTimes.size() == 0){
+			reserved = new ReservedEvent(name, task.getLocation(),
+					task.getDescription(), task.getCategory(), prevReservedTimes, GenericEvent.Status.UNDETERMINED);
+		} else{
+			reserved = new ReservedEvent(name, task.getLocation(),
+					task.getDescription(), task.getCategory(), reservedTimes, GenericEvent.Status.UNDETERMINED);
 		}
-		task = determineQuotedInput(task, remainingInput);
-		return decodeDataFromInput(task, input);
+
+		return reserved;
 	}
 
 	/**
@@ -1124,7 +1199,7 @@ public class Parser {
 	}
 	
 	/**
-	 * 
+	 * To be used with Confirm Command
 	 * @param event
 	 * @return Event object with updated Category field 
 	 */
@@ -1138,6 +1213,42 @@ public class Parser {
 		}
 		
 		return event;
+	}
+	
+	/**
+	 * To be used with Select and Delete Command, when the user chooses by Category
+	 * @param userInput
+	 * @return Category
+	 */
+	private GenericEvent.Category classifyCategory(String userInput){
+		
+		if(userInput.equalsIgnoreCase(Constant.CATEGORY_DEADLINE)){
+			return GenericEvent.Category.DEADLINE;
+		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_EVENT)){
+			return GenericEvent.Category.EVENT;
+		} else if(userInput.equalsIgnoreCase(Constant.CATEGORY_FLOATING)){
+			return GenericEvent.Category.FLOATING;
+		}
+		
+		return GenericEvent.Category.NULL;
+	}
+	
+	/**
+	 * To be used with Select and Delete Command, when the user chooses by Status
+	 * @param userInput
+	 * @return Status
+	 */
+	private GenericEvent.Status classifyStatus(String userInput){
+		
+		if(userInput.equalsIgnoreCase(Constant.STATUS_INCOMPLETE)){
+			return GenericEvent.Status.INCOMPLETE;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_COMPLETE)){
+			return GenericEvent.Status.COMPLETE;
+		}else if(userInput.equalsIgnoreCase(Constant.STATUS_UNDETERMINED)){
+			return GenericEvent.Status.UNDETERMINED;
+		}
+		return GenericEvent.Status.NULL;
+
 	}
 
 
