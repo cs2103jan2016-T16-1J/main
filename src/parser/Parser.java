@@ -6,11 +6,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import command.Add;
-import command.ChangeDir;
 import command.ChangeTab;
 import command.Command;
 import command.Delete;
 import command.Edit;
+import command.Export;
+import command.Import;
 import command.Select;
 
 import java.util.ArrayList;
@@ -155,10 +156,14 @@ public class Parser {
 			event = determineQuotedInput(event, removeFirstWord(input));
 			event = decodeDataFromInput(event, input);
 			oldEvent = null;
-		} else if(tempCmd == CommandType.CHANGDIR) {
+		} else if(tempCmd == CommandType.EXPORT) {
 			Event event = new Event();
 			event = decodeImportExportData(event, removeFirstWord(input));
-			cmdInterface = new ChangeDir(event);
+			cmdInterface = new Export(event);
+		} else if(tempCmd == CommandType.IMPORT) {
+			Event event = new Event();
+			event = decodeImportExportData(event, removeFirstWord(input));
+			cmdInterface = new Import(event);
 		} else if(tempCmd == CommandType.CHANGETAB){
 			Status tab = decodeChangeTab(removeFirstWord(input));
 			cmdInterface = new ChangeTab(tab);
@@ -208,10 +213,6 @@ public class Parser {
 				oldReservedEvent = reserved;
 				return reserved;
 			}
-		} else if(tempCmd == CommandType.CHANGDIR){
-			Event task = new Event();
-			task = decodeImportExportData(task, removeFirstWord(input));
-			return task;
 		} 
 		return null;
 	}
@@ -1463,8 +1464,10 @@ public class Parser {
 		}else if (command.equalsIgnoreCase("edit") || 
 				command.equalsIgnoreCase("e")){
 			return CommandType.EDIT;
-		}else if (command.contains("changedir")){
-			return CommandType.CHANGDIR;
+		}else if (command.contains("export")){
+			return CommandType.EXPORT;
+		}else if (command.contains("import")){
+			return CommandType.IMPORT;
 		}else if (command.equalsIgnoreCase("block") || command.equalsIgnoreCase("reserve")){
 			return CommandType.BLOCK;
 		}else if (command.equalsIgnoreCase("unblock") || command.equalsIgnoreCase("release")){

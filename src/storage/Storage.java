@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,14 +57,29 @@ public class Storage {
 	}
 	
 	
-	public void changeDirectory(String newDirectory){
-		File oldFile = new File(getDirectory());
+	public void exportDir(String newDirectory){
+		
+		copyStorage(getDirectory(), newDirectory);
+		
+		/*File oldFile = new File(getDirectory());
 		
 		if (oldFile.renameTo(new File(newDirectory))){
 			System.out.println("File is moved successful!");
     	} else {
     		System.out.println("File is failed to move!"); 
-    	}
+    	}*/
+	}
+	
+	public void importDir(String sourceDirectory){
+		copyStorage(sourceDirectory, getDirectory());
+		/*
+		File sourceFile = new File(sourceDirectory);
+		
+		if (sourceFile.renameTo(new File(getDirectory()))){
+			System.out.println("File is moved successful!");
+    	} else {
+    		System.out.println("File is failed to move!"); 
+    	}*/
 	}
 	
 	/** 
@@ -391,6 +407,25 @@ public class Storage {
 		completeState.displayedEvents.addAll(completeState.undeterminedEvents);		
 	}
 	
-	
+	private void copyStorage(String sorucefileName, String destinationFileName) {
+		 		Path source = Paths.get(sorucefileName);
+		 		Path output = Paths.get(destinationFileName);
+		 		
+		 		try {
+		 			
+		 			File temp = new File (destinationFileName);
+			 		if (temp.exists()){
+			 			clearFile(destinationFileName);
+			 			System.out.println("delete " + destinationFileName);
+			 		}
+			 		
+		 			Files.copy(source, output, REPLACE_EXISTING);
+		 			
+		 			
+		 		} catch (IOException e) {
+		 			// TODO Auto-generated catch block
+		 			e.printStackTrace();
+		 		}
+		 	}
 	
 }
