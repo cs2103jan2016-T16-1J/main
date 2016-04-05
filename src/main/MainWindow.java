@@ -90,31 +90,31 @@ public class MainWindow {
 	private int WINDOW_Y = 100;
 	private int WINDOW_WIDTH = 1600;
 	private int WINDOW_HEIGHT = 800;
-	private double WINDOW_SECTION_HEIGHT_RATIO = 23.0;
+	private double WINDOW_SECTION_HEIGHT_RATIO = 46.0;
 	private double WINDOW_SECTION_WIDTH_RATIO = 12.0;
 	private double WINDOW_WIDTH_SECTION = WINDOW_WIDTH / WINDOW_SECTION_WIDTH_RATIO;
 	private double WINDOW_HEIGHT_SECTION = WINDOW_HEIGHT / WINDOW_SECTION_HEIGHT_RATIO;
 	
 	private int WINDOW_BUTTON_WIDTH_SECTIONS = 1;
-	private int WINDOW_BUTTN_HEIGHT_SECTONS = 1;
+	private int WINDOW_BUTTN_HEIGHT_SECTONS = 2;
 	
 	private int WINDOW_INFO_SECTION_WIDTH_SECTIONS = 2;
-	private int WINDOW_INFO_SECTION_HEIGHT_SECTIONS = 12;
+	private int WINDOW_INFO_SECTION_HEIGHT_SECTIONS = 24;
 	
 	private int WINDOW_FLOATING_SECTION_WIDTH_SECTIONS = 2;
-	private int WINDOW_FLOATING_SECTION_HEIGHT_SECTIONS = 12;
+	private int WINDOW_FLOATING_SECTION_HEIGHT_SECTIONS = 24;
 	
 	private int WINDOW_OUTPUT_WIDTH_SECTIONS = 7;
-	private int WINDOW_OUTPUT_HEIGHT_SECTIONS = 1;
+	private int WINDOW_OUTPUT_HEIGHT_SECTIONS = 2;
 	
 	private int WINDOW_INPUT_WIDTH_SECTIONS = 6;
-	private double WINDOW_INPUT_HEIGHT_SECTIONS = 0.6;
+	private int WINDOW_INPUT_HEIGHT_SECTIONS = 1;
 	
 	private int WINDOW_INPUT_BUTTON_WIDTH_SECTIONS = 1;
-	private double WINDOW_INPUT_BUTTON_HEIGHT_SECTIONS = 0.6;
+	private int WINDOW_INPUT_BUTTON_HEIGHT_SECTIONS = 1;
 
 	private int WINDOW_MONTH_LABEL_WIDTH_SECTIONS = 2;
-
+	private int WINDOW_MONTH_LABEL_HEIGHT_SECTIONS = 3;
 	
 	private JTextField textField;
 	private JTable calendarTable;
@@ -767,7 +767,12 @@ public class MainWindow {
 		calendarPanel.setLayout(null);
 		calendarPanel.add(stblCalendar);
 		lblMonth = new JLabel();
-		lblMonth.setBounds(0, 436, 286, 44);
+		
+		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_MONTH_LABEL_WIDTH_SECTIONS);
+		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_MONTH_LABEL_HEIGHT_SECTIONS);
+		int yOffset = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS);
+
+		lblMonth.setBounds(0, yOffset, width, height);
 		mainTab.add(lblMonth);
 		lblMonth.setForeground(fontColor);
 		lblMonth.setFont(new Font("Tahoma", Font.PLAIN, 16));
