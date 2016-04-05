@@ -56,21 +56,15 @@ public class Storage {
 	}
 	
 	
-	
-	
 	public void changeDirectory(String newDirectory){
-		createFile(newDirectory);
-		setDirectory(newDirectory);
-	
+		File oldFile = new File(getDirectory());
+		
+		if (oldFile.renameTo(new File(newDirectory))){
+			System.out.println("File is moved successful!");
+    	} else {
+    		System.out.println("File is failed to move!"); 
+    	}
 	}
-	
-	public void backUp(String newDirectory){
-		createFile(newDirectory);
-		copyStorage(newDirectory);
-	}
-
-	
-	
 	
 	/** 
 	 * Check if the file is exist. If not, create a new file
@@ -87,9 +81,6 @@ public class Storage {
 			}
 		}
 	}
-	
-	
-	
 	
 	/** 
 	 * Clean up every content in file
@@ -199,7 +190,7 @@ public class Storage {
 		return state;
 	}
 	
-	/*
+	
 	public void changeDirectory(String oldDirectory, String newDirectory){
 		try {
 			File oldFile = new File(oldDirectory);
@@ -213,7 +204,7 @@ public class Storage {
     	} catch (Exception e){
     		e.printStackTrace();
     	}
-	}*/
+	}
 	
 	
 	
@@ -400,16 +391,6 @@ public class Storage {
 		completeState.displayedEvents.addAll(completeState.undeterminedEvents);		
 	}
 	
-	private void copyStorage(String destinationFileName) {
-		Path source = Paths.get(getDirectory());
-		Path output = Paths.get(destinationFileName);
-		
-		try {
-			Files.copy(source, output, REPLACE_EXISTING);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 	
 }
