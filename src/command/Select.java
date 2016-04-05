@@ -62,23 +62,23 @@ public class Select implements Command{
 	private void getMatchingEvents(ArrayList<GenericEvent> allEvents){
 	
 		for(GenericEvent e: allEvents){
-			if(isMatchingEvent((Event)e)){
+			if(isMatchingEvent(e)){
 				completeState.selectedEvents.add(e);
 				
 			}
 		}	
 	}
 	
-	private boolean isMatchingEvent(Event currentEvent){
+	private boolean isMatchingEvent(GenericEvent currentEvent){
 		boolean isMatch = true;
 		
 		
 		isMatch = isStringMatching(currentEvent.getName(), selectedParameters.getName()) &&
 				isStringMatching(currentEvent.getLocation(), selectedParameters.getLocation()) &&
 				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
-				&&
+				//&&
 				//isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory()) &&
-				isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
+				//isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
 				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
 				;
 		
@@ -148,3 +148,4 @@ public class Select implements Command{
 
 
 }
+
