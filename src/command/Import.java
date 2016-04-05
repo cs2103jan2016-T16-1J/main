@@ -7,23 +7,25 @@ import main.Event;
 import main.State;
 import storage.Storage;
 
-public class ChangeDir implements Command {
+public class Import implements Command {
 
 	Event modifiedEvent;
 	State completeState;
 	
-	public ChangeDir(Event modifiedEvent){
+	public Import(Event modifiedEvent){
 		this.modifiedEvent = modifiedEvent;
 	}
 
 	@Override
 	public State execute(State completeState) throws IOException, JSONException {
-		this.completeState = completeState;
+		//this.completeState = completeState;
+		State newState = new State();
 		
 		Storage storage = new Storage();
-		storage.changeDirectory(modifiedEvent.getName());
+		storage.importDir(modifiedEvent.getName());
+		newState = storage.readStorage(modifiedEvent.getName());
 		
-		return completeState;
+		return newState;
 	}
 
 }

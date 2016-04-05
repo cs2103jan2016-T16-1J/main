@@ -1,1 +1,0 @@
-{"startTime":"Sun Apr 03 00:00:00 SGT 2016","category":"EVENT","location":"Supahotfire's house","status":"INCOMPLETE","description":"","name":"Test Event Name","endTime":"Sun Apr 03 23:59:01 SGT 2016"}
