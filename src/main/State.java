@@ -18,6 +18,7 @@ public class State {
 	public static final String MESSAGE_PARSE_ERROR = "Unable to parse the requestedd event";
 	public static final String MESSAGE_TOO_MANY_SELECTIONS = "More than one result was found. Please select the desired event's number";
 	public static final String MESSAGE_NO_SELECTED_EVENT = "No event has been selected. Please select an event.";
+	public static final String MESSAGE_INVALID_INDEX = "Please select a valid index";
 	public static final int NO_EVENTS_SELECTED = 0;
 	public static final int ONE_EVENT_SELECTED = 1;
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
@@ -28,6 +29,8 @@ public class State {
 	//Events with multiple times
 	public static ArrayList<ReservedEvent> reservedEvents;
 	
+	
+	/**Need to implements- selecting of individual types*/
 	public ArrayList<ReservedEvent> undeterminedSelected;
 	public ArrayList<Event> completedSelected;
 	public ArrayList<Event> incompletedSelected;

@@ -172,7 +172,7 @@ public class Delete implements Command{
 				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
 				//&& isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory())
 				//&& isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
-				&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
+				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
 				;
 		
 		
