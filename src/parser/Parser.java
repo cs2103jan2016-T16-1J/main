@@ -138,11 +138,12 @@ public class Parser {
 			reserved.setStatus(GenericEvent.Status.UNDETERMINED);
 			oldReservedEvent = reserved;
 			oldEvent = null;
-			//cmdInterface = new Delete(event);
+			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.UNDO){
-			
+	
 		} else if(tempCmd == CommandType.REDO){
-			
+			Event event = new Event();
+
 		} else if(tempCmd == CommandType.CONFIRM){
 			Event event = new Event();
 			event = determineQuotedInput(event, removeFirstWord(input));
@@ -153,7 +154,6 @@ public class Parser {
 			Event event = new Event();
 			event = determineQuotedInput(event, removeFirstWord(input));
 			event = decodeDataFromInput(event, input);
-			
 			oldEvent = null;
 		} else if(tempCmd == CommandType.CHANGDIR) {
 			Event event = new Event();
@@ -654,6 +654,14 @@ public class Parser {
 		}
 
 		int[] indexes = matchPatternOfFirstOccurrence(PATTERN_PREP_ALL, input);
+		
+		if(indexes[0] == 0 && indexes[1]!=0){			
+			isNameDefined = false;
+		} else if(indexes[0] == 0 && indexes[1] ==0){
+			isNameDefined = true;
+		} else{
+			isNameDefined = true;
+		}
 		
 		if(isSingleQuoted || isDoubleQuoted){
 			if(endIndex != input.length()-1){
