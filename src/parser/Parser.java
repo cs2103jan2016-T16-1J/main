@@ -100,21 +100,24 @@ public class Parser {
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.EDIT){
 			isEdit = true;
-			if(oldEvent != null){
-				Event event = new Event();
+			Event event = new Event();
+			if(oldEvent != null){	/*to edit the previously added event which is selected automatically*/
 				cloneEvent(oldEvent, event);
 				event = decodeEditData(event, removeFirstWord(input));
 				oldEvent = event;
 				cmdInterface = new Edit(event);
-			} else{
+			} else if(oldReservedEvent != null){ /*to edit the previously reserved event which is selected automatically*/
 				ArrayList<TimePair> reservedTimes = new ArrayList<>();
-				Event event = new Event();
 				cloneReservedEvent(oldReservedEvent, event);
 				cloneReservedTimePair(reservedTimes, oldReservedEvent);
 				
 				ReservedEvent reserved = decodeEditReservedData(event, reservedTimes, removeFirstWord(input));			
 				oldReservedEvent = reserved;
 				cmdInterface = new Edit(reserved);
+			} else{				/*to edit the selected events*/
+				event = decodeEditData(event, removeFirstWord(input));
+				oldEvent = event;
+				cmdInterface = new Edit(event);
 			}
 		
 		} else if(tempCmd == CommandType.SELECT){		
