@@ -116,6 +116,9 @@ public class MainWindow {
 	private int WINDOW_MONTH_LABEL_WIDTH_SECTIONS = 2;
 	private int WINDOW_MONTH_LABEL_HEIGHT_SECTIONS = 3;
 	
+	private int WINDOW_CALENDAR_WIDTH_SECTIONS = 11;
+	private int WINDOW_CALENDAR_HEIGHT_SECTIONS = 19;
+	
 	private JTextField textField;
 	private JTable calendarTable;
 	private JPanel calendarPanel;
@@ -660,7 +663,7 @@ public class MainWindow {
 	private void renderFloatingSection() {
 		ArrayList<GenericEvent> displayedEvents = currentState.displayedEvents;
 		int counter = 0;
-		while (counter < displayedEvents.size() && counter < 5) {
+		while (counter < displayedEvents.size() && counter < this.DISPLAYED_FLOATING_TASKS_NUM) {
 			Event event = (Event) displayedEvents.get(counter);
 			addFloatingEvent(event, counter);
 			counter++;
@@ -930,9 +933,12 @@ public class MainWindow {
 	
 	
 	private void setBoundsCalendarComponents() {
-		calendarPanel.setBounds(0, 482, 1467, 279);
+		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_CALENDAR_HEIGHT_SECTIONS);
+		int yOffset = WINDOW_HEIGHT - height;
+		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_CALENDAR_WIDTH_SECTIONS);
+		calendarPanel.setBounds(0, yOffset, width, height);
 		tblCalendar.setSize(100, 100);
-		stblCalendar.setBounds(10, 11, 1447, 260);
+		stblCalendar.setBounds(0, 0, width, height);
 	}
 	
 	private void setCalendarHeaders() {
