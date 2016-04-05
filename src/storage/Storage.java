@@ -128,10 +128,10 @@ public class Storage {
 		for (Event e: completeState.incompletedEvents){
 			addToStorage(e, fileName);
 		}
-		for (Event e: completeState.undeterminedEvents){
+		for (ReservedEvent e: completeState.undeterminedEvents){
 			addToStorage(e, fileName);
 		}
-		for (Event e: completeState.reservedEvents){
+		for (ReservedEvent e: completeState.reservedEvents){
 			addToStorage(e, fileName);
 		}
 	}
@@ -187,11 +187,17 @@ public class Storage {
 			BufferedReader br = new BufferedReader(fr);
 			
 			while ( (line = br.readLine()) != null) {
-				JSONObject jsonObj = new JSONObject(line);;
-				Event event = castJSONObjToEvent(jsonObj);
+				JSONObject jsonObj = new JSONObject(line);
 				
-				storageToState(state, event);
-				updatedDisplayedEvents(state);
+				if (getStatus(jsonObj).equals( GenericEvent.Status.UNDETERMINED)){
+					ReservedEvent event = castJSONObjToReservedEvent(jsonObj);
+					storageToState(state, event);
+					updatedDisplayedEvents(state);
+				} else {
+					Event event = castJSONObjToEvent(jsonObj);
+					storageToState(state, event);
+					updatedDisplayedEvents(state);
+				}
 			}
 			
 		} catch(FileNotFoundException ex) {
@@ -231,9 +237,14 @@ public class Storage {
 			state.addToIncompletedList((Event)event);
 		} else if (event.getStatus() == GenericEvent.Status.UNDETERMINED){
 				if (event.getCategory() == GenericEvent.Category.FLOATING){
-					state.addToUndeterminedList((Event)event);
+					if(event instanceof Event) {
+						System.out.println("ee");
+					}
+					state.undeterminedEvents.add((ReservedEvent) event);
+					//state.addToUndeterminedList((ReservedEvent) event);
 				} else {
-					state.addToReservedList((Event)event);
+					//state.addToReservedList((ReservedEvent)event);
+					state.reservedEvents.add((ReservedEvent) event);
 				}
 		}
 		
@@ -375,6 +386,23 @@ public class Storage {
 	}
 	
 	
+	private ReservedEvent castJSONObjToReservedEvent(JSONObject jsonObj){
+		ReservedEvent event = new ReservedEvent();
+		
+		try {
+			
+			event.setName(jsonObj.getString("name"));
+			event.setDescription(jsonObj.getString("description"));
+			event.setCategory(getCategory(jsonObj));
+			event.setStatus(getStatus(jsonObj));
+			event.setLocation(jsonObj.getString("location"));
+			
+		} catch (JSONException e2) {
+			e2.printStackTrace();
+		}
+		
+		return event;
+	}
 	
 	
 	
