@@ -23,12 +23,16 @@ public class State {
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
 	public static ArrayList<Event> completedEvents;
 	public static ArrayList<Event> incompletedEvents;
-	
 	//Floating events
-	public static ArrayList<Event> undeterminedEvents;
-	
+	public static ArrayList<ReservedEvent> undeterminedEvents;
 	//Events with multiple times
-	public static ArrayList<Event> reservedEvents;
+	public static ArrayList<ReservedEvent> reservedEvents;
+	
+	public ArrayList<ReservedEvent> undeterminedSelected;
+	public ArrayList<Event> completedSelected;
+	public ArrayList<Event> incompletedSelected;
+
+	
 	
 	public ArrayList<GenericEvent> displayedEvents;
 	public ArrayList<GenericEvent> selectedEvents;
@@ -49,12 +53,18 @@ public class State {
 	public State(){
 		completedEvents = new ArrayList<Event>();
 		incompletedEvents = new ArrayList<Event>();
-		undeterminedEvents = new ArrayList<Event>();
-		reservedEvents = new ArrayList<Event>(); 
+		undeterminedEvents = new ArrayList<ReservedEvent>();
+		reservedEvents = new ArrayList<ReservedEvent>(); 
 		
 		//floatingEvents = new ArrayList<ReservedEvent>();
 		displayedEvents = new ArrayList<GenericEvent>();
 		selectedEvents = new ArrayList<GenericEvent>();
+		
+		
+		//Arrays for selected tabs of each kind of event
+		undeterminedSelected = new ArrayList<ReservedEvent>();
+		completedSelected = new ArrayList<Event>();
+		incompletedSelected = new ArrayList<Event>();
 		
 		statusMessage = new String();
 		
@@ -156,7 +166,7 @@ public class State {
 		incompletedEvents.add(event);
 	}
 	
-	public  void addToUndeterminedList(Event event){
+	public  void addToUndeterminedList(ReservedEvent event){
 		undeterminedEvents.add(event);
 	}
 	
@@ -165,7 +175,7 @@ public class State {
 		floatingEvents.add(event);
 	}*/
 	
-	public  void addToReservedList(Event event){
+	public  void addToReservedList(ReservedEvent event){
 		reservedEvents.add(event);
 	}
 	

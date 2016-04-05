@@ -100,13 +100,10 @@ public class Add implements Command{
 	public void addToUndeterminedList(){
 		
 		if(modifiedEvent.getCategory() == Category.FLOATING){
-			completeState.undeterminedEvents.add((Event) modifiedEvent);
+			completeState.undeterminedEvents.add((ReservedEvent) modifiedEvent);
 		} else{
-			ReservedEvent reserved = (ReservedEvent) modifiedEvent;
-			ArrayList<Event> eventList = convertReservedEventToEvent(reserved);
-			for(Event e : eventList){
-				completeState.addToReservedList(e);
-			}
+			ArrayList<Event> eventList = convertReservedEventToEvent((ReservedEvent)modifiedEvent);
+			completeState.reservedEvents.add((ReservedEvent)modifiedEvent);
 		}
 	}
 	
