@@ -511,10 +511,14 @@ public class Parser {
 		boolean isCategoryDefined = false;
 		int startIndex = 0;
 		int endIndex = startIndex;
+		
+		List<Integer> indexes = new ArrayList<>();
+		int userChoice;
+		int i = 0;
+		
 		String remainingInput = extractDescription(task, input);
 		if(remainingInput.isEmpty()){
-			task.setCategory(Category.NULL);
-			return task;
+			return null;
 		}
 		
 		/** Look for Selecting Category type command **/
@@ -533,8 +537,25 @@ public class Parser {
 			return task;
 		} 
 		
-		task = determineQuotedInput(task, remainingInput);
-		return decodeDataFromInput(task, remainingInput);
+		if(input.indexOf("#") >= 0){
+			startIndex = input.indexOf("#",startIndex) + 1;
+			while(input.indexOf(",", startIndex) > 0){
+				endIndex = input.indexOf(",", startIndex);
+				userChoice = Integer.parseInt(input.substring(startIndex, endIndex));
+				startIndex = endIndex + 1;
+				indexes.add(userChoice);
+				if(input.indexOf("#",startIndex) >= 0){
+					startIndex = input.indexOf("#",startIndex) + 1;
+				}
+			} 
+			userChoice = Integer.parseInt(input.substring(startIndex));
+			indexes.add(userChoice);		
+			task.setSelection(indexes);
+		} else{
+			task = determineQuotedInput(task, remainingInput);
+			task = decodeDataFromInput(task, remainingInput);
+		}
+			return task;
 	}
 	
 	
