@@ -90,6 +90,8 @@ public class MainWindow {
 	private int WINDOW_Y = 100;
 	private int WINDOW_WIDTH = 1600;
 	private int WINDOW_HEIGHT = 800;
+	private double WINDOW_BUTTON_HEIGHT_RATIO = 23.0;
+	private double WINDOW_BUTTON_WIDTH_RATIO = 6.8;
 	private JTextField textField;
 	private JTable calendarTable;
 	private JPanel calendarPanel;
@@ -269,9 +271,7 @@ public class MainWindow {
 		
 		initializeCalendar();
 		
-		initializeInfoSection();
-		
-		
+		initializeInfoSection();		
 	}
 
 	private void initializeFile() {
@@ -335,26 +335,29 @@ public class MainWindow {
 	}
 	
 	private void initializeTabButtons() {
-		incompletedTab = new JToggleButton("Incompleted");
-		incompletedTab.setForeground(Color.WHITE);
-		incompletedTab.setBorder(null);
-		incompletedTab.setBackground(buttonColor);
-		incompletedTab.setBounds(0, 68, 119, 34);
-		frame.getContentPane().add(incompletedTab);
+		int buttonWidth = (int) (WINDOW_HEIGHT / WINDOW_BUTTON_WIDTH_RATIO);
+		int buttonHeight = (int) (WINDOW_HEIGHT / WINDOW_BUTTON_HEIGHT_RATIO);
 		
 		undeterminedTab = new JToggleButton("Undetermined");
 		undeterminedTab.setForeground(Color.WHITE);
 		undeterminedTab.setBorder(null);
 		undeterminedTab.setBackground(buttonColor);
-		undeterminedTab.setBounds(0, 0, 119, 34);
+		undeterminedTab.setBounds(0, 0 * buttonHeight, buttonWidth, buttonHeight);
 		frame.getContentPane().add(undeterminedTab);
-		
+
 		completedTab = new JToggleButton("Completed");
 		completedTab.setForeground(Color.WHITE);
 		completedTab.setBorder(null);
 		completedTab.setBackground(buttonColor);
-		completedTab.setBounds(0, 34, 119, 34);
+		completedTab.setBounds(0, 1 * buttonHeight, buttonWidth, buttonHeight);
 		frame.getContentPane().add(completedTab);
+		
+		incompletedTab = new JToggleButton("Incompleted");
+		incompletedTab.setForeground(Color.WHITE);
+		incompletedTab.setBorder(null);
+		incompletedTab.setBackground(buttonColor);
+		incompletedTab.setBounds(0, 2 * buttonHeight, buttonWidth, buttonHeight);
+		frame.getContentPane().add(incompletedTab);
 	}
 	
 	private void initializeInfoSection() {
@@ -645,7 +648,7 @@ public class MainWindow {
 	}
 	
 	private void initializeOutputField() {
-		actionsTextArea = new JTextArea("BRUH");
+		actionsTextArea = new JTextArea();
 		actionsTextArea.setBounds(10, 478, 761, 252);
 		//actionsTextArea.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		actionsTextArea.setEditable(false);
