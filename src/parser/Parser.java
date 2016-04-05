@@ -105,6 +105,7 @@ public class Parser {
 				cloneEvent(oldEvent, event);
 				event = decodeEditData(event, removeFirstWord(input));
 				oldEvent = event;
+				cmdInterface = new Edit(event);
 			} else{
 				ArrayList<TimePair> reservedTimes = new ArrayList<>();
 				Event event = new Event();
@@ -113,9 +114,9 @@ public class Parser {
 				
 				ReservedEvent reserved = decodeEditReservedData(event, reservedTimes, removeFirstWord(input));			
 				oldReservedEvent = reserved;
+				cmdInterface = new Edit(reserved);
 			}
 		
-			//cmdInterface = new Edit(event);
 		} else if(tempCmd == CommandType.SELECT){		
 			Event event = new Event();
 			event = decodeSelectData(event, removeFirstWord(input));
@@ -126,7 +127,7 @@ public class Parser {
 			reserved = decodeReservedData(event, removeFirstWord(input));
 			oldReservedEvent = reserved;
 			oldEvent = null;
-			//cmdInterface = new Add(event);
+			cmdInterface = new Add(reserved);
 		} else if(tempCmd == CommandType.UNBLOCK){
 			Event event = new Event();
 			ReservedEvent reserved = new ReservedEvent();
@@ -726,6 +727,8 @@ public class Parser {
 		if(!isFound){
 			task.setName(input.substring(startIndex, input.length()));
 			task.setStatus(Status.UNDETERMINED);
+		} else{
+			determineCategory(task);
 		}
 
 		return task;

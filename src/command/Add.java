@@ -4,6 +4,9 @@ import java.io.IOException;
 
 import json.JSONException;
 import main.Event;
+import main.GenericEvent;
+import main.GenericEvent.Category;
+import main.ReservedEvent;
 import main.State;
 import storage.Storage;
 
@@ -14,14 +17,14 @@ import storage.Storage;
  */
 public class Add implements Command{
 
-	Event modifiedEvent;
+	GenericEvent modifiedEvent;
 	State completeState;
 
 	/**
 	 * Add class constructor
 	 * @param modifiedEvent the event that will be added
 	 */
-	public Add(Event modifiedEvent){
+	public Add(GenericEvent modifiedEvent){
 		this.modifiedEvent = modifiedEvent;
 	}
 
@@ -77,18 +80,23 @@ public class Add implements Command{
 	 * adds the given task to the completed list in State
 	 */
 	public void addToCompleteList(){
-		completeState.completedEvents.add(modifiedEvent);
+		completeState.completedEvents.add((Event) modifiedEvent);
 	}
 
 	/**
 	 * adds the given task to the incomplete list in State
 	 */
 	public void addToIncompleteList(){
-		completeState.incompletedEvents.add(modifiedEvent);
+		completeState.incompletedEvents.add((Event) modifiedEvent);
 	}
 
 	public void addToUndeterminedList(){
-		completeState.undeterminedEvents.add(modifiedEvent);
+		
+		if(modifiedEvent.getCategory() == Category.FLOATING){
+			completeState.undeterminedEvents.add((Event) modifiedEvent);
+		} else{
+			completeState.reservedEvents.add((ReservedEvent) modifiedEvent);
+		}
 	}
 	
 	/**
