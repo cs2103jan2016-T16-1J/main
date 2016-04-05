@@ -90,6 +90,16 @@ public class MainWindow {
 	private int WINDOW_Y = 100;
 	private int WINDOW_WIDTH = 1600;
 	private int WINDOW_HEIGHT = 800;
+	private double WINDOW_SECTION_HEIGHT_RATIO = 23.0;
+	private double WINDOW_SECTION_WIDTH_RATIO = 12.0;
+	private double WINDOW_WIDTH_SECTION = WINDOW_WIDTH / WINDOW_SECTION_WIDTH_RATIO;
+	private double WINDOW_HEIGHT_SECTION = WINDOW_HEIGHT / WINDOW_SECTION_HEIGHT_RATIO;
+	
+	private int WINDOW_BUTTON_WIDTH_SECTIONS = 1;
+	private int WINDOW_BUTTN_HEIGHT_SECTONS = 1;
+	private int WINDOW_INFO_SECTION_WIDTH_SECTIONS = 2;
+	
+	
 	private JTextField textField;
 	private JTable calendarTable;
 	private JPanel calendarPanel;
@@ -152,8 +162,7 @@ public class MainWindow {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) {
-		
-		
+
 		
 		/*_________ Testing ADD ______________*/
 		//Creating object manually
@@ -220,7 +229,6 @@ public class MainWindow {
 			public void run() {
 				try {
 					MainWindow window = new MainWindow();
-					
 					//for Testing Purposes
 					//actionsTextArea.append(finalResult);
 
@@ -269,9 +277,7 @@ public class MainWindow {
 		
 		initializeCalendar();
 		
-		initializeInfoSection();
-		
-		
+		initializeInfoSection();		
 	}
 
 	private void initializeFile() {
@@ -335,30 +341,35 @@ public class MainWindow {
 	}
 	
 	private void initializeTabButtons() {
-		incompletedTab = new JToggleButton("Incompleted");
-		incompletedTab.setForeground(Color.WHITE);
-		incompletedTab.setBorder(null);
-		incompletedTab.setBackground(buttonColor);
-		incompletedTab.setBounds(0, 68, 119, 34);
-		frame.getContentPane().add(incompletedTab);
+		int buttonWidth = (int) (WINDOW_WIDTH_SECTION * WINDOW_BUTTON_WIDTH_SECTIONS);
+		int buttonHeight = (int) (WINDOW_HEIGHT_SECTION * WINDOW_BUTTN_HEIGHT_SECTONS);
 		
 		undeterminedTab = new JToggleButton("Undetermined");
 		undeterminedTab.setForeground(Color.WHITE);
 		undeterminedTab.setBorder(null);
 		undeterminedTab.setBackground(buttonColor);
-		undeterminedTab.setBounds(0, 0, 119, 34);
+		undeterminedTab.setBounds(0, 0 * buttonHeight, buttonWidth, buttonHeight);
 		frame.getContentPane().add(undeterminedTab);
-		
+
 		completedTab = new JToggleButton("Completed");
 		completedTab.setForeground(Color.WHITE);
 		completedTab.setBorder(null);
 		completedTab.setBackground(buttonColor);
-		completedTab.setBounds(0, 34, 119, 34);
+		completedTab.setBounds(0, 1 * buttonHeight, buttonWidth, buttonHeight);
 		frame.getContentPane().add(completedTab);
+		
+		incompletedTab = new JToggleButton("Incompleted");
+		incompletedTab.setForeground(Color.WHITE);
+		incompletedTab.setBorder(null);
+		incompletedTab.setBackground(buttonColor);
+		incompletedTab.setBounds(0, 2 * buttonHeight, buttonWidth, buttonHeight);
+		frame.getContentPane().add(incompletedTab);
 	}
 	
 	private void initializeInfoSection() {
 		infoPanel = new JPanel();
+		int height = WINDOW_HEIGHT;
+		int width = (int) (WINDOW_WIDTH_SECTION / WINDOW_INFO_SECTION_WIDTH_SECTIONS);
 		infoPanel.setBounds(0, 0, 286, 425);
 		infoPanel.setBackground(lightGray);
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
@@ -505,7 +516,10 @@ public class MainWindow {
 		mainTab = new JPanel();
 		mainTab.setBackground(Color.WHITE);
 		mainTab.setLayout(null);
-		mainTab.setBounds(117, 0, 1467, 761);
+		int xOffset = (int) (WINDOW_WIDTH_SECTION * WINDOW_BUTTON_WIDTH_SECTIONS);
+		int height = WINDOW_HEIGHT;
+		int width = WINDOW_WIDTH - xOffset;
+		mainTab.setBounds(xOffset, 0, width, height);
 		frame.getContentPane().add(mainTab);
 	}
 	
@@ -645,7 +659,7 @@ public class MainWindow {
 	}
 	
 	private void initializeOutputField() {
-		actionsTextArea = new JTextArea("BRUH");
+		actionsTextArea = new JTextArea();
 		actionsTextArea.setBounds(10, 478, 761, 252);
 		//actionsTextArea.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		actionsTextArea.setEditable(false);
