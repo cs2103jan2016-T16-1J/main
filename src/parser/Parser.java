@@ -513,7 +513,8 @@ public class Parser {
 		int endIndex = startIndex;
 		String remainingInput = extractDescription(task, input);
 		if(remainingInput.isEmpty()){
-			return null;
+			task.setCategory(Category.NULL);
+			return task;
 		}
 		
 		/** Look for Selecting Category type command **/
@@ -523,25 +524,17 @@ public class Parser {
 			
 			if(classifyCategory(input) == null){
 				task.setCategory(null);
+				task.setStatus(GenericEvent.Status.NULL);
 			} else {
 				task.setCategory(classifyCategory(remainingInput));
+				isCategoryDefined = true;
 			}
 			task.setStatus(classifyStatus(remainingInput));
-			
 			return task;
-		} else{
-			isCategoryDefined = true;
-		}
+		} 
 		
 		task = determineQuotedInput(task, remainingInput);
-		task = decodeDataFromInput(task, remainingInput);
-		
-		if(isCategoryDefined){
-			task.setCategory(null);
-			task.setStatus(GenericEvent.Status.NULL);
-		}
-		
-		return task;
+		return decodeDataFromInput(task, remainingInput);
 	}
 	
 	
