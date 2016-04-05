@@ -23,10 +23,12 @@ public class State {
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
 	public static ArrayList<Event> completedEvents;
 	public static ArrayList<Event> incompletedEvents;
+	
+	//Floating events
 	public static ArrayList<Event> undeterminedEvents;
 	
+	//Events with multiple times
 	public static ArrayList<Event> reservedEvents;
-	//public static ArrayList<ReservedEvent> undeterminedEvents;
 	
 	public ArrayList<GenericEvent> displayedEvents;
 	public ArrayList<GenericEvent> selectedEvents;
