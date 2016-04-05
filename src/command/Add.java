@@ -62,7 +62,12 @@ public class Add implements Command{
 			break;*/
 			
 		}
-
+		
+		/*to select the previously added or reserved event*/
+		completeState.clearSelections();
+		completeState.selectedEvents.add(modifiedEvent);
+		completeState.setSelectionStatus(completeState.ONE_EVENT_SELECTED);
+		
 		updatedDisplayedEvents();
 		
 		return completeState;
@@ -128,7 +133,8 @@ public class Add implements Command{
 		completeState.floatingEvents.add(modifiedEvent);
 		
 	}*/
-	
+
+
 	/**
 	 * updates the displayedEvents with new information
 	 */

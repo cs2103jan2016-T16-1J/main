@@ -11,7 +11,7 @@ import main.State;
  */
 public class Edit implements Command{
 	Event originalEvent;
-	Event selectedParameters;
+	GenericEvent selectedParameters;
 	State completeState;
 
 	/**
@@ -20,7 +20,7 @@ public class Edit implements Command{
 	 * @param editedEvent new information in the form of an Event object that will replace the original event
 	 */
 
-	public Edit(Event event){
+	public Edit(GenericEvent event){
 		this.selectedParameters = event;
 	}
 	
@@ -71,7 +71,7 @@ public class Edit implements Command{
 	 * @param index the index of the event
 	 */
 	public void editInCompletedEventList(int index){
-		completeState.completedEvents.set(index, selectedParameters);
+		completeState.completedEvents.set(index, (Event) selectedParameters);
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class Edit implements Command{
 	 * @param index the index of the event
 	 */
 	public void editInIncompletedEventList(int index){
-		completeState.incompletedEvents.set(index, selectedParameters);
+		completeState.incompletedEvents.set(index, (Event) selectedParameters);
 	}
 	
 	/**
@@ -99,10 +99,10 @@ public class Edit implements Command{
 		
 		switch (originalEvent.getStatus()){
 		case COMPLETE:
-			completeState.completedEvents.indexOf(originalEvent);
+			index = completeState.completedEvents.indexOf(originalEvent);
 			break;
 		case INCOMPLETE:
-			completeState.incompletedEvents.indexOf(originalEvent);
+			index = completeState.incompletedEvents.indexOf(originalEvent);
 			break;
 		case UNDETERMINED:
 			//completeState.floatingEvents.indexOf(originalEvent);
