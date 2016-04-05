@@ -71,8 +71,7 @@ public class Select implements Command{
 	
 	private boolean isMatchingEvent(GenericEvent currentEvent){
 		boolean isMatch = true;
-		
-		
+				
 		isMatch = isStringMatching(currentEvent.getName(), selectedParameters.getName()) &&
 				isStringMatching(currentEvent.getLocation(), selectedParameters.getLocation()) &&
 				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
@@ -81,9 +80,7 @@ public class Select implements Command{
 				//isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
 				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
 				;
-		
-		
-		
+						
 		return isMatch;
 		
 	}
