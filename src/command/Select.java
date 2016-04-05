@@ -19,9 +19,18 @@ public class Select implements Command{
 	Event selectedParameters;
 	State completeState;
 	
+	boolean selectByIndex;
+	int index;
+	
 	public Select(Event selectedParameters){
 		this.selectedParameters = selectedParameters;
+		selectByIndex = false;
 
+	}
+	
+	public Select(int index){
+		this.index = index;
+		selectByIndex = true;
 	}
 	
 	@Override
@@ -34,13 +43,34 @@ public class Select implements Command{
 		ArrayList<GenericEvent> allEvents = completeState.getAllEvents();
 		///for each event in allEvents check if it matches selectedParameters
 		//if the event does, clone it and add it to completeState.selectedEvents
-		getMatchingEvents(allEvents);
-		checkSelectionStatus();
-		//new event list = eventlist.clone
-		//for each event in 
+		if(selectByIndex){
+			selectViaIndex();
+		}
+		else{
+			getMatchingEvents(allEvents);
+			checkSelectionStatus();
+		}
 		return null;
 	}
 
+	private boolean selectViaIndex(){
+		//if there are no events selected or if there is already only one event selected, don't do anything
+		if(!completeState.hasEventSelected() || completeState.hasSingleEventSelected()){
+			return false;
+		}
+		//if an invalid index is provided
+		if(index > completeState.selectedEvents.size()){
+			completeState.setStatusMessage(State.MESSAGE_INVALID_INDEX);
+			return false;
+		}
+		
+		completeState.selectedEvent = completeState.selectedEvents.get(index);
+		
+		completeState.selectedEvents.clear();
+		completeState.selectedEvents.add(completeState.selectedEvent);
+		
+		return true;
+	}
 	
 	private void checkSelectionStatus(){
 		
