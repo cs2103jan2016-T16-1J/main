@@ -19,6 +19,8 @@ public class Event extends GenericEvent{
 		super();
 		startTime = Constant.MIN_DATE; 
 		endTime = Constant.MAX_DATE;
+		stringStartTime = "";
+		stringEndTime = "";
 	}
 	
 	public Event(String name, String location, String description, Category category, Date startTime, Date endTime,

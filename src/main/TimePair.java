@@ -14,6 +14,20 @@ public class TimePair {
 	public TimePair(Date startTime, Date endTime){
 		this.startTime = startTime;
 		this.endTime = endTime;
+		
+		if(startTime == Constant.MIN_DATE){
+			this.stringStartTime = "";
+		} else{
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			this.stringStartTime = sdf.format(startTime);
+		}
+		
+		if(endTime == Constant.MAX_DATE){
+			this.stringEndTime = "";
+		} else{
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+			this.stringEndTime = sdf.format(endTime);
+		}
 	}
 
 	public Date getStartTime(){
