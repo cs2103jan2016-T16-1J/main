@@ -48,6 +48,10 @@ public class Edit implements Command{
 		
 		updateGenericEvent();
 		
+		completeState.clearSelections();
+		completeState.selectedEvents.add(originalEvent);
+		completeState.selectedEvent = originalEvent;
+		completeState.setSelectionStatus(completeState.ONE_EVENT_SELECTED);
 		return completeState;
 	}
 	

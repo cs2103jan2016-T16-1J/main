@@ -655,6 +655,14 @@ public class Parser {
 
 		int[] indexes = matchPatternOfFirstOccurrence(PATTERN_PREP_ALL, input);
 		
+		if(indexes[0] == 0 && indexes[1]!=0){			
+			isNameDefined = false;
+		} else if(indexes[0] == 0 && indexes[1] ==0){
+			isNameDefined = true;
+		} else{
+			isNameDefined = true;
+		}
+		
 		if(isSingleQuoted || isDoubleQuoted){
 			if(endIndex != input.length()-1){
 				int startIndex = endIndex + 1;
