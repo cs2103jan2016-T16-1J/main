@@ -1,5 +1,6 @@
 package parser;
 
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
@@ -89,10 +90,10 @@ public class Parser {
 			oldReservedEvent = null;
 		} else if(tempCmd == CommandType.ADD){
 			Event event = new Event();
-			decodeAddData(event, removeFirstWord(input));
+			GenericEvent task = decodeAddData(event, removeFirstWord(input));
 			oldEvent = event;
 			oldReservedEvent = null;
-			cmdInterface = new Add(event);
+			cmdInterface = new Add(task);
 		} else if(tempCmd == CommandType.DELETE){
 			Event event = new Event();
 			event = decodeDeleteData(event, removeFirstWord(input));
@@ -290,10 +291,22 @@ public class Parser {
 	 * @param input
 	 * @return Event object with updated values
 	 */
-	private void decodeAddData(Event task, String input){
+	private GenericEvent decodeAddData(Event task, String input){
 		String remainingInput = extractDescription(task, input);
 		task =  determineQuotedInput(task, remainingInput);
 		task =  decodeDataFromInput(task, remainingInput);
+		
+		if(task.getStatus() == Status.UNDETERMINED){
+			ArrayList<TimePair> times = new ArrayList<>();
+			TimePair reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
+			times.add(reservedTime);
+			ReservedEvent reserved = new ReservedEvent(task.getName(), task.getLocation(), task.getDescription(),
+					task.getCategory(), times, task.getStatus());
+			
+			return reserved;
+		}
+		
+		return task;
 	}
 	
 	/**
