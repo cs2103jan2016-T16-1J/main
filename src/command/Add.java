@@ -66,7 +66,7 @@ public class Add implements Command{
 		/*to select the previously added or reserved event*/
 		completeState.clearSelections();
 		completeState.selectedEvents.add(modifiedEvent);
-		completeState.selectedEvent = completeState.selectedEvents.get(0);
+		completeState.selectedEvent = modifiedEvent;
 		completeState.setSelectionStatus(completeState.ONE_EVENT_SELECTED);
 		
 		updatedDisplayedEvents();

@@ -2,6 +2,7 @@ package command;
 
 import main.Event;
 import main.GenericEvent;
+import main.ReservedEvent;
 import main.State;
 
 /**
@@ -10,7 +11,7 @@ import main.State;
  *
  */
 public class Edit implements Command{
-	Event originalEvent;
+	GenericEvent originalEvent;
 	GenericEvent selectedParameters;
 	State completeState;
 
@@ -26,7 +27,7 @@ public class Edit implements Command{
 	
 	private boolean checkForSelectedEvent(){
 		if(completeState.hasEventSelected()){
-			originalEvent = (Event)completeState.getAllSelectedEvents().get(0);
+			originalEvent = completeState.getSingleSelectedEvent();
 		}
 		
 		return true;
@@ -40,77 +41,42 @@ public class Edit implements Command{
 	public State execute(State completeState){
 		this.completeState = completeState;
 		
-		checkForSelectedEvent();
-
-		int index = findIndexOfEvent();
-		
-		if(index == -1){
+		if(!checkForSelectedEvent()){
 			completeState.setStatusMessage(State.MESSAGE_EVENT_NOT_FOUND);
 			return completeState;
 		}
-				
-		switch (originalEvent.getStatus()){
-		case COMPLETE:
-			editInCompletedEventList(index);
-			break;
-		case INCOMPLETE:
-			editInIncompletedEventList(index);
-			break;
-		case UNDETERMINED:
-			editInFloatingEventList(index);
-			break;
-		}
 		
-		updatedDisplayedEvents();
+		updateGenericEvent();
 		
 		return completeState;
 	}
 	
-	/**
-	 * Replaces the event if it is in the completed list
-	 * @param index the index of the event
-	 */
-	public void editInCompletedEventList(int index){
-		completeState.completedEvents.set(index, (Event) selectedParameters);
-	}
-	
-	/**
-	 * Replaces the event if it is in the incompleted list
-	 * @param index the index of the event
-	 */
-	public void editInIncompletedEventList(int index){
-		completeState.incompletedEvents.set(index, (Event) selectedParameters);
-	}
-	
-	/**
-	 * Replaces the event if it is in the floating list
-	 * @param index the index of the event
-	 */
-	public void editInFloatingEventList(int index){
-		//completeState.floatingEvents.set(index, selectedParameters);
-	}
-	
-	/**
-	 * returns the index of the event so that the new event can be replaced at the old event's index
-	 * @return
-	 */
-	public int findIndexOfEvent(){
-		int index = 0;
+	public void updateGenericEvent(){
+		originalEvent.setName(selectedParameters.getName());
+		originalEvent.setDescription(selectedParameters.getDescription());
+		originalEvent.setLocation(selectedParameters.getLocation());
+		originalEvent.setCategory(selectedParameters.getCategory());
+		originalEvent.setStatus(selectedParameters.getStatus());
 		
-		switch (originalEvent.getStatus()){
-		case COMPLETE:
-			index = completeState.completedEvents.indexOf(originalEvent);
-			break;
-		case INCOMPLETE:
-			index = completeState.incompletedEvents.indexOf(originalEvent);
-			break;
-		case UNDETERMINED:
-			//completeState.floatingEvents.indexOf(originalEvent);
-			break;
+		if(originalEvent instanceof Event){
+			updateEvent();
+		}
+		if(originalEvent instanceof ReservedEvent){
+			updateReservedEvent();
 		}
 		
-		return index;
 	}
+	
+	public void updateEvent(){
+		((Event)originalEvent).setStartTime(((Event)selectedParameters).getStartTime());
+		((Event)originalEvent).setEndTime(((Event)selectedParameters).getEndTime());
+	}
+	
+	public void updateReservedEvent(){
+		((ReservedEvent)originalEvent).setReservedTimes(((ReservedEvent)selectedParameters).getReservedTimes());
+		
+	}
+	
 	
 	/**
 	 * updates the displayedEvents with new information

@@ -564,6 +564,8 @@ public class MainWindow {
 		
 		tblCalendar.removeAll();
 		
+		floatingTasksPanel.removeAll();
+		
 		infoPanel.removeAll();
 		
 		this.refreshMonth();
@@ -578,9 +580,15 @@ public class MainWindow {
 		
 		tblCalendar.revalidate();
 		tblCalendar.repaint();
+		
+		stblCalendar.revalidate();
+		stblCalendar.repaint();
     	
 		infoPanel.revalidate();
 		infoPanel.repaint();
+		
+		floatingTasksPanel.revalidate();
+		floatingTasksPanel.repaint();
 	}
 	
 	private void renderEvents() {
