@@ -1,6 +1,7 @@
 package command;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import json.JSONException;
 import main.Event;
@@ -95,8 +96,28 @@ public class Add implements Command{
 		if(modifiedEvent.getCategory() == Category.FLOATING){
 			completeState.undeterminedEvents.add((Event) modifiedEvent);
 		} else{
-			completeState.reservedEvents.add((ReservedEvent) modifiedEvent);
+			ReservedEvent reserved = (ReservedEvent) modifiedEvent;
+			ArrayList<Event> eventList = convertReservedEventToEvent(reserved);
+			for(Event e : eventList){
+				completeState.addToReservedList(e);
+			}
 		}
+	}
+	
+	public ArrayList<Event> convertReservedEventToEvent(ReservedEvent reserved){
+		ArrayList<Event> eventList = new ArrayList<>();
+		for(int i=0; i < reserved.getReservedTimes().size(); i++){
+			Event event = new Event();
+			event.setName(reserved.getName());
+			event.setLocation(reserved.getLocation());
+			event.setCategory(reserved.getCategory());
+			event.setStatus(reserved.getStatus());
+			event.setDescription(reserved.getDescription());
+			event.setStartTime(reserved.getReservedTimes().get(i).getStartTime());
+			event.setEndTime(reserved.getReservedTimes().get(i).getEndTime());
+			eventList.add(event);
+		}
+		return eventList; 
 	}
 	
 	/**

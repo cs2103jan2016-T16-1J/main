@@ -146,6 +146,12 @@ public class Parser {
 			event = decodeDataFromInput(event, input);
 			event = determineCategory(event);
 			oldEvent = event;
+		} else if(tempCmd == CommandType.COMPLETE){
+			Event event = new Event();
+			event = determineQuotedInput(event, removeFirstWord(input));
+			event = decodeDataFromInput(event, input);
+			
+			oldEvent = null;
 		} else if(tempCmd == CommandType.CHANGDIR) {
 			Event event = new Event();
 			event = decodeImportExportData(event, removeFirstWord(input));
@@ -482,7 +488,7 @@ public class Parser {
 			task.setSelection(indexes);
 		} else{
 			task = determineQuotedInput(task, remainingInput);
-			task = decodeDataFromInput(task, input);
+			task = decodeDataFromInput(task, remainingInput);
 		}
 		
 		if(isCategoryDefined){
@@ -525,7 +531,7 @@ public class Parser {
 		}
 		
 		task = determineQuotedInput(task, remainingInput);
-		task = decodeDataFromInput(task, input);
+		task = decodeDataFromInput(task, remainingInput);
 		
 		if(isCategoryDefined){
 			task.setCategory(null);
@@ -550,7 +556,7 @@ public class Parser {
 			return null;
 		}
 		task = determineQuotedInput(task, remainingInput);
-		return decodeDataFromInput(task, input);
+		return decodeDataFromInput(task, remainingInput);
 	}
 	
 	private ReservedEvent decodeEditReservedData(Event task, ArrayList<TimePair> prevReservedTimes,String input){
@@ -724,10 +730,12 @@ public class Parser {
 		}
 
 		/*if preposition describing other fields is not found */
-		if(!isFound){
+		if(!isFound && !isEdit){
 			task.setName(input.substring(startIndex, input.length()));
 			task.setStatus(Status.UNDETERMINED);
-		} else{
+		} else if(!isFound && isEdit){
+			task.setName(input.substring(startIndex, input.length()));
+		} else {
 			determineCategory(task);
 		}
 

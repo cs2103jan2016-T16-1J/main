@@ -124,7 +124,7 @@ public class Storage {
 		for (Event e: completeState.undeterminedEvents){
 			addToStorage(e, fileName);
 		}
-		for (ReservedEvent e: completeState.reservedEvents){
+		for (Event e: completeState.reservedEvents){
 			addToStorage(e, fileName);
 		}
 	}
@@ -226,7 +226,7 @@ public class Storage {
 				if (event.getCategory() == GenericEvent.Category.FLOATING){
 					state.addToUndeterminedList((Event)event);
 				} else {
-					state.addToReservedList((ReservedEvent)event);
+					state.addToReservedList((Event)event);
 				}
 		}
 		

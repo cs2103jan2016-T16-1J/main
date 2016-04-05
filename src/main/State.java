@@ -25,7 +25,7 @@ public class State {
 	public static ArrayList<Event> incompletedEvents;
 	public static ArrayList<Event> undeterminedEvents;
 	
-	public static ArrayList<ReservedEvent> reservedEvents;
+	public static ArrayList<Event> reservedEvents;
 	//public static ArrayList<ReservedEvent> undeterminedEvents;
 	
 	public ArrayList<GenericEvent> displayedEvents;
@@ -48,7 +48,7 @@ public class State {
 		completedEvents = new ArrayList<Event>();
 		incompletedEvents = new ArrayList<Event>();
 		undeterminedEvents = new ArrayList<Event>();
-		reservedEvents = new ArrayList<ReservedEvent>(); 
+		reservedEvents = new ArrayList<Event>(); 
 		
 		//floatingEvents = new ArrayList<ReservedEvent>();
 		displayedEvents = new ArrayList<GenericEvent>();
@@ -163,7 +163,7 @@ public class State {
 		floatingEvents.add(event);
 	}*/
 	
-	public  void addToReservedList(ReservedEvent event){
+	public  void addToReservedList(Event event){
 		reservedEvents.add(event);
 	}
 	
