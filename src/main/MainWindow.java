@@ -97,8 +97,24 @@ public class MainWindow {
 	
 	private int WINDOW_BUTTON_WIDTH_SECTIONS = 1;
 	private int WINDOW_BUTTN_HEIGHT_SECTONS = 1;
-	private int WINDOW_INFO_SECTION_WIDTH_SECTIONS = 2;
 	
+	private int WINDOW_INFO_SECTION_WIDTH_SECTIONS = 2;
+	private int WINDOW_INFO_SECTION_HEIGHT_SECTIONS = 12;
+	
+	private int WINDOW_FLOATING_SECTION_WIDTH_SECTIONS = 2;
+	private int WINDOW_FLOATING_SECTION_HEIGHT_SECTIONS = 12;
+	
+	private int WINDOW_OUTPUT_WIDTH_SECTIONS = 7;
+	private int WINDOW_OUTPUT_HEIGHT_SECTIONS = 1;
+	
+	private int WINDOW_INPUT_WIDTH_SECTIONS = 6;
+	private double WINDOW_INPUT_HEIGHT_SECTIONS = 0.6;
+	
+	private int WINDOW_INPUT_BUTTON_WIDTH_SECTIONS = 1;
+	private double WINDOW_INPUT_BUTTON_HEIGHT_SECTIONS = 0.6;
+
+	private int WINDOW_MONTH_LABEL_WIDTH_SECTIONS = 2;
+
 	
 	private JTextField textField;
 	private JTable calendarTable;
@@ -267,13 +283,13 @@ public class MainWindow {
 		
 		initializeMainTab();
 				
-		initializeInputField();
-		
 		initializeInfoSection();
 		
 		initializeFloatingSection();
 
 		initializeOutputField();
+		
+		initializeInputField();
 		
 		initializeCalendar();
 		
@@ -368,9 +384,9 @@ public class MainWindow {
 	
 	private void initializeInfoSection() {
 		infoPanel = new JPanel();
-		int height = WINDOW_HEIGHT;
-		int width = (int) (WINDOW_WIDTH_SECTION / WINDOW_INFO_SECTION_WIDTH_SECTIONS);
-		infoPanel.setBounds(0, 0, 286, 425);
+		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS);
+		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS);
+		infoPanel.setBounds(0, 0, width, height);
 		infoPanel.setBackground(lightGray);
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
@@ -379,7 +395,10 @@ public class MainWindow {
 	
 	private void initializeFloatingSection() {
 		floatingTasksPanel = new JPanel();
-		floatingTasksPanel.setBounds(1181, 0, 286, 425);
+		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_FLOATING_SECTION_WIDTH_SECTIONS);
+		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_FLOATING_SECTION_HEIGHT_SECTIONS);
+		int xOffset = mainTab.getWidth() - width;
+		floatingTasksPanel.setBounds(xOffset, 0, width, height);
 		floatingTasksPanel.setBackground(lightGray);
 		floatingTasksPanel.setLayout(new BoxLayout(floatingTasksPanel, BoxLayout.Y_AXIS));
 		floatingTasksPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
@@ -525,13 +544,26 @@ public class MainWindow {
 	
 	private void initializeInputField() {
 		textField = new JTextField();
+		
+		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INPUT_WIDTH_SECTIONS);
+		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INPUT_HEIGHT_SECTIONS);
+		int xOffset = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS);
+		int yOffset = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS) + areaScrollPane.getHeight();
+		
+		
 		textField.setBorder(new LineBorder(borderColor));
-		
 		textField.addKeyListener(new ChangeMonthListener());
-		
 		textField.setColumns(10);
-		textField.setBounds(285, 460, 1100, 20);
+		textField.setBounds(xOffset, yOffset, width, height);
 		mainTab.add(textField);
+		
+		toggleButton = new JToggleButton("GO");
+		width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INPUT_BUTTON_WIDTH_SECTIONS);
+		height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INPUT_BUTTON_HEIGHT_SECTIONS);
+		xOffset = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS) + textField.getWidth();
+		yOffset = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS) + areaScrollPane.getHeight();
+		toggleButton.setBounds(xOffset, yOffset, width, height);
+		mainTab.add(toggleButton);
 	}
 	
 	private class ChangeMonthListener implements KeyListener {
@@ -660,14 +692,17 @@ public class MainWindow {
 	
 	private void initializeOutputField() {
 		actionsTextArea = new JTextArea();
-		actionsTextArea.setBounds(10, 478, 761, 252);
+		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_OUTPUT_WIDTH_SECTIONS);
+		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_OUTPUT_HEIGHT_SECTIONS);
+		int xOffset = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS);
+		int yOffset = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS);
 		//actionsTextArea.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		actionsTextArea.setEditable(false);
 		
 		areaScrollPane = new JScrollPane(actionsTextArea);
 		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 		areaScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0,1, borderColor));
-		areaScrollPane.setBounds(285, 424, 1162, 37);
+		areaScrollPane.setBounds(xOffset, yOffset, width, height);
 	    
 		mainTab.add(areaScrollPane);
 	}
@@ -725,9 +760,6 @@ public class MainWindow {
 	}
 	
 	private void addCalendarComponents() {
-		toggleButton = new JToggleButton("GO");
-		toggleButton.setBounds(1383, 460, 64, 20);
-		mainTab.add(toggleButton);
 		toggleButton.setForeground(Color.WHITE);
 		toggleButton.setBorder(null);
 		toggleButton.setBackground(new Color(28, 192, 159));

@@ -54,6 +54,8 @@ public class Delete implements Command{
 			return completeState;
 		}
 		
+		deleteFromSelectedEvents(eventsToDelete);
+		
 		deleteMatchedEvents(eventsToDelete);
 		
 		updatedDisplayedEvents();
@@ -71,12 +73,34 @@ public class Delete implements Command{
 		return true;
 	}
 	
+	private void deleteFromSelectedEvents(ArrayList<GenericEvent> eventsToDelete){
+		if((completeState.hasSingleEventSelected()) && (isMatchingEvent(completeState.getSingleSelectedEvent()))){
+			completeState.selectedEvent = null;
+			completeState.selectedEvents.clear();
+		}
+		if(completeState.hasMultipleEventSelected()){
+			for(GenericEvent e : completeState.getAllSelectedEvents()){
+				if(isMatchingEvent(e)){
+					completeState.selectedEvents.remove(e);
+				}
+			}
+		}
+	}
+
+	
 	private void deleteStateSelectedEvent(){
-		if(!completeState.hasSingleEventSelected()){
+		if(completeState.hasSingleEventSelected()){
+			deleteFromCorrespondingArray(completeState.getSingleSelectedEvent());
+		}
+		else if(completeState.hasMultipleEventSelected()){
+			for(GenericEvent e : completeState.getAllSelectedEvents()){
+				deleteFromCorrespondingArray(e);
+			}
+		}		
+		else{
 			completeState.setStatusMessage(State.MESSAGE_NO_SELECTED_EVENT);
 		}
-		
-		deleteFromCorrespondingArray(completeState.getSingleSelectedEvent());
+
 		completeState.clearSelections();
 
 	}
@@ -142,15 +166,13 @@ public class Delete implements Command{
 	
 	private boolean isMatchingEvent(GenericEvent currentEvent){
 		boolean isMatch = true;
-		
-		
+				
 		isMatch = isStringMatching(currentEvent.getName(), selectedParameters.getName()) &&
 				isStringMatching(currentEvent.getLocation(), selectedParameters.getLocation()) &&
 				isStringMatching(currentEvent.getDescription(), selectedParameters.getDescription())
-				//&&
-				//isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory())&&
-				//isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
-				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
+				//&& isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory())
+				//&& isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
+				&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
 				;
 		
 		
@@ -226,3 +248,4 @@ public class Delete implements Command{
 		//completeState.displayedEvents.addAll(completeState.floatingEvents);		
 	}
 }
+
