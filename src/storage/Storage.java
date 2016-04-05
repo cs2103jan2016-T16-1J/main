@@ -128,10 +128,10 @@ public class Storage {
 		for (Event e: completeState.incompletedEvents){
 			addToStorage(e, fileName);
 		}
-		for (Event e: completeState.undeterminedEvents){
+		for (ReservedEvent e: completeState.undeterminedEvents){
 			addToStorage(e, fileName);
 		}
-		for (Event e: completeState.reservedEvents){
+		for (ReservedEvent e: completeState.reservedEvents){
 			addToStorage(e, fileName);
 		}
 	}
@@ -231,9 +231,9 @@ public class Storage {
 			state.addToIncompletedList((Event)event);
 		} else if (event.getStatus() == GenericEvent.Status.UNDETERMINED){
 				if (event.getCategory() == GenericEvent.Category.FLOATING){
-					state.addToUndeterminedList((Event)event);
+					state.addToUndeterminedList((ReservedEvent)event);
 				} else {
-					state.addToReservedList((Event)event);
+					state.addToReservedList((ReservedEvent)event);
 				}
 		}
 		
