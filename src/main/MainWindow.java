@@ -90,8 +90,16 @@ public class MainWindow {
 	private int WINDOW_Y = 100;
 	private int WINDOW_WIDTH = 1600;
 	private int WINDOW_HEIGHT = 800;
-	private double WINDOW_BUTTON_HEIGHT_RATIO = 23.0;
-	private double WINDOW_BUTTON_WIDTH_RATIO = 6.8;
+	private double WINDOW_SECTION_HEIGHT_RATIO = 23.0;
+	private double WINDOW_SECTION_WIDTH_RATIO = 12.0;
+	private double WINDOW_WIDTH_SECTION = WINDOW_WIDTH / WINDOW_SECTION_WIDTH_RATIO;
+	private double WINDOW_HEIGHT_SECTION = WINDOW_HEIGHT / WINDOW_SECTION_HEIGHT_RATIO;
+	
+	private int WINDOW_BUTTON_WIDTH_SECTIONS = 1;
+	private int WINDOW_BUTTN_HEIGHT_SECTONS = 1;
+	private int WINDOW_INFO_SECTION_WIDTH_SECTIONS = 2;
+	
+	
 	private JTextField textField;
 	private JTable calendarTable;
 	private JPanel calendarPanel;
@@ -154,8 +162,7 @@ public class MainWindow {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) {
-		
-		
+
 		
 		/*_________ Testing ADD ______________*/
 		//Creating object manually
@@ -222,7 +229,6 @@ public class MainWindow {
 			public void run() {
 				try {
 					MainWindow window = new MainWindow();
-					
 					//for Testing Purposes
 					//actionsTextArea.append(finalResult);
 
@@ -335,8 +341,8 @@ public class MainWindow {
 	}
 	
 	private void initializeTabButtons() {
-		int buttonWidth = (int) (WINDOW_HEIGHT / WINDOW_BUTTON_WIDTH_RATIO);
-		int buttonHeight = (int) (WINDOW_HEIGHT / WINDOW_BUTTON_HEIGHT_RATIO);
+		int buttonWidth = (int) (WINDOW_WIDTH_SECTION * WINDOW_BUTTON_WIDTH_SECTIONS);
+		int buttonHeight = (int) (WINDOW_HEIGHT_SECTION * WINDOW_BUTTN_HEIGHT_SECTONS);
 		
 		undeterminedTab = new JToggleButton("Undetermined");
 		undeterminedTab.setForeground(Color.WHITE);
@@ -362,6 +368,8 @@ public class MainWindow {
 	
 	private void initializeInfoSection() {
 		infoPanel = new JPanel();
+		int height = WINDOW_HEIGHT;
+		int width = (int) (WINDOW_WIDTH_SECTION / WINDOW_INFO_SECTION_WIDTH_SECTIONS);
 		infoPanel.setBounds(0, 0, 286, 425);
 		infoPanel.setBackground(lightGray);
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
@@ -508,7 +516,10 @@ public class MainWindow {
 		mainTab = new JPanel();
 		mainTab.setBackground(Color.WHITE);
 		mainTab.setLayout(null);
-		mainTab.setBounds(117, 0, 1467, 761);
+		int xOffset = (int) (WINDOW_WIDTH_SECTION * WINDOW_BUTTON_WIDTH_SECTIONS);
+		int height = WINDOW_HEIGHT;
+		int width = WINDOW_WIDTH - xOffset;
+		mainTab.setBounds(xOffset, 0, width, height);
 		frame.getContentPane().add(mainTab);
 	}
 	
