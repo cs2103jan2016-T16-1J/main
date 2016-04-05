@@ -33,6 +33,7 @@ public class Parser {
 
 	private static Event oldEvent;
 	private static ReservedEvent oldReservedEvent;
+	private static GenericEvent oldGenericEvent;
 	private static String recordedDate;
 	private boolean isNameDefined = true;
 	private boolean isEdit = false;
@@ -86,39 +87,40 @@ public class Parser {
 		if (tempCmd == CommandType.INVALID){
 			Event event = new Event();
 			event = null;
-			oldEvent = null;
-			oldReservedEvent = null;
+			oldGenericEvent = null;
 		} else if(tempCmd == CommandType.ADD){
 			Event event = new Event();
 			GenericEvent task = decodeAddData(event, removeFirstWord(input));
-			oldEvent = event;
-			oldReservedEvent = null;
+			if(task.getStatus() == Status.UNDETERMINED){
+				oldGenericEvent = (ReservedEvent) task;
+			} else {
+				oldGenericEvent = (Event) task;
+			}
 			cmdInterface = new Add(task);
 		} else if(tempCmd == CommandType.DELETE){
 			Event event = new Event();
 			event = decodeDeleteData(event, removeFirstWord(input));
-			oldEvent = null;
-			oldReservedEvent = null;
+			oldGenericEvent = null;
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.EDIT){
 			isEdit = true;
 			Event event = new Event();
-			if(oldEvent != null){	/*to edit the previously added event which is selected automatically*/
+			if(oldGenericEvent instanceof Event){	/*to edit the previously added event which is selected automatically*/
 				cloneEvent(oldEvent, event);
 				event = decodeEditData(event, removeFirstWord(input));
-				oldEvent = event;
+				oldGenericEvent = (Event) event;
 				cmdInterface = new Edit(event);
-			} else if(oldReservedEvent != null){ /*to edit the previously reserved event which is selected automatically*/
+			} else if(oldGenericEvent instanceof ReservedEvent){ /*to edit the previously reserved event which is selected automatically*/
 				ArrayList<TimePair> reservedTimes = new ArrayList<>();
-				cloneReservedEvent(oldReservedEvent, event);
-				cloneReservedTimePair(reservedTimes, oldReservedEvent);
+				cloneReservedEvent((ReservedEvent)oldGenericEvent, event);
+				cloneReservedTimePair(reservedTimes, (ReservedEvent) oldGenericEvent);
 				
-				ReservedEvent reserved = decodeEditReservedData(event, reservedTimes, removeFirstWord(input));			
-				oldReservedEvent = reserved;
-				cmdInterface = new Edit(reserved);
+				GenericEvent genericEvent = decodeEditReservedData(event, reservedTimes, removeFirstWord(input));			
+				oldGenericEvent = genericEvent;
+				cmdInterface = new Edit(genericEvent);
 			} else{				/*to edit the selected events*/
 				event = decodeEditData(event, removeFirstWord(input));
-				oldEvent = event;
+				oldGenericEvent = event;
 				cmdInterface = new Edit(event);
 			}
 		
@@ -130,16 +132,14 @@ public class Parser {
 			Event event = new Event();
 			ReservedEvent reserved = new ReservedEvent();
 			reserved = decodeReservedData(event, removeFirstWord(input));
-			oldReservedEvent = reserved;
-			oldEvent = null;
+			oldGenericEvent = reserved;
 			cmdInterface = new Add(reserved);
 		} else if(tempCmd == CommandType.UNBLOCK){
 			Event event = new Event();
 			ReservedEvent reserved = new ReservedEvent();
 			reserved = decodeUnblockData(event, removeFirstWord(input));
 			reserved.setStatus(GenericEvent.Status.UNDETERMINED);
-			oldReservedEvent = reserved;
-			oldEvent = null;
+			oldGenericEvent = reserved;
 			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.UNDO){
 	
@@ -151,12 +151,12 @@ public class Parser {
 			event = determineQuotedInput(event, removeFirstWord(input));
 			event = decodeDataFromInput(event, input);
 			event = determineCategory(event);
-			oldEvent = event;
+			oldGenericEvent = event;
 		} else if(tempCmd == CommandType.COMPLETE){
 			Event event = new Event();
 			event = determineQuotedInput(event, removeFirstWord(input));
 			event = decodeDataFromInput(event, input);
-			oldEvent = null;
+			oldGenericEvent = null;
 		} else if(tempCmd == CommandType.EXPORT) {
 			Event event = new Event();
 			event = decodeImportExportData(event, removeFirstWord(input));
@@ -210,9 +210,10 @@ public class Parser {
 				cloneReservedEvent(oldReservedEvent, (Event) event);
 				cloneReservedTimePair(reservedTimes, oldReservedEvent);
 				
-				ReservedEvent reserved = decodeEditReservedData((Event) event, reservedTimes, removeFirstWord(input));			
-				oldReservedEvent = reserved;
-				return reserved;
+				GenericEvent genericEvent = decodeEditReservedData((Event) event, reservedTimes, removeFirstWord(input));			
+				
+				oldReservedEvent = (ReservedEvent) genericEvent;
+				return genericEvent;
 			}
 		} 
 		return null;
@@ -590,8 +591,8 @@ public class Parser {
 		return decodeDataFromInput(task, remainingInput);
 	}
 	
-	private ReservedEvent decodeEditReservedData(Event task, ArrayList<TimePair> prevReservedTimes,String input){
-		ReservedEvent reserved;
+	private GenericEvent decodeEditReservedData(Event task, ArrayList<TimePair> prevReservedTimes,String input){
+		GenericEvent event;
 		int startIndex = 0;
 		int endIndex = startIndex;		
 		String name = null;
@@ -642,15 +643,24 @@ public class Parser {
 			}
 		}
 		
+		if(reservedTimes.get(0).getStartTime() != Constant.MIN_DATE && reservedTimes.get(0).getEndTime() != Constant.MAX_DATE){
+			event = new Event(task.getName(), task.getLocation(), task.getDescription(), task.getCategory(), task.getStartTime(),
+					task.getEndTime(), task.getStartTimeString(), task.getEndTimeString(), Status.INCOMPLETE);
+		} else if(reservedTimes.get(0).getStartTime() == Constant.MIN_DATE && reservedTimes.get(0).getEndTime() != Constant.MAX_DATE){
+			event = new Event(task.getName(), task.getLocation(), task.getDescription(), task.getCategory(), task.getStartTime(),
+					task.getEndTime(), task.getStartTimeString(), task.getEndTimeString(), Status.INCOMPLETE);
+		} else {
+			event = new ReservedEvent(name, task.getLocation(),task.getDescription(), task.getCategory(), reservedTimes, 
+					GenericEvent.Status.UNDETERMINED);
+		}
+		/*
 		if(reservedTimes.size() == 0){
 			reserved = new ReservedEvent(name, task.getLocation(),
 					task.getDescription(), task.getCategory(), prevReservedTimes, GenericEvent.Status.UNDETERMINED);
 		} else{
-			reserved = new ReservedEvent(name, task.getLocation(),
-					task.getDescription(), task.getCategory(), reservedTimes, GenericEvent.Status.UNDETERMINED);
-		}
+		}*/
 
-		return reserved;
+		return event;
 	}
 
 	/**

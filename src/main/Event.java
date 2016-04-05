@@ -28,7 +28,8 @@ public class Event extends GenericEvent{
 		super(name, location, description, category, status);
 		this.startTime = startTime;
 		this.endTime = endTime;
-		
+		this.stringStartTime = stringStartTime;
+		this.stringEndTime = stringEndTime;
 	}
 
 	public void setStartTime(Date startTime){

@@ -38,11 +38,14 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit.UnderlineAction;
 
+import org.hamcrest.core.IsInstanceOf;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -88,7 +91,7 @@ public class MainWindow {
 	private int DISPLAYED_FLOATING_TASKS_NUM = 6;
 	private int WINDOW_X = 100;
 	private int WINDOW_Y = 100;
-	private int WINDOW_WIDTH = 1600;
+	private int WINDOW_WIDTH = 1200;
 	private int WINDOW_HEIGHT = 800;
 	private double WINDOW_SECTION_HEIGHT_RATIO = 46.0;
 	private double WINDOW_SECTION_WIDTH_RATIO = 12.0;
@@ -408,7 +411,7 @@ public class MainWindow {
 		mainTab.add(floatingTasksPanel);
 	}
 	
-	private void displayEventDetails(Event currentEvent) {	
+	private void displayEventDetails(GenericEvent currentEvent) {	
 		JPanel infoSectionWrapper = new JPanel();
 		infoSectionWrapper.setLayout(null);
 		infoSectionWrapper.setSize(new Dimension(infoPanel.getWidth(), 200));
@@ -436,11 +439,11 @@ public class MainWindow {
 		}
 	}
 	
-	private void addEventDetails(JPanel wrapper, Event currentEvent) {
+	private void addEventDetails(JPanel wrapper, GenericEvent currentEvent) {
 		this.addEventDetails(wrapper, currentEvent, 0);
 	}
 	
-	private void addEventDetails(JPanel wrapper, Event currentEvent, int elementNumber) {		
+	private void addEventDetails(JPanel wrapper, GenericEvent currentEvent, int elementNumber) {		
 		JPanel currentPanel = new JPanel();
 		currentPanel.setBounds(0, 113 * elementNumber, infoPanel.getWidth(), 113);
 		GridBagLayout layout = new GridBagLayout();
@@ -471,7 +474,7 @@ public class MainWindow {
 		layout.setConstraints(lblInfoEventStartTime, c);
 		currentPanel.add(lblInfoEventStartTime);
 		
-		JLabel lblInfoEventEndTime = createInfoLabelEndTime(currentEvent);
+		JLabel lblInfoEventEndTime = createInfoLabelEndTime( currentEvent);
 		c.gridy = 4;
 		layout.setConstraints(lblInfoEventEndTime, c);
 		currentPanel.add(lblInfoEventEndTime);
@@ -484,7 +487,7 @@ public class MainWindow {
 		wrapper.add(currentPanel);
 	}
 
-	private JLabel createInfoLabelCategory(Event currentEvent) {
+	private JLabel createInfoLabelCategory(GenericEvent currentEvent) {
 		JLabel lblInfoEventCategory = new JLabel(currentEvent.getCategory().toString());
 		lblInfoEventCategory.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblInfoEventCategory.setHorizontalAlignment(SwingConstants.CENTER);
@@ -492,23 +495,33 @@ public class MainWindow {
 		return lblInfoEventCategory;
 	}
 
-	private JLabel createInfoLabelEndTime(Event currentEvent) {
-		JLabel lblInfoEventEndTime = new JLabel(currentEvent.getEndTime().toString());
+	private JLabel createInfoLabelEndTime(GenericEvent currentEvent) {
+		JLabel lblInfoEventEndTime;
+		if(currentEvent instanceof Event){
+			lblInfoEventEndTime = new JLabel( ((Event)currentEvent).getEndTimeString());
+		} else{
+			lblInfoEventEndTime = new JLabel( ((ReservedEvent)currentEvent).getReservedTimes().get(0).getEndTimeString());
+		}
 		lblInfoEventEndTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblInfoEventEndTime.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventEndTime.setForeground(fontColor);
 		return lblInfoEventEndTime;
 	}
 
-	private JLabel createInfoLabelStartTime(Event currentEvent) {
-		JLabel lblInfoEventStartTime = new JLabel(currentEvent.getStartTime().toString());
+	private JLabel createInfoLabelStartTime(GenericEvent currentEvent) {
+		JLabel lblInfoEventStartTime;
+		if(currentEvent instanceof Event){
+			lblInfoEventStartTime = new JLabel(((Event)currentEvent).getStartTimeString());
+		} else{
+			lblInfoEventStartTime = new JLabel(((ReservedEvent)currentEvent).getReservedTimes().get(0).getStartTimeString());
+		}
 		lblInfoEventStartTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblInfoEventStartTime.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventStartTime.setForeground(fontColor);
 		return lblInfoEventStartTime;
 	}
 
-	private JLabel createInfoLabelLocation(Event currentEvent) {
+	private JLabel createInfoLabelLocation(GenericEvent currentEvent) {
 		JLabel lblInfoEventLocation = new JLabel(currentEvent.getLocation());
 		lblInfoEventLocation.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblInfoEventLocation.setHorizontalAlignment(SwingConstants.CENTER);
@@ -516,7 +529,7 @@ public class MainWindow {
 		return lblInfoEventLocation;
 	}
 
-	private JLabel createInfoLabelDescription(Event currentEvent) {
+	private JLabel createInfoLabelDescription(GenericEvent currentEvent) {
 		JLabel lblInfoEventDescription = new JLabel(currentEvent.getDescription());
 		lblInfoEventDescription.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblInfoEventDescription.setHorizontalAlignment(SwingConstants.CENTER);
@@ -524,7 +537,7 @@ public class MainWindow {
 		return lblInfoEventDescription;
 	}
 
-	private JLabel createInfoLabelTitle(Event currentEvent, int id) {
+	private JLabel createInfoLabelTitle(GenericEvent currentEvent, int id) {
 		String title = String.format("[%d] %s", id + 1, currentEvent.getName());
 		JLabel lblInfoEventName = new JLabel(title);
 		lblInfoEventName.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -643,18 +656,18 @@ public class MainWindow {
 	private void renderEvents() {
 		ArrayList<GenericEvent> displayedEvents = currentState.displayedEvents;
 		for (int i = 0; i < displayedEvents.size(); i++) {
-			Event event = (Event) displayedEvents.get(i);
+			GenericEvent event = displayedEvents.get(i);
 			if (event.isDeadline()) {
-	    		createDeadlineEvent(event);
+	    		createDeadlineEvent((Event) event);
 	    	} else if (event.isEvent()) {
-	    		createSpecificEvent(event);
+	    		createSpecificEvent((Event) event);
 	    	}
 		}
 	}
 	
 	private void renderInfoSection() {
 		if (currentState.hasSingleEventSelected()) {
-			displayEventDetails((Event) currentState.getSingleSelectedEvent());
+			displayEventDetails(currentState.getSingleSelectedEvent());
 		} else if (currentState.hasMultipleEventSelected()) {
 			displayMultipleEventsDetails(currentState.getAllSelectedEvents());
 		}
@@ -662,15 +675,20 @@ public class MainWindow {
 	
 	private void renderFloatingSection() {
 		ArrayList<GenericEvent> displayedEvents = currentState.displayedEvents;
-		int counter = 0;
-		while (counter < displayedEvents.size() && counter < this.DISPLAYED_FLOATING_TASKS_NUM) {
-			Event event = (Event) displayedEvents.get(counter);
-			addFloatingEvent(event, counter);
+		int counter = 0, floatingDisplayCounter = 0;
+		while (counter < displayedEvents.size() && floatingDisplayCounter < this.DISPLAYED_FLOATING_TASKS_NUM) {
+			if(displayedEvents.get(counter) instanceof Event){
+				Event event = (Event) displayedEvents.get(counter);
+			} else{
+				ReservedEvent event = (ReservedEvent) displayedEvents.get(counter);
+				addFloatingEvent(event, counter);
+				floatingDisplayCounter++;
+			}	
 			counter++;
 		}
 	}
 	
-	private void addFloatingEvent(Event event, int offsetNum) {
+	private void addFloatingEvent(GenericEvent event, int offsetNum) {
 		double eventHeight = floatingTasksPanel.getHeight() / (double) DISPLAYED_DAYS_NUM;
 		double eventWidth = getEventWidth();
 		int xOffset = 0;
