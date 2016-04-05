@@ -138,11 +138,12 @@ public class Parser {
 			reserved.setStatus(GenericEvent.Status.UNDETERMINED);
 			oldReservedEvent = reserved;
 			oldEvent = null;
-			//cmdInterface = new Delete(event);
+			cmdInterface = new Delete(event);
 		} else if(tempCmd == CommandType.UNDO){
-			
+	
 		} else if(tempCmd == CommandType.REDO){
-			
+			Event event = new Event();
+
 		} else if(tempCmd == CommandType.CONFIRM){
 			Event event = new Event();
 			event = determineQuotedInput(event, removeFirstWord(input));
@@ -153,7 +154,6 @@ public class Parser {
 			Event event = new Event();
 			event = determineQuotedInput(event, removeFirstWord(input));
 			event = decodeDataFromInput(event, input);
-			
 			oldEvent = null;
 		} else if(tempCmd == CommandType.CHANGDIR) {
 			Event event = new Event();
