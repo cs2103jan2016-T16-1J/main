@@ -57,7 +57,6 @@ public class State {
 		undeterminedEvents = new ArrayList<ReservedEvent>();
 		reservedEvents = new ArrayList<ReservedEvent>(); 
 		
-		//floatingEvents = new ArrayList<ReservedEvent>();
 		displayedEvents = new ArrayList<GenericEvent>();
 		selectedEvents = new ArrayList<GenericEvent>();
 		
@@ -175,16 +174,28 @@ public class State {
 		reservedEvents.add(event);
 	}
 	
-	public void sortDisplayedEvents() {
-		//Collections.sort(this.displayedEvents, new CustomEndTimeComparator());
+
+	public  ArrayList<Event> getCompletedList(){
+		return completedEvents;
 	}
 	
-	private class CustomEndTimeComparator implements Comparator<Event> {
-	    @Override
-	    public int compare(Event o1, Event o2) {
-	        return o1.getEndTime().compareTo(o2.getEndTime());
-	    }
+	public  ArrayList<Event> getIncompletedList(){
+		return incompletedEvents;
 	}
+	
+	public  ArrayList<ReservedEvent> getUndeterminedList(){
+		return undeterminedEvents;
+	}
+	
+	public  ArrayList<ReservedEvent> getReservedList(){
+		return undeterminedEvents;
+	}
+	
+	public  ArrayList<ReservedEvent> getFloatingList(){
+		return undeterminedEvents;
+	}
+ 
+	
 
 }
 
