@@ -58,7 +58,7 @@ public class Reserve implements Command{
 		completeState.clearSelections();
 		completeState.selectedEvents.add(modifiedEvent);
 		completeState.selectedEvent = modifiedEvent;
-		completeState.setSelectionStatus(completeState.ONE_EVENT_SELECTED);
+		completeState.setSelectionStatus(State.ONE_EVENT_SELECTED);
 		
 		updatedDisplayedEvents();
 		
@@ -77,6 +77,7 @@ public class Reserve implements Command{
 	public void addToUndeterminedList(){
 		
 		if(modifiedEvent.getCategory() == Category.FLOATING){
+			
 			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_ADD_WITH_RESERVE);
 		} else{
 			completeState.reservedEvents.add((ReservedEvent)modifiedEvent);

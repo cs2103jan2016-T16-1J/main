@@ -102,7 +102,7 @@ public class Add implements Command{
 		if(modifiedEvent.getCategory() == Category.FLOATING){
 			completeState.undeterminedEvents.add((ReservedEvent) modifiedEvent);
 		} else{
-			completeState.reservedEvents.add((ReservedEvent)modifiedEvent);
+			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_RESERVE_WITH_ADD);
 		}
 	}
 	
