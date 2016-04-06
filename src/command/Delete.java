@@ -42,7 +42,7 @@ public class Delete implements Command{
 		this.completeState = completeState;
 		
 		if(!hasDeleteParameters()){
-			updatedDisplayedEvents();
+			completeState.updateDisplayedEvents();
 			return completeState;
 		}
 		
@@ -58,7 +58,7 @@ public class Delete implements Command{
 		
 		deleteMatchedEvents(eventsToDelete);
 		
-		updatedDisplayedEvents();
+		completeState.updateDisplayedEvents();
 
 		return completeState;
 	}
@@ -241,16 +241,6 @@ public class Delete implements Command{
 		
 		return ((eventEnd.getTime() >= paramStart.getTime()) && (eventEnd.getTime() <= paramEnd.getTime()));
 	}
-	
-	
-	/**
-	 * updates the displayedEvents with new information
-	 */
-	public void updatedDisplayedEvents(){
-		completeState.displayedEvents.clear();
-		completeState.displayedEvents.addAll(completeState.completedEvents);
-		completeState.displayedEvents.addAll(completeState.incompletedEvents);
-		//completeState.displayedEvents.addAll(completeState.floatingEvents);		
-	}
+
 }
 
