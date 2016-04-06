@@ -108,7 +108,7 @@ public class Parser {
 			isEdit = true;
 			Event event = new Event();
 			if(oldGenericEvent instanceof Event){	/*to edit the previously added event which is selected automatically*/
-				cloneEvent(oldEvent, event);
+				cloneEvent((Event) oldGenericEvent, event);
 				event = decodeEditData(event, removeFirstWord(input));
 				oldGenericEvent = (Event) event;
 				cmdInterface = new Edit(event);
@@ -122,13 +122,14 @@ public class Parser {
 				cmdInterface = new Edit(genericEvent);
 			} else{				/*to edit the selected events*/
 				event = decodeEditData(event, removeFirstWord(input));
-				oldGenericEvent = event;
+				//oldGenericEvent = event;
 				cmdInterface = new Edit(event);
 			}
 		
 		} else if(tempCmd == CommandType.SELECT){		
 			Event event = new Event();
 			event = decodeSelectData(event, removeFirstWord(input));
+			oldGenericEvent = null;
 			if(event.getSelection().isEmpty()){
 				cmdInterface = new Select(event);
 
@@ -1114,7 +1115,11 @@ public class Parser {
 				String today = sdf.format(new Date());
 				Date todayDate = DateChecker.writeTime(today, time);
 
-				task.setEndTime(DateChecker.writeTime(stringDate, time));
+				if(stringDate.equals(dateTime[1])){
+					task.setEndTime(DateChecker.writeTime(today, time));
+				} else{
+					task.setEndTime(DateChecker.writeTime(stringDate, time));
+				}
 				task.setCategory(GenericEvent.Category.DEADLINE);
 				
 				if(cal.getTime().after(task.getEndTime())){
