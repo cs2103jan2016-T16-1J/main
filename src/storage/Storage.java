@@ -186,7 +186,7 @@ public class Storage {
 				state.undeterminedEvents.add(e);
 			}
 			for (int i = 0; i < arrReserved.length(); i++){
-				ReservedEvent e = castJSONObjToFloatingEvent(arrReserved.getJSONObject(i));
+				ReservedEvent e = castJSONObjToReservedEvent(arrReserved.getJSONObject(i));
 				state.reservedEvents.add(e);
 			}
 			
