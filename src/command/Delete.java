@@ -75,8 +75,7 @@ public class Delete implements Command{
 	
 	private void deleteFromSelectedEvents(ArrayList<GenericEvent> eventsToDelete){
 		if((completeState.hasSingleEventSelected()) && (isMatchingEvent(completeState.getSingleSelectedEvent()))){
-			completeState.selectedEvent = null;
-			completeState.selectedEvents.clear();
+			completeState.clearSelections();
 		}
 		if(completeState.hasMultipleEventSelected()){
 			for(GenericEvent e : completeState.getAllSelectedEvents()){

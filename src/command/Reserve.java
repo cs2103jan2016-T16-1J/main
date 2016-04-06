@@ -16,7 +16,7 @@ import storage.Storage;
  * @author Reem
  *
  */
-public class Add implements Command{
+public class Reserve implements Command{
 
 	GenericEvent modifiedEvent;
 	State completeState;
@@ -25,7 +25,7 @@ public class Add implements Command{
 	 * Add class constructor
 	 * @param modifiedEvent the event that will be added
 	 */
-	public Add(GenericEvent modifiedEvent){
+	public Reserve(GenericEvent modifiedEvent){
 		this.modifiedEvent = modifiedEvent;
 	}
 
@@ -45,29 +45,20 @@ public class Add implements Command{
 		}
 		
 		switch (modifiedEvent.getStatus()){
-		case COMPLETE:
-			addToCompleteList();
-			break;
-		case INCOMPLETE:
-			addToIncompleteList();
-			break;
-			
-		case UNDETERMINED:
-			addToUndeterminedList();
-			break;
-			
-			/*This will be fulfilled by Reseve Command
-		case UNDETERMINED:
-			addToFloatingList();
-			break;*/
-			
-		}
+			case UNDETERMINED:
+				addToUndeterminedList();
+				break;
+			default:
+				//completeState.setStatusMessage(State.MESSAGE_INVALID_RESERVED);
+				break;
+							
+			}
 		
 		/*to select the previously added or reserved event*/
 		completeState.clearSelections();
 		completeState.selectedEvents.add(modifiedEvent);
 		completeState.selectedEvent = modifiedEvent;
-		completeState.setSelectionStatus(completeState.ONE_EVENT_SELECTED);
+		completeState.setSelectionStatus(State.ONE_EVENT_SELECTED);
 		
 		updatedDisplayedEvents();
 		
@@ -83,29 +74,19 @@ public class Add implements Command{
 		
 		return true;
 	}
-	/**
-	 * adds the given task to the completed list in State
-	 */
-	public void addToCompleteList(){
-		completeState.completedEvents.add((Event) modifiedEvent);
-	}
-
-	/**
-	 * adds the given task to the incomplete list in State
-	 */
-	public void addToIncompleteList(){
-		completeState.incompletedEvents.add((Event) modifiedEvent);
-	}
-
 	public void addToUndeterminedList(){
 		
 		if(modifiedEvent.getCategory() == Category.FLOATING){
-			completeState.undeterminedEvents.add((ReservedEvent) modifiedEvent);
+			
+			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_ADD_WITH_RESERVE);
 		} else{
-			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_RESERVE_WITH_ADD);
+			completeState.reservedEvents.add((ReservedEvent)modifiedEvent);
+			completeState.undeterminedEvents.add((ReservedEvent)modifiedEvent);
+
 		}
 	}
-	
+
+
 	/**
 	 * updates the displayedEvents with new information
 	 */
