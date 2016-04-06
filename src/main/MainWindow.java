@@ -620,7 +620,7 @@ public class MainWindow {
 	}
 	
 	private void initializeInputField() {
-		textField = new JTextField();
+		textField = new JTextField("Type message here...");
 		
 		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INPUT_WIDTH_SECTIONS);
 		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INPUT_HEIGHT_SECTIONS);
@@ -662,16 +662,14 @@ public class MainWindow {
 	        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 		    	String inputString = textField.getText() + NEW_LINE;
 		    	textField.setText(EMPTY_STRING);
-		    	actionsTextArea.setText(inputString);
-		    	
 		    	//calling controller
 		    	try {
 					currentState = mainController.executeCommand(inputString, defaultStorage);
 					actionTaken = true;
 				} catch (IOException | JSONException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+		    	actionsTextArea.setText(currentState.getStatusMessage());
 	        }
 	        if (actionTaken) {
 	        	rowHeaderTable.setCalendarInstance(calendarInstance);
@@ -733,16 +731,12 @@ public class MainWindow {
 	}
 	
 	private void renderFloatingSection() {
-		ArrayList<GenericEvent> displayedEvents = currentState.displayedEvents;
+		ArrayList<ReservedEvent> displayedFloatingEvents = currentState.getFloatingList();
 		int counter = 0, floatingDisplayCounter = 0;
-		while (counter < displayedEvents.size() && floatingDisplayCounter < this.DISPLAYED_FLOATING_TASKS_NUM) {
-			if(displayedEvents.get(counter) instanceof Event){
-				Event event = (Event) displayedEvents.get(counter);
-			} else{
-				ReservedEvent event = (ReservedEvent) displayedEvents.get(counter);
-				addFloatingEvent(event, counter);
-				floatingDisplayCounter++;
-			}	
+		while (counter < displayedFloatingEvents.size() && floatingDisplayCounter < this.DISPLAYED_FLOATING_TASKS_NUM) {
+			ReservedEvent event = displayedFloatingEvents.get(counter);
+			addFloatingEvent(event, counter);
+			floatingDisplayCounter++;
 			counter++;
 		}
 	}
