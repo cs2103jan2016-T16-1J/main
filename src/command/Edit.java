@@ -26,7 +26,7 @@ public class Edit implements Command{
 	}
 	
 	private boolean checkForSelectedEvent(){
-		if(completeState.hasEventSelected()){
+		if(completeState.hasSingleEventSelected()){
 			originalEvent = completeState.getSingleSelectedEvent();
 		}
 		
