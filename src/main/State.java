@@ -33,13 +33,12 @@ public class State {
 	public ArrayList<ReservedEvent> undeterminedSelected;
 	public ArrayList<Event> completedSelected;
 	public ArrayList<Event> incompletedSelected;
-
-	
 	
 	public ArrayList<GenericEvent> displayedEvents;
 	public ArrayList<GenericEvent> selectedEvents;
 	Stack<GenericEvent> eventHistory;
 	
+	public boolean hasErrorMessage;
 	public GenericEvent selectedEvent;
 	
 	
@@ -69,6 +68,7 @@ public class State {
 		
 		statusMessage = new String();
 		setStatusMessage(MESSAGE_WELCOME);
+		hasErrorMessage = false;
 		
 		tabStatus = Constant.TAB_INCOMPLETE;
 
@@ -155,6 +155,11 @@ public class State {
 	
 	public void setStatusMessage(String statusMessage){
 		this.statusMessage = statusMessage;
+	}
+	
+	public void clearStatusMessage(){
+		this.statusMessage = null;
+		hasErrorMessage = false;
 	}
 	
 	public String getStatusMessage(){

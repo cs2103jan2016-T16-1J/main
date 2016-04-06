@@ -61,6 +61,7 @@ public class Select implements Command{
 		//if an invalid index is provided
 		if(index > completeState.selectedEvents.size()){
 			completeState.setStatusMessage(State.MESSAGE_INVALID_INDEX);
+			completeState.hasErrorMessage = true;
 			return false;
 		}
 		

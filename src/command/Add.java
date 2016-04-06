@@ -48,17 +48,18 @@ public class Add implements Command{
 			break;
 		case INCOMPLETE:
 			addToIncompleteList();
-			break;
-			
+			break;			
 		case UNDETERMINED:
 			addToUndeterminedList();
 			break;
 		}
 		
 		/*to select the previously added or reserved event*/
-		completeState.setOneSelectedEvent(modifiedEvent);
-		
-		updatedDisplayedEvents();
+		if(!completeState.hasErrorMessage){
+			completeState.setOneSelectedEvent(modifiedEvent);
+			
+			updatedDisplayedEvents();
+		}
 		
 		return completeState;
 	}
@@ -67,6 +68,7 @@ public class Add implements Command{
 	private boolean isNewEventValid(){
 		if(null == modifiedEvent){
 			completeState.setStatusMessage(State.MESSAGE_PARSE_ERROR);
+			completeState.hasErrorMessage = true;
 			return false;
 		}
 		
@@ -94,6 +96,8 @@ public class Add implements Command{
 		} else{
 			
 			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_RESERVE_WITH_ADD);
+			completeState.hasErrorMessage = true;
+
 		}
 	}
 	

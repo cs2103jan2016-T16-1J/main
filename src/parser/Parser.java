@@ -9,10 +9,12 @@ import java.util.regex.Pattern;
 import command.Add;
 import command.ChangeTab;
 import command.Command;
+import command.Confirm;
 import command.Delete;
 import command.Edit;
 import command.Export;
 import command.Import;
+import command.Reserve;
 import command.Select;
 
 import java.util.ArrayList;
@@ -133,7 +135,7 @@ public class Parser {
 			ReservedEvent reserved = new ReservedEvent();
 			reserved = decodeReservedData(event, removeFirstWord(input));
 			oldGenericEvent = reserved;
-			cmdInterface = new Add(reserved);
+			cmdInterface = new Reserve (reserved);
 		} else if(tempCmd == CommandType.UNBLOCK){
 			Event event = new Event();
 			ReservedEvent reserved = new ReservedEvent();
@@ -152,6 +154,7 @@ public class Parser {
 			event = decodeDataFromInput(event, input);
 			event = determineCategory(event);
 			oldGenericEvent = event;
+			//cmdInterface = new Confirm(event);
 		} else if(tempCmd == CommandType.COMPLETE){
 			Event event = new Event();
 			event = determineQuotedInput(event, removeFirstWord(input));
@@ -462,7 +465,6 @@ public class Parser {
 	 * @return
 	 */
 	private Event decodeSelectData(Event task, String input){
-		boolean isCategoryDefined = false;
 		int startIndex = 0;
 		int endIndex = startIndex;
 		
@@ -472,24 +474,6 @@ public class Parser {
 		
 		String remainingInput = extractDescription(task, input);
 
-		/** Look for Selecting Category type command **/
-		if(input.indexOf("--") >= 0){
-			startIndex = input.indexOf("--", startIndex) + 1;
-			endIndex = input.length();
-			
-			if(classifyCategory(input) == null){
-				task.setCategory(null);
-			} else {
-				task.setCategory(classifyCategory(remainingInput));
-			}
-			
-			task.setStatus(classifyStatus(remainingInput));
-
-			return task;
-		} else{
-			isCategoryDefined = true;
-		}
-		
 		if(input.indexOf("#") >= 0){
 			startIndex = input.indexOf("#",startIndex) + 1;
 			while(input.indexOf(",", startIndex) > 0){
@@ -509,10 +493,7 @@ public class Parser {
 			task = decodeDataFromInput(task, remainingInput);
 		}
 		
-		if(isCategoryDefined){
-			task.setCategory(null);
-			task.setStatus(GenericEvent.Status.NULL);
-		}
+	
 		return task;
 	}
 
