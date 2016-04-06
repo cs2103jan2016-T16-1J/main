@@ -59,7 +59,7 @@ public class Controller{
 	 * @throws IOException 
 	 */
 	public State executeCommand(String commandText, String directory) throws IOException, JSONException{
-		completeState.setStatusMessage(null);
+		completeState.clearStatusMessage();
 		Command userCommand;
 		userCommand = parser.parseCommand(commandText); //parser should return Command
 		if(null == userCommand){
