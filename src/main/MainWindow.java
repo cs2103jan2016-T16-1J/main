@@ -148,6 +148,9 @@ public class MainWindow {
 	private static ArrayList<Color> randomColors;
 	private static HashMap<String, Color> coloredEvents;
 	
+	private static Font titleFont;
+	private static Font descriptionFont;
+	
 	private Controller mainController;
 	private State currentState;
 	private Calendar calendarInstance;
@@ -292,6 +295,8 @@ public class MainWindow {
 				
 		initializeColors();
 		
+		initializeFonts();
+		
 		initializeMainWindow();
 		
 		initializeTabButtons();
@@ -348,21 +353,18 @@ public class MainWindow {
 		randomColors.add(Color3);
 		randomColors.add(Color4);
 		randomColors.add(Color5);
-		
-		/*
-		for (int i = 0; i < 300; i++) {
-			Color currentColor = new Color((int) (Math.random() * 255),
-										   (int) (Math.random() * 255),
-										   (int) (Math.random() * 255),
-										   160);
-			randomColors.add(currentColor);			
-		}*/
+
 		coloredEvents = new HashMap<String, Color>();
+	}
+	
+	private void initializeFonts() {
+		
+		titleFont = new Font("Verdana", Font.PLAIN, 16);
+		descriptionFont = new Font("Tahoma", Font.PLAIN, 11);
 		
 	}
 	
 	private void initializeMainWindow() {
-		navbarColor = new Color(55, 71, 79);
 		frame = new JFrame();
 		frame.getContentPane().setBackground(navbarColor);
 		frame.setBackground(navbarColor);
@@ -405,7 +407,7 @@ public class MainWindow {
 
 		lblInfo.setBounds(0, 0, width, height);
 		lblInfo.setForeground(fontColor);
-		lblInfo.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblInfo.setFont(titleFont);
 		lblInfo.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfo.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, borderColor));
 		mainTab.add(lblInfo);
@@ -429,7 +431,7 @@ public class MainWindow {
 
 		lblFloating.setBounds(xOffset, 0, width, height);
 		lblFloating.setForeground(fontColor);
-		lblFloating.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblFloating.setFont(titleFont);
 		lblFloating.setHorizontalAlignment(SwingConstants.CENTER);
 		lblFloating.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, borderColor));
 		mainTab.add(lblFloating);
@@ -557,7 +559,7 @@ public class MainWindow {
 
 	private JLabel createInfoLabelCategory(GenericEvent currentEvent) {
 		JLabel lblInfoEventCategory = new JLabel(currentEvent.getCategory().toString());
-		lblInfoEventCategory.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventCategory.setFont(descriptionFont);
 		lblInfoEventCategory.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventCategory.setForeground(fontColor);
 		return lblInfoEventCategory;
@@ -566,7 +568,7 @@ public class MainWindow {
 	private JLabel createInfoLabelEndTime(String currentEventEndTime) {
 		JLabel lblInfoEventEndTime;
 		lblInfoEventEndTime = new JLabel(currentEventEndTime);
-		lblInfoEventEndTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventEndTime.setFont(descriptionFont);
 		lblInfoEventEndTime.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventEndTime.setForeground(fontColor);
 		return lblInfoEventEndTime;
@@ -574,7 +576,7 @@ public class MainWindow {
 
 	private JLabel createInfoLabelStartTime(String currentEventStartTime) {
 		JLabel lblInfoEventStartTime =  new JLabel(currentEventStartTime);
-		lblInfoEventStartTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventStartTime.setFont(descriptionFont);
 		lblInfoEventStartTime.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventStartTime.setForeground(fontColor);
 		return lblInfoEventStartTime;
@@ -582,7 +584,7 @@ public class MainWindow {
 
 	private JLabel createInfoLabelLocation(GenericEvent currentEvent) {
 		JLabel lblInfoEventLocation = new JLabel(currentEvent.getLocation());
-		lblInfoEventLocation.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventLocation.setFont(descriptionFont);
 		lblInfoEventLocation.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventLocation.setForeground(fontColor);
 		return lblInfoEventLocation;
@@ -590,7 +592,7 @@ public class MainWindow {
 
 	private JLabel createInfoLabelDescription(GenericEvent currentEvent) {
 		JLabel lblInfoEventDescription = new JLabel(currentEvent.getDescription());
-		lblInfoEventDescription.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		lblInfoEventDescription.setFont(descriptionFont);
 		lblInfoEventDescription.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventDescription.setForeground(fontColor);
 		return lblInfoEventDescription;
@@ -853,7 +855,7 @@ public class MainWindow {
 		lblMonth.setBounds(0, yOffset, width, height);
 		mainTab.add(lblMonth);
 		lblMonth.setForeground(fontColor);
-		lblMonth.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblMonth.setFont(titleFont);
 		lblMonth.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMonth.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 
