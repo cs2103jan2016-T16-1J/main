@@ -403,7 +403,8 @@ public class Storage {
 		completeState.displayedEvents.clear();
 		completeState.displayedEvents.addAll(completeState.completedEvents);
 		completeState.displayedEvents.addAll(completeState.incompletedEvents);
-		completeState.displayedEvents.addAll(completeState.undeterminedEvents);		
+		completeState.displayedEvents.addAll(completeState.undeterminedEvents);	
+		completeState.displayedEvents.addAll(completeState.reservedEvents);	
 	}
 	
 	private void copyStorage(String sorucefileName, String destinationFileName) {
