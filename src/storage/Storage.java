@@ -9,6 +9,7 @@ import main.GenericEvent.Category;
 import main.GenericEvent.Status;
 import main.ReservedEvent;
 import main.State;
+import main.TimePair;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -22,6 +23,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -61,25 +63,11 @@ public class Storage {
 		
 		copyStorage(getDirectory(), newDirectory);
 		
-		/*File oldFile = new File(getDirectory());
-		
-		if (oldFile.renameTo(new File(newDirectory))){
-			System.out.println("File is moved successful!");
-    	} else {
-    		System.out.println("File is failed to move!"); 
-    	}*/
 	}
 	
 	public void importDir(String sourceDirectory){
 		copyStorage(sourceDirectory, getDirectory());
-		/*
-		File sourceFile = new File(sourceDirectory);
 		
-		if (sourceFile.renameTo(new File(getDirectory()))){
-			System.out.println("File is moved successful!");
-    	} else {
-    		System.out.println("File is failed to move!"); 
-    	}*/
 	}
 	
 	/** 
@@ -112,92 +100,94 @@ public class Storage {
 		 
 	}
 	
-	
-	
-	
-	/** 
-	 * Import all the events under every lists in state class into storage
-	 * @param completeState
-	 */
 	public void stateToStorage(State completeState, String fileName){
 		clearFile(fileName);
 		
-		for (Event e: completeState.completedEvents){
-			addToStorage(e, fileName);
-		}
-		for (Event e: completeState.incompletedEvents){
-			addToStorage(e, fileName);
-		}
-		for (ReservedEvent e: completeState.undeterminedEvents){
-			addToStorage(e, fileName);
-		}
-		for (ReservedEvent e: completeState.reservedEvents){
-			addToStorage(e, fileName);
-		}
-	}
-	
-	/**
-	 * cast an event to JSONObject and then write to file
-	 * @param event
-	 */
-	public void addToStorage(Event event, String fileName) {
-		JSONObject jsonObj = castEventToJSONObj(event);
+		JSONArray arrCompleted = new JSONArray();
+		JSONArray arrIncompleted = new JSONArray();
+		JSONArray arrUndetermined = new JSONArray();
+		JSONArray arrReserved = new JSONArray();
 		
+		
+			for (Event e: completeState.completedEvents){
+				JSONObject object = new JSONObject();
+				object = castEventToJSONObj(e);
+				arrCompleted.put(object);
+			}
+			for (Event e: completeState.incompletedEvents){
+				JSONObject object = new JSONObject();
+				object = castEventToJSONObj(e);
+				arrIncompleted.put(object);
+			}
+			for (ReservedEvent e: completeState.undeterminedEvents){
+				JSONObject object = new JSONObject();
+				object = castFloatingEventToJSONObj(e);
+				arrUndetermined.put(object);
+			}
+			for (ReservedEvent e: completeState.reservedEvents){
+				JSONObject object = new JSONObject();
+				object = castReservedEventToJSONObj(e);
+				arrReserved.put(object);
+			}
+			
+			JSONObject o = new JSONObject();
+			try {
+				o.put("completed", arrCompleted);
+				o.put("incompleted", arrIncompleted);
+				o.put("undetermined", arrUndetermined);
+				o.put("reserved", arrReserved);
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
 		try {
 			FileWriter fw = new FileWriter(fileName, true);
 			PrintWriter pw = new PrintWriter(fw);
-			pw.println(jsonObj.toString());
+			pw.println(o.toString());
 			pw.close();
 		} catch(IOException ex) {
 			ex.printStackTrace();
 		}
-		
+
 	}
-	
-	
-	//overloading addToStorage
-	public void addToStorage(ReservedEvent event, String fileName) {
-		JSONObject jsonObj = castReservedEventToJSONObj(event);
-		
-		try {
-			FileWriter fw = new FileWriter(fileName, true);
-			PrintWriter pw = new PrintWriter(fw);
-			pw.println(jsonObj.toString());
-			pw.close();
-		} catch(IOException ex) {
-			ex.printStackTrace();
-		}
-		
-	}
-	
-	
-	
-	
-	/**
-	 * Read storage and cast every JSONObject into event, then add to the specific list
-	 * in the state class
-	 * @return State
-	 */
+
 	public State readStorage(String fileName) {
 		String line = null;
 		State state = new State();
+		String jsonData = "";
 		
 		try {
 			FileReader fr = new FileReader(fileName);
 			BufferedReader br = new BufferedReader(fr);
 			
 			while ( (line = br.readLine()) != null) {
-				JSONObject jsonObj = new JSONObject(line);
+				jsonData += line + "\n";
 				
-				if (getStatus(jsonObj).equals( GenericEvent.Status.UNDETERMINED)){
-					ReservedEvent event = castJSONObjToReservedEvent(jsonObj);
-					storageToState(state, event);
-					updatedDisplayedEvents(state);
-				} else {
-					Event event = castJSONObjToEvent(jsonObj);
-					storageToState(state, event);
-					updatedDisplayedEvents(state);
-				}
+			}
+			JSONObject object = new JSONObject(jsonData);
+			
+			JSONArray arrCompleted = object.getJSONArray("completed");
+			JSONArray arrIncompleted = object.getJSONArray("incompleted");
+			JSONArray arrUndetermined = object.getJSONArray("undetermined");
+			JSONArray arrReserved = object.getJSONArray("reserved");
+			
+			for (int i = 0; i < arrCompleted.length(); i++){
+				Event e = castJSONObjToEvent(arrCompleted.getJSONObject(i));
+				state.completedEvents.add(e);
+			}
+			for (int i = 0; i < arrIncompleted.length(); i++){
+				Event e = castJSONObjToEvent(arrIncompleted.getJSONObject(i));
+				state.incompletedEvents.add(e);
+			}
+			for (int i = 0; i < arrUndetermined.length(); i++){
+				ReservedEvent e = castJSONObjToFloatingEvent(arrUndetermined.getJSONObject(i));
+				state.undeterminedEvents.add(e);
+			}
+			for (int i = 0; i < arrReserved.length(); i++){
+				ReservedEvent e = castJSONObjToReservedEvent(arrReserved.getJSONObject(i));
+				state.reservedEvents.add(e);
 			}
 			
 		} catch(FileNotFoundException ex) {
@@ -209,155 +199,17 @@ public class Storage {
 			e.printStackTrace();
 		}
 		
+		updatedDisplayedEvents(state);
+		
 		return state;
 	}
-	
-	
-	public void changeDirectory(String oldDirectory, String newDirectory){
-		try {
-			File oldFile = new File(oldDirectory);
-			
-			if (oldFile.renameTo(new File(newDirectory))){
-				System.out.println("File is moved successful!");
-	    	} else {
-	    		System.out.println("File is failed to move!"); 
-	    	}
-		    
-    	} catch (Exception e){
-    		e.printStackTrace();
-    	}
-	}
+
 	
 	
 	
-	private void storageToState(State state, GenericEvent event) {
-		if (event.getStatus() == GenericEvent.Status.COMPLETE){
-			state.addToCompletedList((Event)event);
-		} else if (event.getStatus() == GenericEvent.Status.INCOMPLETE){
-			state.addToIncompletedList((Event)event);
-		} else if (event.getStatus() == GenericEvent.Status.UNDETERMINED){
-				if (event.getCategory() == GenericEvent.Category.FLOATING){
-					if(event instanceof Event) {
-						System.out.println("ee");
-					}
-					state.undeterminedEvents.add((ReservedEvent) event);
-					//state.addToUndeterminedList((ReservedEvent) event);
-				} else {
-					//state.addToReservedList((ReservedEvent)event);
-					state.reservedEvents.add((ReservedEvent) event);
-				}
-		}
-		
-		
-		/*
-		if (event.getStatus() == GenericEvent.Status.COMPLETE){
-			state.addToCompletedList(event);
-		} else if (event.getStatus() == GenericEvent.Status.INCOMPLETE){
-			state.addToIncompletedList(event);
-		} else if (event.getStatus() == GenericEvent.Status.UNDETERMINED){
-			state.addToFloatingList(event);
-		}*/
-	}
-	
-	private JSONObject castEventToJSONObj(Event event){
-		JSONObject jsonObj = new JSONObject();
-		
-		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
-		Date deadLine = null;
-		
-		try {
-			 deadLine = dfDeadline.parse("1970-01-01");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
-		
-		try {
-			jsonObj.put("name", event.getName());
-			jsonObj.put("description", event.getDescription());
-			jsonObj.put("category", event.getCategory());
-			jsonObj.put("status", event.getStatus());
-			jsonObj.put("location", event.getLocation());
-			
-			if (event.getCategory().equals(GenericEvent.Category.FLOATING)){
-				jsonObj.put("startTime", "null");
-				jsonObj.put("endTime", "null");
-			} else if (event.getCategory().equals(GenericEvent.Category.DEADLINE)){
-				jsonObj.put("startTime", deadLine);
-				jsonObj.put("endTime", event.getEndTime());
-			} else {
-				jsonObj.put("startTime", event.getStartTime());
-				jsonObj.put("endTime", event.getEndTime());
-			}
-			/*
-			if (event.getCategory().equals(GenericEvent.Category.DEADLINE)){
-				jsonObj.put("startTime", deadLine);
-			} else if (event.getCategory().equals(GenericEvent.Category.FLOATING)){
-				jsonObj.put("startTime", "null");
-			} else {
-				jsonObj.put("startTime", event.getStartTime());
-			}
-			
-			if (event.getCategory().equals(GenericEvent.Category.FLOATING)){
-				jsonObj.put("endTime", "null");
-			} else {
-				jsonObj.put("endTime", event.getEndTime());
-			}*/
-			
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		
-		return jsonObj;
-	
-	}
-	
-	////////////////////////
-	private JSONObject castReservedEventToJSONObj(ReservedEvent event){
-		JSONObject jsonObj = new JSONObject();
-		
-		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
-		Date deadLine = null;
-		try {
-			 deadLine = dfDeadline.parse("1970-01-01");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
-		
-		try {
-			jsonObj.put("name", event.getName());
-			jsonObj.put("description", event.getDescription());
-			jsonObj.put("category", event.getCategory());
-			jsonObj.put("endTime", "");
-			jsonObj.put("status", event.getStatus());
-			jsonObj.put("location", event.getLocation());
-			
-			if (event.getCategory().equals(GenericEvent.Category.DEADLINE)){
-				jsonObj.put("startTime", deadLine);
-			} else {
-				jsonObj.put("startTime", "");
-			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return jsonObj;
-	
-	}
-	
-	public Event castJSONObjToEvent(JSONObject jsonObj){
+	private Event castJSONObjToEvent(JSONObject jsonObj){
 		Event event = new Event();
 		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
-		/*
-		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
-		Date deadLine = null;
-		try {
-			 deadLine = dfDeadline.parse("1970-01-01");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}*/
 		
 		try {
 			String startTime = jsonObj.get("startTime").toString();
@@ -385,12 +237,9 @@ public class Storage {
 		return event;
 	}
 	
-	
-	private ReservedEvent castJSONObjToReservedEvent(JSONObject jsonObj){
+	private ReservedEvent castJSONObjToFloatingEvent(JSONObject jsonObj){
 		ReservedEvent event = new ReservedEvent();
-		
 		try {
-			
 			event.setName(jsonObj.getString("name"));
 			event.setDescription(jsonObj.getString("description"));
 			event.setCategory(getCategory(jsonObj));
@@ -402,6 +251,128 @@ public class Storage {
 		}
 		
 		return event;
+	}
+	
+	private ReservedEvent castJSONObjToReservedEvent(JSONObject jsonObj){
+		ReservedEvent event = new ReservedEvent();
+		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+		int max = 100;
+		int count = 0;
+		
+		try {
+			event.setName(jsonObj.getString("name"));
+			event.setDescription(jsonObj.getString("description"));
+			event.setCategory(getCategory(jsonObj));
+			event.setStatus(getStatus(jsonObj));
+			event.setLocation(jsonObj.getString("location"));
+			
+			for (int i = 0; i < 100; i ++){
+				try{
+					jsonObj.getString("startTime" + i);
+				} catch (JSONException e){
+					count = i; 
+					break;
+				}
+			}
+			
+			ArrayList<TimePair> reservedTimes = new ArrayList<TimePair>();
+			for (int i = 0; i < count; i++){
+				TimePair t = new TimePair(df.parse(jsonObj.get("startTime"+i).toString()), 
+						df.parse(jsonObj.get("endTime"+i).toString()));
+				reservedTimes.add(t);
+			}
+			
+			event.setReservedTimes(reservedTimes);
+			
+		} catch (JSONException e2) {
+			e2.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return event;
+	}	
+	
+	
+	private JSONObject castEventToJSONObj(Event event){
+		JSONObject jsonObj = new JSONObject();
+		
+		DateFormat dfDeadline = new SimpleDateFormat("yyyy-M-dd");
+		Date deadLine = null;
+		
+		try {
+			 deadLine = dfDeadline.parse("1970-01-01");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			jsonObj.put("name", event.getName());
+			jsonObj.put("description", event.getDescription());
+			jsonObj.put("category", event.getCategory());
+			jsonObj.put("status", event.getStatus());
+			jsonObj.put("location", event.getLocation());
+			
+			
+			if (event.getCategory().equals(GenericEvent.Category.DEADLINE)){
+				jsonObj.put("startTime", deadLine);
+				jsonObj.put("endTime", event.getEndTime());
+			} else {
+				jsonObj.put("startTime", event.getStartTime());
+				jsonObj.put("endTime", event.getEndTime());
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return jsonObj;
+	
+	}
+	
+	
+	private JSONObject castFloatingEventToJSONObj(ReservedEvent event){
+		JSONObject jsonObj = new JSONObject();
+		
+		try {
+			jsonObj.put("name", event.getName());
+			jsonObj.put("description", event.getDescription());
+			jsonObj.put("category", event.getCategory());
+			jsonObj.put("status", event.getStatus());
+			jsonObj.put("location", event.getLocation());
+			jsonObj.put("startTime", "");
+			jsonObj.put("endTime", "");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return jsonObj;
+	
+	}
+	
+	private JSONObject castReservedEventToJSONObj(ReservedEvent event){
+		JSONObject jsonObj = new JSONObject();
+		
+		try {
+			jsonObj.put("name", event.getName());
+			jsonObj.put("description", event.getDescription());
+			jsonObj.put("category", event.getCategory());
+			jsonObj.put("status", event.getStatus());
+			jsonObj.put("location", event.getLocation());
+			
+			int count = event.getReservedTimes().size();
+			for (int i = 0; i < count; i ++){
+				jsonObj.put("startTime" + i, event.getReservedTimes().get(i).getStartTime());
+				jsonObj.put("endTime" + i, event.getReservedTimes().get(i).getEndTime());
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return jsonObj;
+		
 	}
 	
 	
