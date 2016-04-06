@@ -718,7 +718,7 @@ public class MainWindow {
 	    		createDeadlineEvent((Event) event);
 	    	} else if (event.isEvent()) {
 	    		createSpecificEvent((Event) event);
-	    	} else {
+	    	} else if (event.isReservedEvent()){
 	    		createReservedEvent((ReservedEvent) event);
 	    	}
 		}
