@@ -19,4 +19,4 @@
 {"startTime":"Sun Apr 03 00:00:00 SGT 2016","category":"EVENT","location":"","status":"INCOMPLETE","description":"","name":"someone's birthday","endTime":"Sun Apr 03 23:59:01 SGT 2016"}
 {"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"ass","endTime":"Fri Apr 08 02:00:00 SGT 2016"}
 {"startTime":"Thu Jan 01 00:00:00 SGT 1970","category":"DEADLINE","location":"","status":"INCOMPLETE","description":"","name":"drink more water","endTime":"Thu Apr 07 08:00:00 SGT 2016"}
-{"startTime":"null","category":"FLOATING","location":"","status":"UNDETERMINED","description":"","name":"shit bby thurs 7 am","endTime":"null"}
+{"startTime":"","category":"FLOATING","location":"","status":"UNDETERMINED","description":"","name":"shit bby thurs 7 am","endTime":""}
