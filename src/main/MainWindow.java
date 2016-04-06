@@ -933,7 +933,7 @@ public class MainWindow {
 		int pairNum = specificEvent.getReservedTimes().size();
 		for (int i = 0; i < pairNum; i++) {
 			startDateEvent = specificEvent.getReservedTimes().get(i).getStartTime();
-			endDateEvent = specificEvent.getReservedTimes().get(i).getStartTime();
+			endDateEvent = specificEvent.getReservedTimes().get(i).getEndTime();
 			Calendar startEventCalendar = (Calendar) calendarInstance.clone();
 			startEventCalendar.setTime(startDateEvent);
 			Calendar endEventCalendar = (Calendar) calendarInstance.clone();
@@ -982,6 +982,8 @@ public class MainWindow {
 		minute = startEventCalendar.get(Calendar.MINUTE);
 		yOffset = (int) eventHeight * dayDifference;
 		xOffset = (int) (eventWidth * (hour + minute / 60.0));
+		int i = endEventCalendar.get(Calendar.HOUR_OF_DAY);
+		int b = startEventCalendar.get(Calendar.HOUR_OF_DAY);
 
 		xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
