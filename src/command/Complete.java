@@ -3,37 +3,61 @@ package command;
 import java.io.IOException;
 
 import json.JSONException;
+import main.Event;
 import main.GenericEvent;
+import main.GenericEvent.Status;
 import main.State;
 
 public class Complete {
 	GenericEvent modifiedEvent;
 	State completeState;
 
-	/**
-	 * Add class constructor
-	 * @param modifiedEvent the event that will be added
-	 */
-	public Complete(GenericEvent modifiedEvent){
-		this.modifiedEvent = modifiedEvent;
-	}
+	public Complete(){}
+	
 
 	/**
 	 * Inherited from the Command interface
-	 * execute will add the event to its corresponding list based on status
+	 * execute will edit the event from its corresponding list based on status
 	 * @param completeState the state of all the tasks in the program
-	 * @throws JSONException 
-	 * @throws IOException 
 	 */
-	public State execute(State completeState) throws IOException, JSONException{
-		
+	public State execute(State completeState){
 		this.completeState = completeState;
 		
-
+		if((!checkSelectedEvent()) || (!checkEventType())){
+			return completeState;
+		}
+		
+		modifiedEvent.setStatus(Status.COMPLETE);
 		
 		
 		return completeState;
 		
 	}
 
+	public boolean checkEventType(){
+		if(!(modifiedEvent instanceof Event)){
+			completeState.setErrorMessage(State.MESSAGE_COMPLETE_INVALID_EVENT_TYPE);
+			return false;
+		}
+		if(modifiedEvent.getStatus() != Status.INCOMPLETE){
+			completeState.setErrorMessage(State.MESSAGE_COMPLETE_INVALID_EVENT_STATUS);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean checkSelectedEvent(){
+		
+		if(!completeState.hasSingleEventSelected()){
+			completeState.setErrorMessage(State.MESSAGE_EVENT_NOT_FOUND);
+			return false;
+		}
+		
+		modifiedEvent = completeState.getSingleSelectedEvent();
+
+		
+		return true;
+		
+	}
 }
