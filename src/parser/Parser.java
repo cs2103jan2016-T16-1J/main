@@ -129,7 +129,12 @@ public class Parser {
 		} else if(tempCmd == CommandType.SELECT){		
 			Event event = new Event();
 			event = decodeSelectData(event, removeFirstWord(input));
-			cmdInterface = new Select(event);
+			if(event.getSelection().isEmpty()){
+				cmdInterface = new Select(event);
+
+			} else{
+				cmdInterface = new Select(event.getSelection().get(0));
+			}
 		} else if(tempCmd == CommandType.BLOCK){
 			Event event = new Event();
 			ReservedEvent reserved = new ReservedEvent();
