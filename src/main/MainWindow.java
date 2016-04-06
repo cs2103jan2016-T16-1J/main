@@ -718,6 +718,8 @@ public class MainWindow {
 	    		createDeadlineEvent((Event) event);
 	    	} else if (event.isEvent()) {
 	    		createSpecificEvent((Event) event);
+	    	} else {
+	    		createReservedEvent((ReservedEvent) event);
 	    	}
 		}
 	}
@@ -923,7 +925,25 @@ public class MainWindow {
 		addSpecificEvent(specificEvent, startEventCalendar, endEventCalendar);
 	}
 	
-	private void addSpecificEvent(Event specificEvent, Calendar startEventCalendar, Calendar endEventCalendar) {
+	private void createReservedEvent(ReservedEvent specificEvent) {
+		updateStartCalendar();
+		updateEndCalendar();
+		Date startDateEvent;
+		Date endDateEvent;
+		int pairNum = specificEvent.getReservedTimes().size();
+		for (int i = 0; i < pairNum; i++) {
+			startDateEvent = specificEvent.getReservedTimes().get(i).getStartTime();
+			endDateEvent = specificEvent.getReservedTimes().get(i).getStartTime();
+			Calendar startEventCalendar = (Calendar) calendarInstance.clone();
+			startEventCalendar.setTime(startDateEvent);
+			Calendar endEventCalendar = (Calendar) calendarInstance.clone();
+			endEventCalendar.setTime(endDateEvent);
+			addSpecificEvent(specificEvent, startEventCalendar, endEventCalendar);
+		}
+		
+	}
+	
+	private void addSpecificEvent(GenericEvent specificEvent, Calendar startEventCalendar, Calendar endEventCalendar) {
 		double eventHeight = getEventHeight();
 		double eventWidth = getEventWidth();
 		int dayDifference, hour, minute, yOffset, xOffset;

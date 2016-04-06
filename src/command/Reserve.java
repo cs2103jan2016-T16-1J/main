@@ -47,13 +47,17 @@ public class Reserve implements Command{
 				break;
 			default:
 				completeState.setStatusMessage(State.MESSAGE_INVALID_RESERVED);
+				completeState.hasErrorMessage = true;
+
 				break;
 							
 			}
 		
-		completeState.setOneSelectedEvent(modifiedEvent);
-		
-		completeState.updateDisplayedEvents();
+		if(!completeState.hasErrorMessage){
+			completeState.setOneSelectedEvent(modifiedEvent);
+			
+			completeState.updateDisplayedEvents();
+		}
 		
 		return completeState;
 	}
@@ -72,6 +76,8 @@ public class Reserve implements Command{
 		if(modifiedEvent.getCategory() == Category.FLOATING){
 			
 			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_ADD_WITH_RESERVE);
+			completeState.hasErrorMessage = true;
+
 		} else{
 			completeState.addToReservedList((ReservedEvent)modifiedEvent);
 			completeState.addToUndeterminedList((ReservedEvent)modifiedEvent);
