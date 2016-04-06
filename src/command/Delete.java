@@ -138,7 +138,7 @@ public class Delete implements Command{
 	}
 	
 	private void removeFromUndeterminedList(ReservedEvent e){
-		if(e.getCategory().equals(Constant.CATEGORY_FLOATING)){
+		if(e.getCategory().equals(Category.FLOATING)){
 			completeState.undeterminedEvents.remove(e);
 
 		}
