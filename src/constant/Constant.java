@@ -20,8 +20,8 @@ public class Constant {
 	
 	public static final GenericEvent.Category CATEGORY_NULL = GenericEvent.Category.NULL;
 	
-	public static final String STATUS_INCOMPLETE = "EVENT";
-	public static final String STATUS_COMPLETE = "DEADLINE";
+	public static final String STATUS_INCOMPLETE = "INCOMPLETE";
+	public static final String STATUS_COMPLETE = "COMPLETE";
 	public static final String STATUS_UNDETERMINED = "UNDETERMINED";
 	public static final GenericEvent.Status STATUS_NULL = GenericEvent.Status.NULL;
 	
