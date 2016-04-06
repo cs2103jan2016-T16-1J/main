@@ -102,7 +102,7 @@ public class MainWindow {
 	private int WINDOW_BUTTN_HEIGHT_SECTONS = 2;
 	
 	private int WINDOW_INFO_SECTION_WIDTH_SECTIONS = 2;
-	private int WINDOW_INFO_SECTION_HEIGHT_SECTIONS = 24;
+	private int WINDOW_INFO_SECTION_HEIGHT_SECTIONS = 21;
 	
 	private int WINDOW_FLOATING_SECTION_WIDTH_SECTIONS = 2;
 	private int WINDOW_FLOATING_SECTION_HEIGHT_SECTIONS = 24;
@@ -118,6 +118,9 @@ public class MainWindow {
 
 	private int WINDOW_MONTH_LABEL_WIDTH_SECTIONS = 2;
 	private int WINDOW_MONTH_LABEL_HEIGHT_SECTIONS = 3;
+	
+	private int WINDOW_INFO_LABEL_WIDTH_SECTIONS = 2;
+	private int WINDOW_INFO_LABEL_HEIGHT_SECTIONS = 3;
 	
 	private int WINDOW_CALENDAR_WIDTH_SECTIONS = 11;
 	private int WINDOW_CALENDAR_HEIGHT_SECTIONS = 19;
@@ -155,6 +158,9 @@ public class MainWindow {
 
 	
 	static JLabel lblMonth;
+	static JLabel lblFloating;
+	static JLabel lblInfo;
+
 	static JTable tblCalendar;
 	static JFrame frmMain;
 	static Container pane;
@@ -389,10 +395,23 @@ public class MainWindow {
 	}
 	
 	private void initializeInfoSection() {
+		lblInfo = new JLabel("Selected");
+		
+		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_LABEL_WIDTH_SECTIONS);
+		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_LABEL_HEIGHT_SECTIONS);
+
+		lblInfo.setBounds(0, 0, width, height);
+		lblInfo.setForeground(fontColor);
+		lblInfo.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblInfo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblInfo.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, borderColor));
+		mainTab.add(lblInfo);
+		
 		infoPanel = new JPanel();
-		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS);
-		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS);
-		infoPanel.setBounds(0, 0, width, height);
+		int yOffset = height;
+		height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS);
+		width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS);
+		infoPanel.setBounds(0, yOffset, width, height);
 		infoPanel.setBackground(lightGray);
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 		infoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
@@ -431,7 +450,7 @@ public class MainWindow {
 		infoPanel.add(infoSectionWrapper);
 		int counter = 0;
 		for (GenericEvent currentEvent : arrayList) {
-			addEventDetails(infoSectionWrapper, (Event) currentEvent, counter);
+			addEventDetails(infoSectionWrapper, currentEvent, counter);
 			counter++;
 			if (counter >= 6) {
 				break;
@@ -450,37 +469,70 @@ public class MainWindow {
 		currentPanel.setLayout(layout);
 		
 		GridBagConstraints c = new GridBagConstraints();
+		int gridYCounter = 0;
 	    c.ipady = 5;      //make this component tall
 	    c.gridwidth = 5;
 	    c.gridx = 0;
-	    c.gridy = 0;
+	    c.gridy = gridYCounter;
+	    gridYCounter++;
 		
 		JLabel lblInfoEventName = createInfoLabelTitle(currentEvent, elementNumber);
 		layout.setConstraints(lblInfoEventName, c);
 		currentPanel.add(lblInfoEventName);
 		
 		JLabel lblInfoEventDescription = createInfoLabelDescription(currentEvent);
-		c.gridy = 1;
+		c.gridy = gridYCounter;
+		gridYCounter++;
 		layout.setConstraints(lblInfoEventDescription, c);
 		currentPanel.add(lblInfoEventDescription);
 		
 		JLabel lblInfoEventLocation = createInfoLabelLocation(currentEvent);
-		c.gridy = 2;
+		c.gridy = gridYCounter;
+		gridYCounter++;
 		layout.setConstraints(lblInfoEventLocation, c);
 		currentPanel.add(lblInfoEventLocation);
 		
-		JLabel lblInfoEventStartTime = createInfoLabelStartTime(currentEvent);
-		c.gridy = 3;
-		layout.setConstraints(lblInfoEventStartTime, c);
-		currentPanel.add(lblInfoEventStartTime);
-		
-		JLabel lblInfoEventEndTime = createInfoLabelEndTime( currentEvent);
-		c.gridy = 4;
-		layout.setConstraints(lblInfoEventEndTime, c);
-		currentPanel.add(lblInfoEventEndTime);
+
+		String lblInfoEventEndTimeStr = "";
+		String lblInfoEventStartTimeStr = "";
+		if(currentEvent instanceof Event){
+			lblInfoEventEndTimeStr = ((Event)currentEvent).getEndTimeString();
+			lblInfoEventStartTimeStr = ((Event)currentEvent).getStartTimeString();
+			
+			JLabel lblInfoEventEndTime = createInfoLabelEndTime(lblInfoEventEndTimeStr);
+			c.gridy = gridYCounter;
+			gridYCounter++;
+			layout.setConstraints(lblInfoEventEndTime, c);
+			currentPanel.add(lblInfoEventEndTime);
+			
+			JLabel lblInfoEventStartTime = createInfoLabelStartTime(lblInfoEventStartTimeStr);
+			c.gridy = gridYCounter;
+			gridYCounter++;
+			layout.setConstraints(lblInfoEventStartTime, c);
+			currentPanel.add(lblInfoEventStartTime);
+		} else {
+			int pairNum = ((ReservedEvent)currentEvent).getReservedTimes().size();
+			for (int i = 0; i < pairNum; i++) {
+				lblInfoEventEndTimeStr = ((ReservedEvent)currentEvent).getReservedTimes().get(i).getEndTimeString();
+				lblInfoEventStartTimeStr = ((ReservedEvent)currentEvent).getReservedTimes().get(i).getStartTimeString();
+
+				JLabel lblInfoEventEndTime = createInfoLabelEndTime(lblInfoEventEndTimeStr);
+				c.gridy = gridYCounter;
+				gridYCounter++;
+				layout.setConstraints(lblInfoEventEndTime, c);
+				currentPanel.add(lblInfoEventEndTime);
+				
+				JLabel lblInfoEventStartTime = createInfoLabelStartTime(lblInfoEventStartTimeStr);
+				c.gridy = gridYCounter;
+				gridYCounter++;
+				layout.setConstraints(lblInfoEventStartTime, c);
+				currentPanel.add(lblInfoEventStartTime);
+			}
+		}
 		
 		JLabel lblInfoEventCategory = createInfoLabelCategory(currentEvent);
-		c.gridy = 5;
+		c.gridy = gridYCounter;
+		gridYCounter++;
 		layout.setConstraints(lblInfoEventCategory, c);
 		currentPanel.add(lblInfoEventCategory);
 		
@@ -495,26 +547,17 @@ public class MainWindow {
 		return lblInfoEventCategory;
 	}
 
-	private JLabel createInfoLabelEndTime(GenericEvent currentEvent) {
+	private JLabel createInfoLabelEndTime(String currentEventEndTime) {
 		JLabel lblInfoEventEndTime;
-		if(currentEvent instanceof Event){
-			lblInfoEventEndTime = new JLabel( ((Event)currentEvent).getEndTimeString());
-		} else{
-			lblInfoEventEndTime = new JLabel( ((ReservedEvent)currentEvent).getReservedTimes().get(0).getEndTimeString());
-		}
+		lblInfoEventEndTime = new JLabel(currentEventEndTime);
 		lblInfoEventEndTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblInfoEventEndTime.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventEndTime.setForeground(fontColor);
 		return lblInfoEventEndTime;
 	}
 
-	private JLabel createInfoLabelStartTime(GenericEvent currentEvent) {
-		JLabel lblInfoEventStartTime;
-		if(currentEvent instanceof Event){
-			lblInfoEventStartTime = new JLabel(((Event)currentEvent).getStartTimeString());
-		} else{
-			lblInfoEventStartTime = new JLabel(((ReservedEvent)currentEvent).getReservedTimes().get(0).getStartTimeString());
-		}
+	private JLabel createInfoLabelStartTime(String currentEventStartTime) {
+		JLabel lblInfoEventStartTime =  new JLabel(currentEventStartTime);
 		lblInfoEventStartTime.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		lblInfoEventStartTime.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventStartTime.setForeground(fontColor);
@@ -564,8 +607,7 @@ public class MainWindow {
 		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INPUT_WIDTH_SECTIONS);
 		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INPUT_HEIGHT_SECTIONS);
 		int xOffset = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS);
-		int yOffset = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS) + areaScrollPane.getHeight();
-		
+		int yOffset = (int) (WINDOW_HEIGHT_SECTION * (WINDOW_INFO_SECTION_HEIGHT_SECTIONS + WINDOW_INFO_LABEL_HEIGHT_SECTIONS)) + areaScrollPane.getHeight();
 		
 		textField.setBorder(new LineBorder(borderColor));
 		textField.addKeyListener(new ChangeMonthListener());
@@ -577,7 +619,6 @@ public class MainWindow {
 		width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INPUT_BUTTON_WIDTH_SECTIONS);
 		height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INPUT_BUTTON_HEIGHT_SECTIONS);
 		xOffset = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS) + textField.getWidth();
-		yOffset = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS) + areaScrollPane.getHeight();
 		toggleButton.setBounds(xOffset, yOffset, width, height);
 		mainTab.add(toggleButton);
 	}
@@ -716,7 +757,7 @@ public class MainWindow {
 		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_OUTPUT_WIDTH_SECTIONS);
 		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_OUTPUT_HEIGHT_SECTIONS);
 		int xOffset = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS);
-		int yOffset = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS);
+		int yOffset = (int) (WINDOW_HEIGHT_SECTION * (WINDOW_INFO_SECTION_HEIGHT_SECTIONS + WINDOW_INFO_LABEL_HEIGHT_SECTIONS));
 		//actionsTextArea.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		actionsTextArea.setEditable(false);
 		
@@ -791,7 +832,7 @@ public class MainWindow {
 		
 		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_MONTH_LABEL_WIDTH_SECTIONS);
 		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_MONTH_LABEL_HEIGHT_SECTIONS);
-		int yOffset = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_SECTION_HEIGHT_SECTIONS);
+		int yOffset = (int) (WINDOW_HEIGHT_SECTION * (WINDOW_INFO_SECTION_HEIGHT_SECTIONS + WINDOW_INFO_LABEL_HEIGHT_SECTIONS));
 
 		lblMonth.setBounds(0, yOffset, width, height);
 		mainTab.add(lblMonth);
