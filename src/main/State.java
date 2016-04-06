@@ -131,6 +131,17 @@ public class State {
 		return selectionStatus == MULTIPLE_EVENTS_SELECTED;
 	}
 	
+	public void setOneSelectedEvent(GenericEvent event){
+		clearSelections();
+		addToSelectedEvents(event);
+		selectedEvent = event;
+		setSelectionStatus(State.ONE_EVENT_SELECTED);
+	}
+	
+	public void addToSelectedEvents(GenericEvent event){
+		selectedEvents.add(event);
+	}
+	
 	public int getSelectionStatus(){
 		return selectionStatus;
 	}
