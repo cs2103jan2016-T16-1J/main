@@ -1,5 +1,8 @@
 package command;
 
+import java.io.IOException;
+
+import json.JSONException;
 import main.Event;
 import main.GenericEvent;
 import main.ReservedEvent;
@@ -72,7 +75,13 @@ public class Edit implements Command{
 		Command delete = new Delete(null);
 		Command add = new Add(selectedParameters);
 		
-		//delete.execute();
+		try {
+			completeState = delete.execute(completeState);
+			completeState = add.execute(completeState);
+		} catch (IOException | JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		/*if(originalEvent instanceof Event){
 			//Convert to Reserved Event
