@@ -123,7 +123,7 @@ public class Delete implements Command{
 			removeFromIncompleteList((Event)e);
 			break;
 		case UNDETERMINED:
-			//removeFromFloatingList(e);
+			removeFromUndeterminedList((ReservedEvent)e);
 			break;
 			
 		}
@@ -137,8 +137,14 @@ public class Delete implements Command{
 		completeState.incompletedEvents.remove(e);
 	}
 	
-	private void removeFromFloatingList(ReservedEvent e){
-	//	completeState.floatingEvents.remove(e);
+	private void removeFromUndeterminedList(ReservedEvent e){
+		if(e.getCategory().equals(Constant.CATEGORY_FLOATING)){
+			completeState.undeterminedEvents.remove(e);
+
+		}
+		else{
+			completeState.reservedEvents.remove(e);
+		}
 	}
 	
 	private boolean hasMatchingEvents(ArrayList<GenericEvent> eventsToDelete){
