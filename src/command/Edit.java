@@ -1,12 +1,16 @@
 package command;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
+import constant.Constant;
 import json.JSONException;
 import main.Event;
 import main.GenericEvent;
 import main.ReservedEvent;
 import main.State;
+import main.GenericEvent.Category;
+import main.GenericEvent.Status;
 
 /**
  * Edit class must be instantiated two Events- the original Event and the new edited Event
@@ -83,21 +87,27 @@ public class Edit implements Command{
 			e.printStackTrace();
 		}
 		
-		/*if(originalEvent instanceof Event){
-			//Convert to Reserved Event
-		}
-		else if(originalEvent instanceof ReservedEvent){
-			//Convert to Event
-		}*/
-		
 	}
 
 	public void updateGenericEvent(){
-		originalEvent.setName(selectedParameters.getName());
-		originalEvent.setDescription(selectedParameters.getDescription());
-		originalEvent.setLocation(selectedParameters.getLocation());
-		originalEvent.setCategory(selectedParameters.getCategory());
-		originalEvent.setStatus(selectedParameters.getStatus());
+		if(!selectedParameters.getName().equals(Constant.EMPTY_STRING)){
+			originalEvent.setName(selectedParameters.getName());
+		}
+		if(!selectedParameters.getLocation().equals(Constant.EMPTY_STRING)){
+			originalEvent.setLocation(selectedParameters.getLocation());
+		}
+		if(!selectedParameters.getDescription().equals(Constant.EMPTY_STRING)){
+			originalEvent.setDescription(selectedParameters.getDescription());
+		}
+		if(!selectedParameters.getCategory().equals(Category.FLOATING)){
+			originalEvent.setCategory(selectedParameters.getCategory());
+		}
+		if(!selectedParameters.getStatus().equals(Status.INCOMPLETE)){
+			originalEvent.setStatus(selectedParameters.getStatus());
+		}
+		if(!selectedParameters.getSelection().isEmpty()){
+			originalEvent.setSelection(selectedParameters.getSelection());
+		}
 		
 		if(originalEvent instanceof Event){
 			updateEvent();
@@ -107,7 +117,8 @@ public class Edit implements Command{
 		}
 		
 	}
-	
+
+ 
 	public void updateEvent(){
 		((Event)originalEvent).setStartTime(((Event)selectedParameters).getStartTime());
 		((Event)originalEvent).setEndTime(((Event)selectedParameters).getEndTime());
