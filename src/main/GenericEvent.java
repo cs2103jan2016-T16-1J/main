@@ -96,14 +96,22 @@ public abstract class GenericEvent {
 	 */
 	
 	public boolean isDeadline() {
-		if (this.category == Category.DEADLINE) {
+		if (this.category == Category.DEADLINE && this.status != Status.UNDETERMINED) {
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean isEvent() {
-		if (this.category == Category.EVENT) {
+		if (this.category == Category.EVENT && this.status != Status.UNDETERMINED) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isReservedEvent(){
+		if (this.status == Status.UNDETERMINED && 
+				this.category != Category.FLOATING){
 			return true;
 		}
 		return false;
