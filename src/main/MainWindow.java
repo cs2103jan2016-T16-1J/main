@@ -105,7 +105,7 @@ public class MainWindow {
 	private int WINDOW_INFO_SECTION_HEIGHT_SECTIONS = 21;
 	
 	private int WINDOW_FLOATING_SECTION_WIDTH_SECTIONS = 2;
-	private int WINDOW_FLOATING_SECTION_HEIGHT_SECTIONS = 24;
+	private int WINDOW_FLOATING_SECTION_HEIGHT_SECTIONS = 21;
 	
 	private int WINDOW_OUTPUT_WIDTH_SECTIONS = 7;
 	private int WINDOW_OUTPUT_HEIGHT_SECTIONS = 2;
@@ -121,6 +121,9 @@ public class MainWindow {
 	
 	private int WINDOW_INFO_LABEL_WIDTH_SECTIONS = 2;
 	private int WINDOW_INFO_LABEL_HEIGHT_SECTIONS = 3;
+	
+	private int WINDOW_FLOATING_LABEL_WIDTH_SECTIONS = 2;
+	private int WINDOW_FLOATING_LABEL_HEIGHT_SECTIONS = 3;
 	
 	private int WINDOW_CALENDAR_WIDTH_SECTIONS = 11;
 	private int WINDOW_CALENDAR_HEIGHT_SECTIONS = 19;
@@ -419,11 +422,24 @@ public class MainWindow {
 	}
 	
 	private void initializeFloatingSection() {
-		floatingTasksPanel = new JPanel();
-		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_FLOATING_SECTION_WIDTH_SECTIONS);
-		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_FLOATING_SECTION_HEIGHT_SECTIONS);
+		lblFloating = new JLabel("Floating");
+		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_LABEL_WIDTH_SECTIONS);
+		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INFO_LABEL_HEIGHT_SECTIONS);
 		int xOffset = mainTab.getWidth() - width;
-		floatingTasksPanel.setBounds(xOffset, 0, width, height);
+
+		lblFloating.setBounds(xOffset, 0, width, height);
+		lblFloating.setForeground(fontColor);
+		lblFloating.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblFloating.setHorizontalAlignment(SwingConstants.CENTER);
+		lblFloating.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, borderColor));
+		mainTab.add(lblFloating);
+		
+		floatingTasksPanel = new JPanel();
+		int yOffset = height;
+		width = (int) (WINDOW_WIDTH_SECTION * WINDOW_FLOATING_SECTION_WIDTH_SECTIONS);
+		height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_FLOATING_SECTION_HEIGHT_SECTIONS);
+		xOffset = mainTab.getWidth() - width;
+		floatingTasksPanel.setBounds(xOffset, yOffset, width, height);
 		floatingTasksPanel.setBackground(lightGray);
 		floatingTasksPanel.setLayout(new BoxLayout(floatingTasksPanel, BoxLayout.Y_AXIS));
 		floatingTasksPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, borderColor));
@@ -452,7 +468,7 @@ public class MainWindow {
 		for (GenericEvent currentEvent : arrayList) {
 			addEventDetails(infoSectionWrapper, currentEvent, counter);
 			counter++;
-			if (counter >= 6) {
+			if (counter >= 3) {
 				break;
 			}
 		}
@@ -583,7 +599,7 @@ public class MainWindow {
 	private JLabel createInfoLabelTitle(GenericEvent currentEvent, int id) {
 		String title = String.format("[%d] %s", id + 1, currentEvent.getName());
 		JLabel lblInfoEventName = new JLabel(title);
-		lblInfoEventName.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblInfoEventName.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblInfoEventName.setHorizontalAlignment(SwingConstants.CENTER);
 		lblInfoEventName.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, borderColor));
 		lblInfoEventName.setForeground(fontColor);
