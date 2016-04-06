@@ -1,15 +1,12 @@
 package command;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import json.JSONException;
-import main.Event;
 import main.GenericEvent;
 import main.GenericEvent.Category;
 import main.ReservedEvent;
 import main.State;
-import storage.Storage;
 
 /**
  * Add class must be instantiated with an event to add
@@ -80,8 +77,8 @@ public class Reserve implements Command{
 			
 			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_ADD_WITH_RESERVE);
 		} else{
-			completeState.reservedEvents.add((ReservedEvent)modifiedEvent);
-			completeState.undeterminedEvents.add((ReservedEvent)modifiedEvent);
+			completeState.addToReservedList((ReservedEvent)modifiedEvent);
+			completeState.addToUndeterminedList((ReservedEvent)modifiedEvent);
 
 		}
 	}

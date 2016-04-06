@@ -1,16 +1,12 @@
 package main;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
 import constant.Constant;
 
-import json.JSONException;
 import main.Event;
 import main.GenericEvent.Status;
-import storage.Storage;;
 
 public class State {
 
@@ -155,10 +151,10 @@ public class State {
 	
 	public ArrayList<GenericEvent> getAllEvents(){
 		ArrayList<GenericEvent> allEvents = new ArrayList<GenericEvent>();
-		allEvents.addAll(this.completedEvents);
-		allEvents.addAll(this.incompletedEvents);
-		allEvents.addAll(this.undeterminedEvents);
-		allEvents.addAll(this.reservedEvents);
+		allEvents.addAll(completedEvents);
+		allEvents.addAll(incompletedEvents);
+		allEvents.addAll(undeterminedEvents);
+		allEvents.addAll(reservedEvents);
 		
 		return allEvents;
 	}
@@ -174,11 +170,6 @@ public class State {
 	public  void addToUndeterminedList(ReservedEvent event){
 		undeterminedEvents.add(event);
 	}
-	
-	/*
-	public  void addToFloatingList(ReservedEvent event){
-		floatingEvents.add(event);
-	}*/
 	
 	public  void addToReservedList(ReservedEvent event){
 		reservedEvents.add(event);

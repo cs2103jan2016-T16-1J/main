@@ -1,7 +1,6 @@
 package command;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import json.JSONException;
 import main.Event;
@@ -9,7 +8,6 @@ import main.GenericEvent;
 import main.GenericEvent.Category;
 import main.ReservedEvent;
 import main.State;
-import storage.Storage;
 
 /**
  * Add class must be instantiated with an event to add
@@ -55,19 +53,13 @@ public class Add implements Command{
 		case UNDETERMINED:
 			addToUndeterminedList();
 			break;
-			
-			/*This will be fulfilled by Reseve Command
-		case UNDETERMINED:
-			addToFloatingList();
-			break;*/
-			
 		}
 		
 		/*to select the previously added or reserved event*/
 		completeState.clearSelections();
 		completeState.selectedEvents.add(modifiedEvent);
 		completeState.selectedEvent = modifiedEvent;
-		completeState.setSelectionStatus(completeState.ONE_EVENT_SELECTED);
+		completeState.setSelectionStatus(State.ONE_EVENT_SELECTED);
 		
 		updatedDisplayedEvents();
 		
@@ -87,21 +79,23 @@ public class Add implements Command{
 	 * adds the given task to the completed list in State
 	 */
 	public void addToCompleteList(){
-		completeState.completedEvents.add((Event) modifiedEvent);
+		completeState.addToCompletedList((Event)modifiedEvent);
 	}
 
 	/**
 	 * adds the given task to the incomplete list in State
 	 */
 	public void addToIncompleteList(){
-		completeState.incompletedEvents.add((Event) modifiedEvent);
+		completeState.addToIncompletedList((Event)modifiedEvent);
 	}
 
 	public void addToUndeterminedList(){
 		
 		if(modifiedEvent.getCategory() == Category.FLOATING){
-			completeState.undeterminedEvents.add((ReservedEvent) modifiedEvent);
+			
+			completeState.addToUndeterminedList((ReservedEvent) modifiedEvent);
 		} else{
+			
 			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_RESERVE_WITH_ADD);
 		}
 	}
