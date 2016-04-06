@@ -17,6 +17,7 @@ public class State {
 	public static final String MESSAGE_ATTEMPTED_ADD_WITH_RESERVE = "Cannot create floating event using reserve. Please use the Add command";
 	public static final String MESSAGE_ATTEMPTED_RESERVE_WITH_ADD = "Cannot create reserved event using add. Please use the Reserve command";
 	public static final String MESSAGE_INVALID_RESERVED = "Cannot use Reserve for this type";
+	public static final String MESSAGE_WELCOME = "Welcome to Supahotfire's task manager";
 	public static final int NO_EVENTS_SELECTED = 0;
 	public static final int ONE_EVENT_SELECTED = 1;
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
@@ -67,6 +68,7 @@ public class State {
 		incompletedSelected = new ArrayList<Event>();
 		
 		statusMessage = new String();
+		setStatusMessage(MESSAGE_WELCOME);
 		
 		tabStatus = Constant.TAB_INCOMPLETE;
 
