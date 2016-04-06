@@ -98,6 +98,8 @@ public class Delete implements Command{
 		}		
 		else{
 			completeState.setStatusMessage(State.MESSAGE_NO_SELECTED_EVENT);
+			completeState.hasErrorMessage = true;
+
 		}
 
 		completeState.clearSelections();
@@ -150,6 +152,7 @@ public class Delete implements Command{
 	private boolean hasMatchingEvents(ArrayList<GenericEvent> eventsToDelete){
 		if(eventsToDelete.isEmpty()){
 			completeState.setStatusMessage(State.MESSAGE_EVENT_NOT_FOUND);
+			completeState.hasErrorMessage = true;
 			return false;
 		}
 		

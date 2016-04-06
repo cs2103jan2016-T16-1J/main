@@ -46,7 +46,10 @@ public class Edit implements Command{
 			return completeState;
 		}
 		
-		updateGenericEvent();
+
+		if(checkObjectTypes()){
+			updateGenericEvent();
+		}
 		
 		completeState.updateDisplayedEvents();
 
@@ -55,6 +58,31 @@ public class Edit implements Command{
 		return completeState;
 	}
 	
+	public boolean checkObjectTypes(){
+		//if the objects are not equal
+		if(!selectedParameters.getClass().equals(originalEvent.getClass())){
+			switchObjectTypes();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public void switchObjectTypes(){
+		Command delete = new Delete(null);
+		Command add = new Add(selectedParameters);
+		
+		//delete.execute();
+		
+		/*if(originalEvent instanceof Event){
+			//Convert to Reserved Event
+		}
+		else if(originalEvent instanceof ReservedEvent){
+			//Convert to Event
+		}*/
+		
+	}
+
 	public void updateGenericEvent(){
 		originalEvent.setName(selectedParameters.getName());
 		originalEvent.setDescription(selectedParameters.getDescription());
@@ -74,10 +102,12 @@ public class Edit implements Command{
 	public void updateEvent(){
 		((Event)originalEvent).setStartTime(((Event)selectedParameters).getStartTime());
 		((Event)originalEvent).setEndTime(((Event)selectedParameters).getEndTime());
+		
 	}
 	
 	public void updateReservedEvent(){
 		((ReservedEvent)originalEvent).setReservedTimes(((ReservedEvent)selectedParameters).getReservedTimes());
+		
 		
 	}
 	
