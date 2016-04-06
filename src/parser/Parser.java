@@ -152,7 +152,6 @@ public class Parser {
 		} else if(tempCmd == CommandType.UNDO){
 	
 		} else if(tempCmd == CommandType.REDO){
-			Event event = new Event();
 
 		} else if(tempCmd == CommandType.CONFIRM){
 			Event event = new Event();
