@@ -1,6 +1,7 @@
 package command;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import json.JSONException;
 import main.GenericEvent;
@@ -71,8 +72,9 @@ public class Reserve implements Command{
 		
 		return true;
 	}
+	
 	public void addToUndeterminedList(){
-		
+
 		if(modifiedEvent.getCategory() == Category.FLOATING){
 			
 			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_ADD_WITH_RESERVE);
@@ -80,9 +82,8 @@ public class Reserve implements Command{
 
 		} else{
 			completeState.addToReservedList((ReservedEvent)modifiedEvent);
-			completeState.addToUndeterminedList((ReservedEvent)modifiedEvent);
-
 		}
+
 	}
 
 
