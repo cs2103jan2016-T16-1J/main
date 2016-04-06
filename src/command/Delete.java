@@ -42,7 +42,7 @@ public class Delete implements Command{
 		this.completeState = completeState;
 		
 		if(!hasDeleteParameters()){
-			updatedDisplayedEvents();
+			completeState.updateDisplayedEvents();
 			return completeState;
 		}
 		
@@ -58,7 +58,7 @@ public class Delete implements Command{
 		
 		deleteMatchedEvents(eventsToDelete);
 		
-		updatedDisplayedEvents();
+		completeState.updateDisplayedEvents();
 
 		return completeState;
 	}
@@ -75,8 +75,7 @@ public class Delete implements Command{
 	
 	private void deleteFromSelectedEvents(ArrayList<GenericEvent> eventsToDelete){
 		if((completeState.hasSingleEventSelected()) && (isMatchingEvent(completeState.getSingleSelectedEvent()))){
-			completeState.selectedEvent = null;
-			completeState.selectedEvents.clear();
+			completeState.clearSelections();
 		}
 		if(completeState.hasMultipleEventSelected()){
 			for(GenericEvent e : completeState.getAllSelectedEvents()){
@@ -124,7 +123,7 @@ public class Delete implements Command{
 			removeFromIncompleteList((Event)e);
 			break;
 		case UNDETERMINED:
-			//removeFromFloatingList(e);
+			removeFromUndeterminedList((ReservedEvent)e);
 			break;
 			
 		}
@@ -138,8 +137,14 @@ public class Delete implements Command{
 		completeState.incompletedEvents.remove(e);
 	}
 	
-	private void removeFromFloatingList(ReservedEvent e){
-	//	completeState.floatingEvents.remove(e);
+	private void removeFromUndeterminedList(ReservedEvent e){
+		if(e.getCategory().equals(Category.FLOATING)){
+			completeState.undeterminedEvents.remove(e);
+
+		}
+		else{
+			completeState.reservedEvents.remove(e);
+		}
 	}
 	
 	private boolean hasMatchingEvents(ArrayList<GenericEvent> eventsToDelete){
@@ -236,16 +241,6 @@ public class Delete implements Command{
 		
 		return ((eventEnd.getTime() >= paramStart.getTime()) && (eventEnd.getTime() <= paramEnd.getTime()));
 	}
-	
-	
-	/**
-	 * updates the displayedEvents with new information
-	 */
-	public void updatedDisplayedEvents(){
-		completeState.displayedEvents.clear();
-		completeState.displayedEvents.addAll(completeState.completedEvents);
-		completeState.displayedEvents.addAll(completeState.incompletedEvents);
-		//completeState.displayedEvents.addAll(completeState.floatingEvents);		
-	}
+
 }
 

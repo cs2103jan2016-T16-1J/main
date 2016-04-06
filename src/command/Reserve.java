@@ -3,7 +3,6 @@ package command;
 import java.io.IOException;
 
 import json.JSONException;
-import main.Event;
 import main.GenericEvent;
 import main.GenericEvent.Category;
 import main.ReservedEvent;
@@ -14,7 +13,7 @@ import main.State;
  * @author Reem
  *
  */
-public class Add implements Command{
+public class Reserve implements Command{
 
 	GenericEvent modifiedEvent;
 	State completeState;
@@ -23,7 +22,7 @@ public class Add implements Command{
 	 * Add class constructor
 	 * @param modifiedEvent the event that will be added
 	 */
-	public Add(GenericEvent modifiedEvent){
+	public Reserve(GenericEvent modifiedEvent){
 		this.modifiedEvent = modifiedEvent;
 	}
 
@@ -43,22 +42,18 @@ public class Add implements Command{
 		}
 		
 		switch (modifiedEvent.getStatus()){
-		case COMPLETE:
-			addToCompleteList();
-			break;
-		case INCOMPLETE:
-			addToIncompleteList();
-			break;
-			
-		case UNDETERMINED:
-			addToUndeterminedList();
-			break;
-		}
+			case UNDETERMINED:
+				addToUndeterminedList();
+				break;
+			default:
+				completeState.setStatusMessage(State.MESSAGE_INVALID_RESERVED);
+				break;
+							
+			}
 		
-		/*to select the previously added or reserved event*/
 		completeState.setOneSelectedEvent(modifiedEvent);
 		
-		updatedDisplayedEvents();
+		completeState.updateDisplayedEvents();
 		
 		return completeState;
 	}
@@ -72,39 +67,17 @@ public class Add implements Command{
 		
 		return true;
 	}
-	/**
-	 * adds the given task to the completed list in State
-	 */
-	public void addToCompleteList(){
-		completeState.addToCompletedList((Event)modifiedEvent);
-	}
-
-	/**
-	 * adds the given task to the incomplete list in State
-	 */
-	public void addToIncompleteList(){
-		completeState.addToIncompletedList((Event)modifiedEvent);
-	}
-
 	public void addToUndeterminedList(){
 		
 		if(modifiedEvent.getCategory() == Category.FLOATING){
 			
-			completeState.addToUndeterminedList((ReservedEvent) modifiedEvent);
+			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_ADD_WITH_RESERVE);
 		} else{
-			
-			completeState.setStatusMessage(State.MESSAGE_ATTEMPTED_RESERVE_WITH_ADD);
+			completeState.addToReservedList((ReservedEvent)modifiedEvent);
+			completeState.addToUndeterminedList((ReservedEvent)modifiedEvent);
+
 		}
 	}
-	
-	/**
-	 * updates the displayedEvents with new information
-	 */
-	public void updatedDisplayedEvents(){
-		completeState.displayedEvents.clear();
-		completeState.displayedEvents.addAll(completeState.getCompletedList());
-		completeState.displayedEvents.addAll(completeState.getIncompletedList());
-		completeState.displayedEvents.addAll(completeState.getReservedList());		
-	}
+
 
 }

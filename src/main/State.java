@@ -1,16 +1,11 @@
 package main;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Stack;
 import constant.Constant;
 
-import json.JSONException;
 import main.Event;
 import main.GenericEvent.Status;
-import storage.Storage;;
 
 public class State {
 
@@ -19,6 +14,10 @@ public class State {
 	public static final String MESSAGE_TOO_MANY_SELECTIONS = "More than one result was found. Please select the desired event's number";
 	public static final String MESSAGE_NO_SELECTED_EVENT = "No event has been selected. Please select an event.";
 	public static final String MESSAGE_INVALID_INDEX = "Please select a valid index";
+	public static final String MESSAGE_ATTEMPTED_ADD_WITH_RESERVE = "Cannot create floating event using reserve. Please use the Add command";
+	public static final String MESSAGE_ATTEMPTED_RESERVE_WITH_ADD = "Cannot create reserved event using add. Please use the Reserve command";
+	public static final String MESSAGE_INVALID_RESERVED = "Cannot use Reserve for this type";
+	public static final String MESSAGE_WELCOME = "Welcome to Supahotfire's task manager";
 	public static final int NO_EVENTS_SELECTED = 0;
 	public static final int ONE_EVENT_SELECTED = 1;
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
@@ -59,7 +58,6 @@ public class State {
 		undeterminedEvents = new ArrayList<ReservedEvent>();
 		reservedEvents = new ArrayList<ReservedEvent>(); 
 		
-		//floatingEvents = new ArrayList<ReservedEvent>();
 		displayedEvents = new ArrayList<GenericEvent>();
 		selectedEvents = new ArrayList<GenericEvent>();
 		
@@ -70,6 +68,7 @@ public class State {
 		incompletedSelected = new ArrayList<Event>();
 		
 		statusMessage = new String();
+		setStatusMessage(MESSAGE_WELCOME);
 		
 		tabStatus = Constant.TAB_INCOMPLETE;
 
@@ -135,6 +134,17 @@ public class State {
 		return selectionStatus == MULTIPLE_EVENTS_SELECTED;
 	}
 	
+	public void setOneSelectedEvent(GenericEvent event){
+		clearSelections();
+		addToSelectedEvents(event);
+		selectedEvent = event;
+		setSelectionStatus(State.ONE_EVENT_SELECTED);
+	}
+	
+	public void addToSelectedEvents(GenericEvent event){
+		selectedEvents.add(event);
+	}
+	
 	public int getSelectionStatus(){
 		return selectionStatus;
 	}
@@ -148,15 +158,15 @@ public class State {
 	}
 	
 	public String getStatusMessage(){
-		return this.statusMessage;
+		return statusMessage;
 	}
 	
 	public ArrayList<GenericEvent> getAllEvents(){
 		ArrayList<GenericEvent> allEvents = new ArrayList<GenericEvent>();
-		allEvents.addAll(this.completedEvents);
-		allEvents.addAll(this.incompletedEvents);
-		allEvents.addAll(this.undeterminedEvents);
-		allEvents.addAll(this.reservedEvents);
+		allEvents.addAll(completedEvents);
+		allEvents.addAll(incompletedEvents);
+		allEvents.addAll(undeterminedEvents);
+		allEvents.addAll(reservedEvents);
 		
 		return allEvents;
 	}
@@ -173,25 +183,39 @@ public class State {
 		undeterminedEvents.add(event);
 	}
 	
-	/*
-	public  void addToFloatingList(ReservedEvent event){
-		floatingEvents.add(event);
-	}*/
-	
 	public  void addToReservedList(ReservedEvent event){
 		reservedEvents.add(event);
 	}
 	
-	public void sortDisplayedEvents() {
-		//Collections.sort(this.displayedEvents, new CustomEndTimeComparator());
+
+	public  ArrayList<Event> getCompletedList(){
+		return completedEvents;
 	}
 	
-	private class CustomEndTimeComparator implements Comparator<Event> {
-	    @Override
-	    public int compare(Event o1, Event o2) {
-	        return o1.getEndTime().compareTo(o2.getEndTime());
-	    }
+	public  ArrayList<Event> getIncompletedList(){
+		return incompletedEvents;
 	}
+	
+	public  ArrayList<ReservedEvent> getUndeterminedList(){
+		return undeterminedEvents;
+	}
+	
+	public  ArrayList<ReservedEvent> getReservedList(){
+		return undeterminedEvents;
+	}
+	
+	public  ArrayList<ReservedEvent> getFloatingList(){
+		return undeterminedEvents;
+	}
+	
+	public void updateDisplayedEvents(){
+		displayedEvents.clear();
+		displayedEvents.addAll(completedEvents);
+		displayedEvents.addAll(incompletedEvents);
+		displayedEvents.addAll(reservedEvents);		
+	}
+ 
+	
 
 }
 
