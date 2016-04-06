@@ -46,18 +46,14 @@ public class Reserve implements Command{
 				addToUndeterminedList();
 				break;
 			default:
-				//completeState.setStatusMessage(State.MESSAGE_INVALID_RESERVED);
+				completeState.setStatusMessage(State.MESSAGE_INVALID_RESERVED);
 				break;
 							
 			}
 		
-		/*to select the previously added or reserved event*/
-		completeState.clearSelections();
-		completeState.selectedEvents.add(modifiedEvent);
-		completeState.selectedEvent = modifiedEvent;
-		completeState.setSelectionStatus(State.ONE_EVENT_SELECTED);
+		completeState.setOneSelectedEvent(modifiedEvent);
 		
-		updatedDisplayedEvents();
+		completeState.updateDisplayedEvents();
 		
 		return completeState;
 	}
@@ -83,15 +79,5 @@ public class Reserve implements Command{
 		}
 	}
 
-
-	/**
-	 * updates the displayedEvents with new information
-	 */
-	public void updatedDisplayedEvents(){
-		completeState.displayedEvents.clear();
-		completeState.displayedEvents.addAll(completeState.completedEvents);
-		completeState.displayedEvents.addAll(completeState.incompletedEvents);
-		completeState.displayedEvents.addAll(completeState.undeterminedEvents);		
-	}
 
 }
