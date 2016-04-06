@@ -29,7 +29,7 @@ public class Select implements Command{
 	}
 	
 	public Select(int index){
-		this.index = index;
+		this.index = index -1;
 		selectByIndex = true;
 	}
 	
@@ -37,9 +37,7 @@ public class Select implements Command{
 	public State execute(State completeState) throws IOException, JSONException {
 		// TODO Auto-generated method stub
 		this.completeState = completeState;
-		
-		completeState.clearSelections();
-		
+				
 		ArrayList<GenericEvent> allEvents = completeState.getAllEvents();
 		///for each event in allEvents check if it matches selectedParameters
 		//if the event does, clone it and add it to completeState.selectedEvents
@@ -58,6 +56,7 @@ public class Select implements Command{
 		if(!completeState.hasEventSelected() || completeState.hasSingleEventSelected()){
 			return false;
 		}
+
 		//if an invalid index is provided
 		if(index > completeState.selectedEvents.size()){
 			completeState.setStatusMessage(State.MESSAGE_INVALID_INDEX);
@@ -69,6 +68,7 @@ public class Select implements Command{
 		
 		completeState.selectedEvents.clear();
 		completeState.selectedEvents.add(completeState.selectedEvent);
+		completeState.setSelectionStatus(State.ONE_EVENT_SELECTED);
 		
 		return true;
 	}
@@ -91,6 +91,7 @@ public class Select implements Command{
 	
 
 	private void getMatchingEvents(ArrayList<GenericEvent> allEvents){
+		completeState.clearSelections();
 	
 		for(GenericEvent e: allEvents){
 			if(isMatchingEvent(e)){
