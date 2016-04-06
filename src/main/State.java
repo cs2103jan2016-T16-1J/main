@@ -204,6 +204,13 @@ public class State {
 	public  ArrayList<ReservedEvent> getFloatingList(){
 		return undeterminedEvents;
 	}
+	
+	public void updateDisplayedEvents(){
+		displayedEvents.clear();
+		displayedEvents.addAll(completedEvents);
+		displayedEvents.addAll(incompletedEvents);
+		displayedEvents.addAll(reservedEvents);		
+	}
  
 	
 
