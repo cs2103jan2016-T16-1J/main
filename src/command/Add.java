@@ -56,10 +56,7 @@ public class Add implements Command{
 		}
 		
 		/*to select the previously added or reserved event*/
-		completeState.clearSelections();
-		completeState.selectedEvents.add(modifiedEvent);
-		completeState.selectedEvent = modifiedEvent;
-		completeState.setSelectionStatus(State.ONE_EVENT_SELECTED);
+		completeState.setOneSelectedEvent(modifiedEvent);
 		
 		updatedDisplayedEvents();
 		
@@ -105,9 +102,9 @@ public class Add implements Command{
 	 */
 	public void updatedDisplayedEvents(){
 		completeState.displayedEvents.clear();
-		completeState.displayedEvents.addAll(completeState.completedEvents);
-		completeState.displayedEvents.addAll(completeState.incompletedEvents);
-		completeState.displayedEvents.addAll(completeState.undeterminedEvents);		
+		completeState.displayedEvents.addAll(completeState.getCompletedList());
+		completeState.displayedEvents.addAll(completeState.getIncompletedList());
+		completeState.displayedEvents.addAll(completeState.getReservedList());		
 	}
 
 }
