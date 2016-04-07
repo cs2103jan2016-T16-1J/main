@@ -416,7 +416,6 @@ public class Storage {
 		 			File temp = new File (destinationFileName);
 			 		if (temp.exists()){
 			 			clearFile(destinationFileName);
-			 			System.out.println("delete " + destinationFileName);
 			 		}
 			 		
 		 			Files.copy(source, output, REPLACE_EXISTING);
