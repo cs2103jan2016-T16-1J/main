@@ -1000,10 +1000,10 @@ public class MainWindow {
 		JTextField currentEvent = new JTextField();
 		if (elipsis) {
 			double ratio = 8.42;	// the ratio of the name that would fits in one block
-			System.out.println(name + name.length());
 			if (name.length() != 0){
-				if (eventWidth/name.length() < ratio) {
-					System.out.println((int)(eventWidth/ratio));
+				if (eventWidth < 43){
+					currentEvent.setText(name.substring(0,1) + "..");
+				} else if (eventWidth/name.length() < ratio && eventWidth >= 43) {
 					currentEvent.setText(name.substring(0, ((int)(eventWidth/ratio)-2)) + "...");
 				} else {
 					currentEvent.setText(name);

@@ -68,7 +68,6 @@ public class Controller{
 		}
 		
 		userCommand.execute(completeState);
-		System.out.println(directory);
 		assert isValidCommand(userCommand);
 		//assert false;
 		storage.stateToStorage(completeState, directory);

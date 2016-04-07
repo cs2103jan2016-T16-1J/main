@@ -403,7 +403,8 @@ public class Storage {
 		completeState.displayedEvents.clear();
 		completeState.displayedEvents.addAll(completeState.completedEvents);
 		completeState.displayedEvents.addAll(completeState.incompletedEvents);
-		completeState.displayedEvents.addAll(completeState.undeterminedEvents);		
+		completeState.displayedEvents.addAll(completeState.undeterminedEvents);	
+		completeState.displayedEvents.addAll(completeState.reservedEvents);	
 	}
 	
 	private void copyStorage(String sorucefileName, String destinationFileName) {
@@ -415,7 +416,6 @@ public class Storage {
 		 			File temp = new File (destinationFileName);
 			 		if (temp.exists()){
 			 			clearFile(destinationFileName);
-			 			System.out.println("delete " + destinationFileName);
 			 		}
 			 		
 		 			Files.copy(source, output, REPLACE_EXISTING);
