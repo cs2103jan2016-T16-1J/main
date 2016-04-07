@@ -128,7 +128,6 @@ public class Edit implements Command{
 		
 		newEvent.setEndTime(checkEndTimeParameter(Constant.MAX_DATE));
 
-		
 		return newEvent;
 	}
 	
@@ -161,7 +160,7 @@ public class Edit implements Command{
 	}
 	
 	public Status checkStatusParameter(Status original){
-		if(!selectedParameters.getStatus().equals(Status.INCOMPLETE)){
+		if(selectedParameters.getStatus().equals(Status.INCOMPLETE)){
 			return selectedParameters.getStatus();
 		}
 		return original;

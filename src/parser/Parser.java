@@ -340,7 +340,7 @@ public class Parser {
 		/**extract "task name that has preposition on, from, to, by, at" **/
 		task = determineQuotedInput(task, remainingInput);
 		
-		/**to find AND in a sentence**/
+		/**to find conjunction AND in a sentence**/
 		Pattern pattern = Pattern.compile(PATTERN_AND,Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(remainingInput);
 				
