@@ -17,6 +17,7 @@ public class State {
 	public static final String MESSAGE_ATTEMPTED_ADD_WITH_RESERVE = "Cannot create floating event using reserve. Please use the Add command";
 	public static final String MESSAGE_ATTEMPTED_RESERVE_WITH_ADD = "Cannot create reserved event using add. Please use the Reserve command";
 	public static final String MESSAGE_INVALID_RESERVED = "Cannot use Reserve for this type";
+	public static final String MESSAGE_INVALID_CONFIRM = "Cannot use confirm an event that is not a reserved type";
 	public static final String MESSAGE_WELCOME = "Welcome to Supahotfire's task manager";
 	public static final String MESSAGE_COMPLETE_INVALID_EVENT_TYPE = "You cannot complete a reserved or floating event";
 	public static final String MESSAGE_COMPLETE_INVALID_EVENT_STATUS = "You can only complete events with the status incomplete";
