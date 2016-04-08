@@ -56,8 +56,7 @@ public class Parser {
 	private final String PATTERN_TOM = "(\\btom\\b)";
 	private final String PATTERN_YES = "(\\byes\\b)";
 	private final String PATTERN_PREP_ALL = "(\\b(on)\\b|\\b(by)\\b|\\b(from)\\b|\\b(at)\\b)";
-	private final String PATTERN_KEYWORD_ALL = "(\\b(starttime)\\b|\\b(startdate)\\b|\\b(endtime)\\b"
-			+ "|\\b(enddate)\\b|\\b(location)\\b|\\b(note)\\b)";
+	private final String PATTERN_KEYWORD_ALL = "(\\b(starttime)\\b|\\b(startdate)\\b|\\b(endtime)\\b|\\b(enddate)\\b|\\b(location)\\b|\\b(note)\\b)";
 
 	private final String PREP_ON = "on";
 	private final String PREP_AT = "at";
@@ -302,7 +301,6 @@ public class Parser {
 	 */
 	private GenericEvent decodeAddData(Event task, String input){
 		String remainingInput = extractDescription(task, input);
-		remainingInput = extractLocation(task, remainingInput);
 		task =  determineQuotedInput(task, remainingInput);
 		task =  decodeDataFromInput(task, remainingInput);
 		
@@ -336,7 +334,7 @@ public class Parser {
 		String remainingInput = extractDescription(task, input);
 		
 		/**extract location from the input if it is declared**/
-		remainingInput = extractLocation(task, remainingInput);
+		remainingInput = extractLocationFromAt(task, remainingInput);
 		
 		/**extract "task name that has preposition on, from, to, by, at" **/
 		task = determineQuotedInput(task, remainingInput);
@@ -396,7 +394,7 @@ public class Parser {
 		}
 		
 		/**extract location from the input if it is declared**/
-		remainingInput = extractLocation(task, remainingInput);
+		remainingInput = extractLocationFromAt(task, remainingInput);
 		
 		/**extract "task name that has preposition on, from, to, by, at" **/
 		task = determineQuotedInput(task, remainingInput);
@@ -594,7 +592,7 @@ public class Parser {
 		}
 		
 		/**extract location from the input if it is declared**/
-		remainingInput = extractLocation(task, remainingInput);
+		remainingInput = extractLocationFromAt(task, remainingInput);
 		
 		/**extract "task name that has preposition on, from, to, by, at" **/
 		task = determineQuotedInput(task, remainingInput);
@@ -730,6 +728,8 @@ public class Parser {
 		matchPattern = matchPatternOfFirstOccurrence(PATTERN_KEYWORD_ALL, input);
 
 		if(matchPattern[0] == 0 && matchPattern[1] == 0){		/*No Keyword found*/
+			input = extractLocationFromAt(task, input);
+
 			pattern = Pattern.compile(PATTERN_PREP_ALL,Pattern.CASE_INSENSITIVE);
 			matcher = pattern.matcher(input);
 			matchPattern = matchPatternOfFirstOccurrence(PATTERN_PREP_ALL, input);		
@@ -835,7 +835,7 @@ public class Parser {
 						task.setStartTime(DateChecker.writeTime(writtenDate, time));
 						recordedDate = writtenDate;
 					}
-				} else if(dateTime[0] != null && dateTime[1] != null){
+				} else if(dateTime[0] != null && dateTime[1] != null){	/*tues 11:00 or tues 11 pm*/
 					task.setStartTime(DateChecker.writeTime(dateTime[0], DateChecker.convertAmPmToTime(dateTime[1])));
 				}
 			} else if(dateTime[0] != null && dateTime[1] != null){
@@ -878,14 +878,14 @@ public class Parser {
 					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 					String today = sdf.format(new Date());
 					Date todayDate = DateChecker.writeTime(today, time);
-					task.setStartTime(todayDate);
+					task.setEndTime(todayDate);
 
 					if(cal.getTime().after(todayDate)){
 						int interval = 1;
-						task.setStartTime(DateChecker.findDate(interval));
+						task.setEndTime(DateChecker.findDate(interval));
 
 						String writtenDate = formatToString.format(task.getStartTime());
-						task.setStartTime(DateChecker.writeTime(writtenDate, time));
+						task.setEndTime(DateChecker.writeTime(writtenDate, time));
 					}
 				} else if(dateTime[0] != null && dateTime[1] != null){
 					time = DateChecker.convertAmPmToTime(dateTime[1]);
@@ -1348,14 +1348,14 @@ public class Parser {
 		return dateTime;
 	}
 
-	private String extractLocation(Event event, String input){
-		String location = "";
+	private String extractLocationFromAt(Event event, String input){
+		String unknownData = "";
 		int[] indexes = matchPatternOfLastOccurrence(PATTERN_AT, input);
 		
 		if(indexes[0] != 0 && indexes[1] != 0 && indexes[0] != indexes[1]){
-			location = input.substring(indexes[1], input.length()).trim();
-			if(DateChecker.validateDate(location) ==null){
-				event.setLocation(location);
+			unknownData = input.substring(indexes[1], input.length()).trim();
+			if(DateChecker.validateDate(unknownData) ==null && DateChecker.validateTime(unknownData) == null){
+				event.setLocation(unknownData);
 				return (input.substring(0, indexes[0]).trim());
 			}
 		} 
