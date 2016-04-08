@@ -453,11 +453,11 @@ public class Parser {
 
 	private Status decodeChangeTab(String input){
 		input = input.toUpperCase();
-		if(input.contains(TAB_UNDETERMINED)){
+		if(input.contains("U")){
 			return Constant.TAB_UNDETERMINED;
-		} else if(input.contains(TAB_COMPLETED)){
+		} else if(input.contains("C")){
 			return Constant.TAB_COMPLETE;
-		} else if(input.contains(TAB_INCOMPLETE)){
+		} else if(input.contains("I")){
 			return Constant.TAB_INCOMPLETE;
 		}
 		
