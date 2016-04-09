@@ -363,17 +363,20 @@ public class Parser {
 
 		/**decode all the other information like name, location from input**/
 		task = decodeDataFromInput(task, choppedInputData.get(0));
+		if(task == null){
+			return null;
+		} 
+		
 		TimePair reservedTime = new TimePair(task.getStartTime(),task.getEndTime());
 		reservedTimes.add(reservedTime);
 		name = task.getName().trim();
 		
-		if(name.isEmpty()){
-			return null;
-		}
 		/**check if the connected data are date time **/
 		for(int i = 1; i < choppedInputData.size(); i++){
 			task.setStartTime(Constant.MIN_DATE);
 			task.setEndTime(Constant.MAX_DATE);
+			task.setName(name);
+			isNameDefined = true;
 			task = decodeDataFromInput(task, choppedInputData.get(i));
 
 			if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() == Constant.MAX_DATE){
@@ -434,6 +437,7 @@ public class Parser {
 		for(int i = 1; i < choppedInputData.size(); i++){
 			task.setStartTime(Constant.MIN_DATE);
 			task.setEndTime(Constant.MAX_DATE);
+			task.setName(name);
 			task = decodeDataFromInput(task, choppedInputData.get(i));
 
 			if(task.getStartTime() == Constant.MIN_DATE && task.getEndTime() == Constant.MAX_DATE){
@@ -751,7 +755,9 @@ public class Parser {
 			isPreposition = true;
 		} 
 
-		if(matchPattern[0] == 0 && matchPattern[1]!=0){			
+		if(!task.getName().isEmpty()){
+			isNameDefined = true;
+		}else if(matchPattern[0] == 0 && matchPattern[1]!=0){			
 			isNameDefined = false;
 		} else if(matchPattern[0] == 0 && matchPattern[1] ==0){
 			isNameDefined = true;
@@ -982,7 +988,7 @@ public class Parser {
 			task.setName(name);
 		}
 		
-		if(name == null){
+		if(task.getName().isEmpty()){
 			task = null;
 			return task;
 		}
