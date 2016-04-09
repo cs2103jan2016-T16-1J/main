@@ -16,6 +16,10 @@ public class ChangeTab implements Command{
 	
 	public State execute(State completeState) throws IOException, JSONException{
 		
+		completeState.completedEvents  = 		completeState.completedEvents;
+		completeState.displayedEvents = 		completeState.displayedEvents;
+		completeState.incompletedEvents = completeState.incompletedEvents;
+		
 		completeState.setSelectedTab(newTab);
 		return completeState;
 	}
