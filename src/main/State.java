@@ -40,7 +40,7 @@ public class State {
 	
 	public ArrayList<GenericEvent> displayedEvents;
 	public ArrayList<GenericEvent> selectedEvents;
-	Stack<GenericEvent> eventHistory;
+	public Stack<State> eventHistory;
 	
 	public boolean hasErrorMessage;
 	public GenericEvent selectedEvent;
@@ -69,6 +69,8 @@ public class State {
 		undeterminedSelected = new ArrayList<ReservedEvent>();
 		completedSelected = new ArrayList<Event>();
 		incompletedSelected = new ArrayList<Event>();
+		
+		eventHistory = new Stack<State>();
 		
 		statusMessage = new String();
 		setStatusMessage(MESSAGE_WELCOME);
