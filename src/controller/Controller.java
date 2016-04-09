@@ -65,6 +65,7 @@ public class Controller{
 		userCommand = parser.parseCommand(commandText); //parser should return Command
 		if(null == userCommand){
 			completeState.setStatusMessage(State.MESSAGE_PARSE_ERROR);
+			return completeState;
 		}
 		
 		userCommand.execute(completeState);
