@@ -168,7 +168,7 @@ public class Edit implements Command{
 	}
 
 	public Date checkStartTimeParameter(Date original){
-		if(((Event)selectedParameters).getStartTime().equals(Constant.MIN_DATE)){
+		if(!((Event)selectedParameters).getStartTime().equals(Constant.MIN_DATE)){
 			return ((Event)selectedParameters).getStartTime();
 		}
 		return original;

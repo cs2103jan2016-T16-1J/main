@@ -6,11 +6,20 @@ import json.JSONException;
 import main.State;
 
 public class Undo implements Command{
+	State completeState;
 
 	@Override
 	public State execute(State completeState) throws IOException, JSONException {
 		// TODO Auto-generated method stub
-		return null;
+		
+		this.completeState = completeState;
+		
+		if(completeState.eventHistory.isEmpty()){
+			return completeState;
+		}
+		
+		
+		return completeState.eventHistory.pop();
 	}
 
 }
