@@ -81,6 +81,13 @@ public abstract class GenericEvent {
 		return this.location;
 	}
 
+	public boolean hasSelection(){
+		if(selection.isEmpty()){
+			return false;
+		}
+		
+		return true;
+	}
 	
 	public List<Integer> getSelection(){
 		return selection;
