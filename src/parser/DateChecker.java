@@ -170,6 +170,39 @@ public class DateChecker {
 	}
 
 
+	public static Date convertNextWeekDayToDate(String stringDateInput){
+		int beginIndex = 0;
+		int endIndex = 3;
+		Initialization();
+		
+		String dayAbbreviation = stringDateInput.substring(beginIndex, endIndex);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
+		String stringToday = dateFormat.format(dateToday);
+		
+		Date todayDate = null;
+
+		try {
+			todayDate = dateFormat.parse(stringToday);
+		} catch (ParseException e) {
+			
+		}
+		
+		if(dayAbbreviation.equalsIgnoreCase(SUN)){
+			int interval;
+			if(intToday == SUNDAY){
+				interval = (SUNDAY + DAYS_IN_WEEK);
+				return findDate(interval);
+			} else if(intToday < SUNDAY){
+				interval = (SUNDAY - intToday) + DAYS_IN_WEEK;
+				return findDate(interval);
+			} else{
+				interval = (intToday - SUNDAY) + DAYS_IN_WEEK;
+				return findDate(interval);
+			}
+		} 
+		
+		return null;
+	}
 	public static Date convertDayToDate(String stringDateInput){
 		int beginIndex = 0;
 		int endIndex = 3;
@@ -183,7 +216,7 @@ public class DateChecker {
 		try {
 			todayDate = dateFormat.parse(stringToday);
 		} catch (ParseException e) {
-			//e.printStackTrace();
+
 		}
 		if (dayAbbreviation.equalsIgnoreCase(SUN)){
 			int interval;
@@ -269,8 +302,7 @@ public class DateChecker {
 				return findDate(interval);
 			}
 		}
-		todayDate = null;
-		return todayDate;
+		return null;
 	}
 
 	public static Date findDate(int interval){
@@ -281,6 +313,7 @@ public class DateChecker {
 		String newDate = dateFormat.format(calendar.getTime());
 		return (parseInputDate(newDate));
 	}
+	
 	
 	/**
 	 * This method replaces the hour and minutes of the DateTime with the specified time
