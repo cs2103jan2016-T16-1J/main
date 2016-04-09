@@ -982,7 +982,6 @@ public class Parser {
 		int newEndIndex = 0;
 		SimpleDateFormat formatToString = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-	
 		if(task.getName().isEmpty() && isNameDefined){
 			name = input.substring(startIndex , endIndex).trim();
 			task.setName(name);
