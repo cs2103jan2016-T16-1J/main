@@ -25,6 +25,10 @@ public class Confirm implements Command{
 	 * @param originalEvent the original event located in completeState
 	 * @param editedEvent new information in the form of an Event object that will replace the original event
 	 */
+	
+	public Confirm(int index){
+		
+	}
 
 	public Confirm(Date startTime, Date endTime, String stringStartTime, String stringEndTime){
 		this.startTime = startTime;

@@ -66,8 +66,11 @@ public class Delete implements Command{
 	private boolean hasDeleteParameters(){
 		if(null == selectedParameters){
 			deleteStateSelectedEvent();
+			return false;		
+		}
+		if(selectedParameters.hasSelection()){
+			deleteStateSelectedEvent();
 			return false;
-			
 		}
 		
 		return true;
@@ -90,20 +93,40 @@ public class Delete implements Command{
 	private void deleteStateSelectedEvent(){
 		if(completeState.hasSingleEventSelected()){
 			deleteFromCorrespondingArray(completeState.getSingleSelectedEvent());
+			completeState.clearSelections();
 		}
 		else if(completeState.hasMultipleEventSelected()){
-			for(GenericEvent e : completeState.getAllSelectedEvents()){
-				deleteFromCorrespondingArray(e);
-			}
+			evaluateSelectedEvents();
 		}		
 		else{
-			completeState.setStatusMessage(State.MESSAGE_NO_SELECTED_EVENT);
-			completeState.hasErrorMessage = true;
-
+			completeState.setErrorMessage(State.MESSAGE_NO_SELECTED_EVENT);
 		}
 
-		completeState.clearSelections();
+	}
 
+	private void evaluateSelectedEvents(){
+		if(null == selectedParameters){
+			deleteFromMultipleSelectedEvents();
+			completeState.clearSelections();
+		}
+		else{
+			int index = selectedParameters.getSelection().get(0) - 1;
+			
+			if((index < 0) || (index > completeState.selectedEvents.size())){
+				completeState.setErrorMessage(State.MESSAGE_INVALID_INDEX);
+			}
+			else{
+				deleteFromCorrespondingArray(completeState.getAllSelectedEvents().get(index));
+				completeState.selectedEvents.remove(index);
+				
+			}
+		}
+	}
+	
+	private void deleteFromMultipleSelectedEvents() {
+		for(GenericEvent e : completeState.getAllSelectedEvents()){
+			deleteFromCorrespondingArray(e);
+		}
 	}
 	
 	private void deleteMatchedEvents(ArrayList<GenericEvent> eventsToDelete){
