@@ -173,6 +173,8 @@ public class DateChecker {
 	public static Date convertNextWeekDayToDate(String stringDateInput){
 		int beginIndex = 0;
 		int endIndex = 3;
+		int interval;
+
 		Initialization();
 		
 		String dayAbbreviation = stringDateInput.substring(beginIndex, endIndex);
@@ -188,9 +190,8 @@ public class DateChecker {
 		}
 		
 		if(dayAbbreviation.equalsIgnoreCase(SUN)){
-			int interval;
 			if(intToday == SUNDAY){
-				interval = (SUNDAY + DAYS_IN_WEEK);
+				interval = (SUNDAY + DAYS_IN_WEEK) - intToday;
 				return findDate(interval);
 			} else if(intToday < SUNDAY){
 				interval = (SUNDAY - intToday) + DAYS_IN_WEEK;
@@ -199,7 +200,73 @@ public class DateChecker {
 				interval = (intToday - SUNDAY) + DAYS_IN_WEEK;
 				return findDate(interval);
 			}
-		} 
+		}  else if(dayAbbreviation.equalsIgnoreCase(MON)){
+			if(intToday == MONDAY){
+				interval = (MONDAY + DAYS_IN_WEEK) - intToday;
+				return findDate(interval);
+			} else if(intToday < MONDAY){
+				interval = (MONDAY - intToday) + DAYS_IN_WEEK;
+				return findDate(interval);
+			} else{
+				interval = (intToday - MONDAY) + DAYS_IN_WEEK;
+				return findDate(interval);
+			}
+		} else if(dayAbbreviation.equalsIgnoreCase(TUE)){
+			if(intToday == TUESDAY){
+				interval = (TUESDAY + DAYS_IN_WEEK) - intToday;
+				return findDate(interval);
+			} else if(intToday < TUESDAY){
+				interval = (TUESDAY - intToday) + DAYS_IN_WEEK;
+				return findDate(interval);
+			} else{
+				interval = (intToday - TUESDAY) + DAYS_IN_WEEK;
+				return findDate(interval);
+			}
+		} else if(dayAbbreviation.equalsIgnoreCase(WED)){
+			if(intToday == WEDNESDAY){
+				interval = (WEDNESDAY + DAYS_IN_WEEK) - intToday;
+				return findDate(interval);
+			} else if(intToday < WEDNESDAY){
+				interval = (WEDNESDAY - intToday) + DAYS_IN_WEEK;
+				return findDate(interval);
+			} else{
+				interval = (intToday - WEDNESDAY) + DAYS_IN_WEEK;
+				return findDate(interval);
+			}
+		} else if(dayAbbreviation.equalsIgnoreCase(THU)){
+			if(intToday == THURSDAY){
+				interval = (THURSDAY + DAYS_IN_WEEK) - intToday;
+				return findDate(interval);
+			} else if(intToday < THURSDAY){
+				interval = (THURSDAY - intToday) + DAYS_IN_WEEK;
+				return findDate(interval);
+			} else{
+				interval = (intToday - THURSDAY) + DAYS_IN_WEEK;
+				return findDate(interval);
+			}
+		} else if(dayAbbreviation.equalsIgnoreCase(FRI)){
+			if(intToday == FRIDAY){
+				interval = (FRIDAY + DAYS_IN_WEEK) - intToday;
+				return findDate(interval);
+			} else if(intToday < FRIDAY){
+				interval = (FRIDAY - intToday) + DAYS_IN_WEEK;
+				return findDate(interval);
+			} else{
+				interval = (intToday - FRIDAY) + DAYS_IN_WEEK;
+				return findDate(interval);
+			}
+		} else if(dayAbbreviation.equalsIgnoreCase(SAT)){
+			if(intToday == SATURDAY){
+				interval = (SATURDAY + DAYS_IN_WEEK) - intToday;
+				return findDate(interval);
+			} else if(intToday < SATURDAY){
+				interval = (SATURDAY - intToday) + DAYS_IN_WEEK;
+				return findDate(interval);
+			} else{
+				interval = (intToday - SATURDAY) + DAYS_IN_WEEK;
+				return findDate(interval);
+			}
+		}
 		
 		return null;
 	}
