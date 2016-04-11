@@ -7,7 +7,13 @@ import constant.Constant;
 import main.Event;
 import main.GenericEvent.Status;
 
+/**
+ * State class- keeps all information on the state of the program
+ * @@author Reem Razak
+ */
 public class State {
+	//@@author Reem Razak
+
 
 	public static final String MESSAGE_EVENT_NOT_FOUND = "The requested event was not found";
 	public static final String MESSAGE_PARSE_ERROR = "Unable to process the requested event";
@@ -121,6 +127,11 @@ public class State {
 		statusMessage = anotherState.statusMessage;
 	}
 	
+	/**
+	 * Creates an exact clone of the ReservedEvent arrayList provided. 
+	 * @param arrayList
+	 * @return cloned ReservedEvent arrayList
+	 */
 	public ArrayList<ReservedEvent> cloneReservedEventArray(ArrayList<ReservedEvent> arrayList){
 		ArrayList<ReservedEvent> newArray = new ArrayList<ReservedEvent>();
 		for(ReservedEvent e: arrayList){
@@ -129,6 +140,11 @@ public class State {
 		return newArray;		
 	}
 	
+	/**
+	 * Creates an exact clone of the Event arrayList provided. 
+	 * @param arrayList
+	 * @return cloned Event arrayList
+	 */
 	public ArrayList<Event> cloneEventArray(ArrayList<Event> arrayList){
 		ArrayList<Event> newArray = new ArrayList<Event>();
 		for(Event e: arrayList){
@@ -137,6 +153,11 @@ public class State {
 		return newArray;		
 	}
 		
+	/**
+	 * Creates an exact clone of the GenericEvent arrayList provided. 
+	 * @param arrayList
+	 * @return cloned GenericEvent arrayList
+	 */
 	public ArrayList<GenericEvent> cloneGenericEventArray(ArrayList<GenericEvent> arrayList){
 		ArrayList<GenericEvent> newArray = new ArrayList<GenericEvent>();
 		for(GenericEvent e: arrayList){
@@ -151,25 +172,35 @@ public class State {
 	}
 	
 	/**
-	 * This method returns 
-	 * @return
+	 * Gets the singular selected event
+	 * @return Current selected event. Null will be returned if more than one or no events are selected.
 	 */
 	public GenericEvent getSingleSelectedEvent(){
-		return selectedEvent;
-			
+		return selectedEvent;			
 	}
 	
+	/**
+	 * Gets list of all the selected events.
+	 * @return Current list of selected events. The list will be empty if no events are selected
+	 */
 	public ArrayList<GenericEvent> getAllSelectedEvents(){
 		return selectedEvents;
 	}
 
 	
-
+	/**
+	 * Gets the singular selected event filtered by the status tab
+	 * @return Current filtered event. Null will be returned if more than one or no events are selected through the status tab filter.
+	 */
 	public GenericEvent getSingleFilteredEvent(){
 		return filteredSelectedEvent;
 
 	}
 	
+	/**
+	 * Gets list of all the selected events filtered by the status tab
+	 * @return Current list of filtered events. The list will be empty if no events are selected through the status tab filter
+	 */
 	public ArrayList<GenericEvent> getAllFilteredEvents(){
 		filterListsByTab();
 		switch (tabStatus){
@@ -184,19 +215,10 @@ public class State {
 		
 		}
 	}
-	
-/*	public ArrayList<GenericEvent> filterByTab(){
-		ArrayList<GenericEvent> filteredEvents = new ArrayList<GenericEvent>();
-		
-		for(GenericEvent e: selectedEvents){
-			if(e.getStatus().equals(getSelectedTab())){
-				filteredEvents.add(e);
-			}
-		}
-		
-		return filteredEvents;
-	}*/
 
+	/**
+	 * Updates the filter lists based on current selected Events
+	 */
 	public void filterListsByTab(){
 		clearFilterArrays();
 		
@@ -208,31 +230,48 @@ public class State {
 		
 	}
 
-
+	/**
+	 * Adds an event to the completed filter list
+	 * @param e the event to be added
+	 */
 	private void filterComplete(GenericEvent e) {
 		if(e.getStatus().equals(Status.COMPLETE)){
 			completedSelected.add(e);
 		}
 	}
 	
+	/**
+	 * Adds an event to the incomplete filter list
+	 * @param e the event to be added
+	 */
 	private void filterIncomplete(GenericEvent e) {
 		if(e.getStatus().equals(Status.INCOMPLETE)){
 			incompletedSelected.add(e);
 		}
 	}
 	
+	/**
+	 * Adds an event to the undetermined filter list
+	 * @param e the event to be added
+	 */
 	private void filterUndetermined(GenericEvent e){
 		if(e.getStatus().equals(Status.UNDETERMINED)){
 			undeterminedSelected.add(e);
 		}
 	}
 	
-	public void clearFilterArrays(){
+	/**
+	 * Clear all filter arrays
+	 */
+	private void clearFilterArrays(){
 		completedSelected.clear();
 		incompletedSelected.clear();
 		undeterminedSelected.clear();
 	}
 	
+	/**
+	 * Clears the state selection
+	 */
 	public void clearSelections(){
 		if(!selectedEvents.isEmpty()){
 			selectedEvents.clear();
@@ -245,24 +284,44 @@ public class State {
 
 	}
 	
-	public boolean isUndeterminedSelected(){
-		return tabStatus == Constant.TAB_UNDETERMINED;
-	}
-	
+	/**
+	 * Gets the status of the selected tab
+	 * @return
+	 */
 	public Status getSelectedTab(){
 		return tabStatus;
 	}
 	
+	/**
+	 * Sets the status of the selected tab
+	 * @param tabStatus the new tab status
+	 */
 	public void setSelectedTab(Status tabStatus){
 		this.tabStatus = tabStatus;
 	}
 	
+	/**
+	 * Returns whether or not the tab is currently COMPLETE
+	 * @return
+	 */
 	public boolean isCompletedSelected(){
 		return tabStatus == Constant.TAB_COMPLETE;
 	}
 	
+	/**
+	 * Returns whether or not the tab is currently INCOMPLETE
+	 * @return
+	 */
 	public boolean isIncompletedSelected(){
 		return tabStatus == Constant.TAB_INCOMPLETE;
+	}
+	
+	/**
+	 * Returns whether or not the tab is currently UNDETERMINED
+	 * @return
+	 */
+	public boolean isUndeterminedSelected(){
+		return tabStatus == Constant.TAB_UNDETERMINED;
 	}
 	
 	public boolean hasEventSelected () {
