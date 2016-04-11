@@ -46,7 +46,6 @@ public class Storage {
 	public static String folderName;
 	public final static String tempFileName = ("temp.txt");
 	
-	//@@author claudia
 	public Storage(){
 		storageFile =  "./storage/storage.txt";
 		folderName = "./storage/";
