@@ -1,6 +1,7 @@
 package main;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import constant.Constant;
@@ -14,18 +15,21 @@ public class TimePair {
 	public TimePair(Date startTime, Date endTime){
 		this.startTime = startTime;
 		this.endTime = endTime;
-		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		    
 		if(startTime == Constant.MIN_DATE){
+			Calendar cal = Calendar.getInstance(); 
+			cal.setTime(endTime); 
+			cal.add(Calendar.HOUR_OF_DAY, -1); 
+			this.startTime = cal.getTime(); 	
 			this.stringStartTime = "";
 		} else{
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 			this.stringStartTime = sdf.format(startTime);
 		}
 		
 		if(endTime == Constant.MAX_DATE){
 			this.stringEndTime = "";
 		} else{
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 			this.stringEndTime = sdf.format(endTime);
 		}
 	}
@@ -36,6 +40,10 @@ public class TimePair {
 	
 	public void setStartTime(Date startTime){
 		if(startTime == Constant.MIN_DATE){
+			Calendar cal = Calendar.getInstance(); 
+			cal.setTime(endTime); 
+			cal.add(Calendar.HOUR_OF_DAY, -1); 
+			this.startTime = cal.getTime(); 
 			this.stringStartTime = "";
 		} else{
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");

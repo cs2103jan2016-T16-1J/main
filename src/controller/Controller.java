@@ -1,17 +1,12 @@
 package controller;
 
 import java.io.IOException;
-import java.text.ParseException;
-
 import main.GenericEvent;
-import main.ReservedEvent;
 import main.State;
 import parser.Parser;
 import storage.Storage;
 import command.Command;
 import json.JSONException;
-
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**

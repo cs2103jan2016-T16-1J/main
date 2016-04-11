@@ -8,7 +8,7 @@ import main.GenericEvent;
 import main.GenericEvent.Status;
 import main.State;
 
-public class Complete {
+public class Complete implements Command{
 	GenericEvent modifiedEvent;
 	State completeState;
 
