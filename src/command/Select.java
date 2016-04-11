@@ -48,7 +48,7 @@ public class Select implements Command{
 			getMatchingEvents(allEvents);
 			checkSelectionStatus();
 		}
-		return null;
+		return completeState;
 	}
 
 	private boolean selectViaIndex(){
