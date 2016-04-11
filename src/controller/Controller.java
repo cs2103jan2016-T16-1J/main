@@ -67,7 +67,9 @@ public class Controller{
 		assert isValidCommand(userCommand);
 		//assert false;
 		storage.stateToStorage(completeState, directory);
-				
+		
+		completeState.eventHistory.push(completeState);
+		
 		return completeState;
 	}
 	
