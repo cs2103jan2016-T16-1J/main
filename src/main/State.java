@@ -12,7 +12,6 @@ import main.GenericEvent.Status;
  * @@author Reem Razak
  */
 public class State {
-	
 	public static final String MESSAGE_EVENT_NOT_FOUND = "The requested event was not found";
 	public static final String MESSAGE_PARSE_ERROR = "Unable to process the requested event";
 	public static final String MESSAGE_TOO_MANY_SELECTIONS = "More than one result was found. Please select the desired event's number";
@@ -339,7 +338,33 @@ public class State {
 	}
 	
 	public boolean hasSingleEventFiltered () {
-		return filterStatus == ONE_EVENT_SELECTED;
+		boolean retValue =  filterStatus == ONE_EVENT_SELECTED;
+		if(retValue){
+			return retValue;
+		}
+		switch (tabStatus){
+			case COMPLETE:
+				if(completedSelected.size() == 1){
+						filteredSelectedEvent = completedSelected.get(0); 
+						retValue = true;
+				}
+				break;
+			case INCOMPLETE:
+				if(incompletedSelected.size() == 1){
+					filteredSelectedEvent = incompletedSelected.get(0);
+					retValue = true;
+				}
+				break;			
+			case UNDETERMINED:
+				if(undeterminedSelected.size() == 1){
+					filteredSelectedEvent = undeterminedSelected.get(0);
+					retValue = true;
+				}
+				break;
+		}
+		
+		return retValue;
+				
 	}
 	
 	public boolean hasMultipleEventFiltered () {
@@ -470,4 +495,6 @@ public class State {
 	
 
 }
+
+
 
