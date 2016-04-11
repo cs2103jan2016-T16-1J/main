@@ -725,9 +725,9 @@ public class MainWindow {
 	}
 	
 	private void renderInfoSection() {
-		if (currentState.hasSingleEventSelected()) {
+		if (currentState.hasSingleEventFiltered()) {
 			displayEventDetails(currentState.getSingleSelectedEvent());
-		} else if (currentState.hasMultipleEventSelected()) {
+		} else if (currentState.hasMultipleEventFiltered()) {
 			displayMultipleEventsDetails(currentState.getAllSelectedEvents());
 		}
 	}
