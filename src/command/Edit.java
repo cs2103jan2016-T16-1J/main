@@ -14,10 +14,11 @@ import main.TimePair;
 import main.GenericEvent.Category;
 import main.GenericEvent.Status;
 
+
 /**
- * Edit class must be instantiated two Events- the original Event and the new edited Event
- * @author Reem
- *
+ * Modifies the selected event with new parameters
+ * Edit class must be instantiated with the new parameters
+ * @@author Reem Razak
  */
 public class Edit implements Command{
 
@@ -64,8 +65,6 @@ public class Edit implements Command{
 		
 		completeState.updateDisplayedEvents();
 
-		completeState.setOneSelectedEvent(originalEvent);
-
 		return completeState;
 	}
 	
@@ -110,7 +109,7 @@ public class Edit implements Command{
 		newEvent.setLocation(checkLocationParameter(originalEvent.getLocation()));
 		newEvent.setDescription(checkDescriptionParameter(originalEvent.getDescription()));
 		newEvent.setCategory(checkCategoryParameter(originalEvent.getCategory()));
-		newEvent.setStatus(checkStatusParameter(originalEvent.getStatus()));
+		newEvent.setStatus(Status.UNDETERMINED);
 		
 		newEvent.setReservedTimes(((ReservedEvent)originalEvent).getReservedTimes());
 
@@ -124,7 +123,7 @@ public class Edit implements Command{
 		newEvent.setLocation(checkLocationParameter(originalEvent.getLocation()));
 		newEvent.setDescription(checkDescriptionParameter(originalEvent.getDescription()));
 		newEvent.setCategory(checkCategoryParameter(originalEvent.getCategory()));
-		newEvent.setStatus(checkStatusParameter(originalEvent.getStatus()));
+		newEvent.setStatus(Status.INCOMPLETE);
 		
 		newEvent.setStartTime(checkStartTimeParameter(Constant.MIN_DATE));
 		
@@ -206,6 +205,8 @@ public class Edit implements Command{
 			updateReservedEvent();
 		}
 		
+		completeState.setOneSelectedEvent(originalEvent);
+
 	}
 	
 	public void updateEvent(){

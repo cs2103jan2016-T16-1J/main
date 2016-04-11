@@ -14,6 +14,11 @@ import main.GenericEvent.Category;
 import main.GenericEvent.Status;
 import main.State;
 
+/**
+ * Selects an event
+ * Select class must be instantiated with either the index or the parameters of the new event to select
+ * @@author Reem Razak
+ */
 public class Select implements Command{
 
 	Event selectedParameters;
@@ -64,7 +69,7 @@ public class Select implements Command{
 			return false;
 		}
 		
-		completeState.selectedEvent = completeState.selectedEvents.get(index);
+		completeState.setOneSelectedEvent(completeState.selectedEvents.get(index));
 		
 		completeState.selectedEvents.clear();
 		completeState.selectedEvents.add(completeState.selectedEvent);
@@ -76,19 +81,17 @@ public class Select implements Command{
 	private void checkSelectionStatus(){
 		
 		if(completeState.selectedEvents.isEmpty() == true){
-			completeState.setSelectionStatus(completeState.NO_EVENTS_SELECTED);;
+			completeState.setSelectionStatus(State.NO_EVENTS_SELECTED);
+			completeState.setFilterStatus(State.NO_EVENTS_SELECTED);
 		}
 		else if(completeState.selectedEvents.size() > 1){
-			completeState.setSelectionStatus(completeState.MULTIPLE_EVENTS_SELECTED);
+			completeState.setSelectionStatus(State.MULTIPLE_EVENTS_SELECTED);
+			completeState.setFilterStatus(State.MULTIPLE_EVENTS_SELECTED);
 		}
 		else{
-			completeState.setSelectionStatus(completeState.ONE_EVENT_SELECTED);
-			completeState.selectedEvent = completeState.selectedEvents.get(0);
+			completeState.setOneSelectedEvent(completeState.selectedEvents.get(0));
 		}
-	}
-	
-	//getMatchingEvents
-	
+	}	
 
 	private void getMatchingEvents(ArrayList<GenericEvent> allEvents){
 		completeState.clearSelections();

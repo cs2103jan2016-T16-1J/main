@@ -10,9 +10,8 @@ import json.JSONException;
 import java.util.*;
 
 /**
- * Controller class- handles information between UI Parser and Storage
- * @author Reem
- *
+ * The Controller class handles information between the storage, parser and UI, and invokes the logic to handle different commands
+ * @@author Reem Razak
  */
 public class Controller{
 	
@@ -22,20 +21,13 @@ public class Controller{
 	private Storage storage;
 
 	/**
-	 * default constructor
-	 * called if there is no information in storage- ie no tasks preloaded into program
+	 * Default Controller constructor
 	 */
 	public Controller() {
 		parser = new Parser();
 		storage = new Storage();
 		storage.createFile(Storage.storageFile);
 		completeState = storage.readStorage(Storage.storageFile);
-	}
-	
-	public Controller (String directory){
-		parser = new Parser();
-		storage = new Storage();
-		completeState = storage.readStorage(directory);
 	}
 	
 	public State getCompleteState() {
@@ -64,29 +56,40 @@ public class Controller{
 			return completeState;
 		}
 		
-		userCommand.execute(completeState);
+		completeState = userCommand.execute(completeState);
 		assert isValidCommand(userCommand);
 		//assert false;
 		storage.stateToStorage(completeState, directory);
-		
-		completeState.eventHistory.push(completeState);
+		pushToEventHistory();
 		
 		return completeState;
 	}
 	
+	/**
+	 * Pushes the current state to the event history. This method is used to maintain history for the Undo Command
+	 */
+	private void pushToEventHistory(){
+		State newState = new State(completeState);
+		
+		completeState.eventHistory.push(newState);
+		
+	}
+	
+	/**
+	 * Checks that the command that has been provided is valid
+	 * @param userCommand
+	 * @return
+	 */
 	private boolean isValidCommand(Command userCommand){
 		if((userCommand != null) && (completeState.getStatusMessage() != State.MESSAGE_PARSE_ERROR)){
 			return true;
-		}
-		
+		}		
 		return false;
-	}
-	
-	
+	}		
 	
 	/**
-	 * May need to move this method to State.java
 	 * Returns all the events in the State ordered by their similarity to the String userInput
+	 * This method should be called from the UI when the user is typing, so that they are able to receive recommendations on event names
 	 * @param userInput
 	 * @return matches
 	 */
@@ -106,6 +109,12 @@ public class Controller{
 		return matches;
 	}
 	
+	/**
+	 * Sorts the already levenshtein-calculated array by levenshtein distance.
+	 * The more similar event names should be at the beginning of the array
+	 * @param map
+	 * @return
+	 */
 	private ArrayList<GenericEvent> sortByValues(HashMap<GenericEvent, Integer> map){
 		
 	       List list = new LinkedList(map.entrySet());
@@ -127,6 +136,13 @@ public class Controller{
 	       return matches;
 	}
 	
+	/**
+	 * Calculates the levenshtein distance between two strings
+	 * Levenshtein distance determines the similarity between two strings
+	 * @param stringOne
+	 * @param stringTwo
+	 * @return the levenshteinDistance
+	 */
     private int levenshteinDistance(String stringOne, String stringTwo) {
         stringOne = stringOne.toLowerCase();
         stringTwo = stringTwo.toLowerCase();

@@ -14,9 +14,9 @@ import main.ReservedEvent;
 import storage.Storage;
 
 /**
- * Delete class must be instantiated with an Event object to delete
- * @author Reem
- *
+ * Delete an existing Event
+ * Delete class must be instantiated with the parameters that will be used to filter all event to delete
+ * @@author Reem Razak
  */
 public class Delete implements Command{
 

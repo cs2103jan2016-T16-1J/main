@@ -718,10 +718,10 @@ public class MainWindow {
 	}
 	
 	private void renderInfoSection() {
-		if (currentState.hasSingleEventSelected()) {
-			displayEventDetails(currentState.getSingleSelectedEvent());
-		} else if (currentState.hasMultipleEventSelected()) {
-			displayMultipleEventsDetails(currentState.getAllSelectedEvents());
+		if (currentState.hasSingleEventFiltered()) {
+			displayEventDetails(currentState.getSingleFilteredEvent());
+		} else if (currentState.hasMultipleEventFiltered()) {
+			displayMultipleEventsDetails(currentState.getAllFilteredEvents());
 		}
 	}
 	

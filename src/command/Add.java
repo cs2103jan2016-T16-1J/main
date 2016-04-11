@@ -10,9 +10,9 @@ import main.ReservedEvent;
 import main.State;
 
 /**
+ * Creates a new event
  * Add class must be instantiated with an event to add
- * @author Reem
- *
+ * @@author Reem Razak
  */
 public class Add implements Command{
 
@@ -108,7 +108,8 @@ public class Add implements Command{
 		completeState.displayedEvents.clear();
 		completeState.displayedEvents.addAll(completeState.getCompletedList());
 		completeState.displayedEvents.addAll(completeState.getIncompletedList());
-		completeState.displayedEvents.addAll(completeState.getReservedList());		
+		completeState.displayedEvents.addAll(completeState.getReservedList());
+		completeState.displayedEvents.addAll(completeState.getUndeterminedList());
 	}
 
 }

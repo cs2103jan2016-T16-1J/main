@@ -8,6 +8,10 @@ import main.GenericEvent;
 import main.GenericEvent.Status;
 import main.State;
 
+/**
+ * Complete changes an incompleted event to a completed event
+ * @@author Reem Razak
+ */
 public class Complete implements Command{
 
 	GenericEvent modifiedEvent;
