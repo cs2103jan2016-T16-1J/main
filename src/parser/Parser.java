@@ -1559,7 +1559,7 @@ public class Parser {
 	}
 
 	private String removeFirstWord(String input){
-		return input.replace(getFirstWord(input), "").trim();
+		return input.replaceFirst("\\b"+getFirstWord(input)+"\\b", "").trim();
 	}
 
 }
