@@ -27,8 +27,8 @@ public class Controller{
 	public Controller() {
 		parser = new Parser();
 		storage = new Storage();
+		storage.createFile(Storage.storageFile);
 		completeState = storage.readStorage(Storage.storageFile);
-		
 	}
 	
 	public Controller (String directory){
