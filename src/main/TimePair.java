@@ -6,12 +6,22 @@ import java.util.Date;
 
 import constant.Constant;
 
+/**
+ * TimePair class is a tuple class is defined by a startTime and an endTime
+ * TimePair must be instantiated with a startTime and an endTime
+ * @@author Reem Razak
+ */
 public class TimePair {
 	private Date startTime;
 	private Date endTime;
 	private String stringStartTime;
 	private String stringEndTime;
 	
+	/**
+	 * TimePair constructor which takes in  a startTime and an endTime
+	 * @param startTime
+	 * @param endTime
+	 */
 	public TimePair(Date startTime, Date endTime){
 		this.startTime = startTime;
 		this.endTime = endTime;
