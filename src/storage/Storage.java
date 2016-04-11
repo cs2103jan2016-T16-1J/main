@@ -36,18 +36,20 @@ import static java.nio.file.StandardCopyOption.*;
 
 /**
  * Storage class- handle storage between state class and local file
- * @author Claudia
+ * @@author claudia
  */
 
 
 public class Storage {
 	
 	public static String storageFile ;
+	public static String folderName;
 	public final static String tempFileName = ("temp.txt");
 	
-	
+	//@@author claudia
 	public Storage(){
 		storageFile =  "./storage/storage.txt";
+		folderName = "./storage/";
 	}
 	
 	public String getDirectory(){
@@ -74,6 +76,8 @@ public class Storage {
 	 * Check if the file is exist. If not, create a new file
 	 */
 	public void createFile(String fileName)  {
+		new File(folderName).mkdir();
+		
 		File file = new File(fileName);
 		if (!file.exists()){
 			 PrintWriter writer;
