@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hamcrest.core.IsInstanceOf;
+
 import command.Add;
 import command.ChangeTab;
 import command.Command;
@@ -33,6 +35,11 @@ import main.TimePair;
 import main.GenericEvent.Category;
 import main.GenericEvent.Status;
 
+/**
+ * 
+ * @@author Ingine
+ *
+ */
 public class Parser {
 
 	private static Event oldEvent;
@@ -52,14 +59,12 @@ public class Parser {
 	private final String PATTERN_AND = "(\\b(and)\\b|\\b(&)\\b)";
 	private final String PATTERN_TO = "(\\bto\\b)";
 	private final String PATTERN_BEFORE = "(\\bbefore\\b)";
-	private final String PATTERN_AFTER = "(\\bafter\\b)";
 	private final String PATTERN_NEXT = "(\\bnext\\b)";
 	private final String PATTERN_AFTER_NEXT = "(\\bafter next\\b)";
 	private final String PATTERN_TODAY = "(\\btoday\\b)";
 	private final String PATTERN_TOMORROW = "(\\btomorrow\\b)";
 	private final String PATTERN_TOD = "(\\btod\\b)";
 	private final String PATTERN_TOM = "(\\btom\\b)";
-	private final String PATTERN_YES = "(\\byes\\b)";
 	private final String PATTERN_PREP_ALL = "(\\b(on)\\b|\\b(by)\\b|\\b(from)\\b|\\b(at)\\b|\\b(next)\\b|\\b(before)\\b|\\b(after next)\\b)";
 	private final String PATTERN_KEYWORD_ALL = "(\\b(starttime)\\b|\\b(startdate)\\b|\\b(endtime)\\b|\\b(enddate)\\b|\\b(location)\\b|\\b(note)\\b)";
 	
@@ -118,9 +123,11 @@ public class Parser {
 		} else if(tempCmd == CommandType.EDIT){
 			isEdit = true;
 			Event event = new Event();
+			Event newEvent = new Event();
 			if(oldGenericEvent instanceof Event){	/*to edit the previously added event which is selected automatically*/
 				cloneEvent((Event) oldGenericEvent, event);
 				event = decodeEditData(event, removeFirstWord(input));
+			
 				oldGenericEvent = (Event) event;
 				cmdInterface = new Edit(event);
 			} else if(oldGenericEvent instanceof ReservedEvent){ /*to edit the previously reserved event which is selected automatically*/
@@ -133,7 +140,6 @@ public class Parser {
 				cmdInterface = new Edit(genericEvent);
 			} else{				/*to edit the selected events*/
 				event = decodeEditData(event, removeFirstWord(input));
-				//oldGenericEvent = event;
 				cmdInterface = new Edit(event);
 			}
 		} else if(tempCmd == CommandType.SELECT){		
@@ -157,6 +163,7 @@ public class Parser {
 			}
 		} else if(tempCmd == CommandType.UNDO){
 			Event event = new Event();
+			cmdInterface = new Undo();
 		} else if(tempCmd == CommandType.CONFIRM){
 			Event event = new Event();
 			event = decodeSelectData(event, removeFirstWord(input));
@@ -185,6 +192,14 @@ public class Parser {
 		return cmdInterface;
 	}
 
+	private Event checkChangedStartTimeParameter(Event changedEvent, Event originalEvent){
+		if(changedEvent.getStartTime() == originalEvent.getStartTime()){
+			changedEvent.setStartTime(Constant.MIN_DATE);
+			changedEvent.setCategory(Category.DEADLINE);;
+		}
+		return changedEvent;
+	}
+	
 	/**
 	 * For testing user input (TEST)
 	 * @param input
@@ -229,6 +244,7 @@ public class Parser {
 		} 
 		return null;
 	}
+
 
 	public GenericEvent testingReservedStuff(String input){
 		String command = getFirstWord(input);
@@ -301,7 +317,7 @@ public class Parser {
 		String remainingInput = extractDescription(task, input);
 		task =  determineQuotedInput(task, remainingInput);
 		task =  decodeDataFromInput(task, remainingInput);
-
+		isEdit = false;
 		if(task == null){
 			return task;
 		}
@@ -331,6 +347,7 @@ public class Parser {
 		String name = null;
 		ArrayList<String> choppedInputData = new ArrayList<>();
 		ArrayList<TimePair> reservedTimes = new ArrayList<>();
+		isEdit = false;
 
 		/**extract notes from the input if it is declared**/
 		String remainingInput = extractDescription(task, input);
@@ -1051,11 +1068,11 @@ public class Parser {
 			task.setStartTime(Constant.MIN_DATE);
 			task.setEndTime(DateChecker.writeTime(writtenDate, time));
 		} else{
-			if(dateTime[0] == null && dateTime[1] != null && !stringDate.equals(dateTime[1])){
+			if(dateTime[0] == null && dateTime[1] != null && !stringDate.equals(dateTime[1])){		
 				time = DateChecker.convertAmPmToTime(dateTime[1]);
 				task.setEndTime(DateChecker.writeTime(stringDate, time));
 				task.setCategory(GenericEvent.Category.DEADLINE);
-			} else if(dateTime[0] == null && dateTime[1] != null && stringDate.equals(dateTime[1])) {
+			} else if(dateTime[0] == null && dateTime[1] != null && stringDate.equals(dateTime[1])) {/*stringDate = 12:00 and dateTime[1] = 12:00*/
 				task.setCategory(GenericEvent.Category.DEADLINE);
 				time = DateChecker.convertAmPmToTime(dateTime[1]);
 				Calendar cal = Calendar.getInstance();
@@ -1219,6 +1236,7 @@ public class Parser {
 		} else{
 			/*check date time in Day of the week format*/
 			/*e.g. by Sun 11 am or on Sun by 11 am*/
+			task.setStartTime(Constant.MIN_DATE);
 
 			if(dateTime[0] == null && dateTime[1] != null){
 				time = DateChecker.convertAmPmToTime(dateTime[1]);
@@ -1549,6 +1567,8 @@ public class Parser {
 			return CommandType.SELECT;
 		}else if (command.equalsIgnoreCase("changetab")){
 			return CommandType.CHANGETAB;
+		}else if (command.equalsIgnoreCase("complete")){
+			return CommandType.COMPLETE;
 		}
 
 		return CommandType.INVALID;
