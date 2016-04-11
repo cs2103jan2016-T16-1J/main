@@ -34,7 +34,8 @@ public class Complete implements Command{
 		
 		modifiedEvent.setStatus(Status.COMPLETE);
 		
-				
+		replaceEvent();
+		
 		return completeState;
 		
 	}
