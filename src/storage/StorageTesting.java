@@ -16,6 +16,10 @@ import main.GenericEvent.Status;
 import main.ReservedEvent;
 import main.State;
 
+/**
+ * @@author claudia
+ */
+
 public class StorageTesting{
 	String testFileName = "./TestStorage.txt";
 	
