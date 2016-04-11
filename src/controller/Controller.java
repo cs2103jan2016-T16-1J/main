@@ -31,12 +31,6 @@ public class Controller{
 		completeState = storage.readStorage(Storage.storageFile);
 	}
 	
-	public Controller (String directory){
-		parser = new Parser();
-		storage = new Storage();
-		completeState = storage.readStorage(directory);
-	}
-	
 	public State getCompleteState() {
 		return completeState;
 	}
