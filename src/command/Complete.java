@@ -32,19 +32,29 @@ public class Complete implements Command{
 			return completeState;
 		}
 		
+		deleteFromIncompleteList();
+		
 		modifiedEvent.setStatus(Status.COMPLETE);
 		
-		replaceEvent();
+		addToCompleteList();
 		
 		return completeState;
 		
 	}
 	
-	private void replaceEvent(){
-		Command deleting = new Delete(null);
-		Command adding  = new Add(modifiedEvent);
+	private void deleteFromIncompleteList(){
+		Command deleting = new Delete(modifiedEvent);
 		try {
 			completeState = deleting.execute(completeState);
+		} catch (IOException | JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void addToCompleteList(){
+		Command adding  = new Add(modifiedEvent);
+		try {
 			completeState = adding.execute(completeState);
 
 		} catch (IOException | JSONException e) {
