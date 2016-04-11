@@ -170,30 +170,32 @@ public class Storage {
 				jsonData += line + "\n";
 				
 			}
-			JSONObject object = new JSONObject(jsonData);
 			
-			JSONArray arrCompleted = object.getJSONArray("completed");
-			JSONArray arrIncompleted = object.getJSONArray("incompleted");
-			JSONArray arrUndetermined = object.getJSONArray("undetermined");
-			JSONArray arrReserved = object.getJSONArray("reserved");
-			
-			for (int i = 0; i < arrCompleted.length(); i++){
-				Event e = castJSONObjToEvent(arrCompleted.getJSONObject(i));
-				state.completedEvents.add(e);
+			if (jsonData.contains("{")){
+				JSONObject object = new JSONObject(jsonData);
+				
+				JSONArray arrCompleted = object.getJSONArray("completed");
+				JSONArray arrIncompleted = object.getJSONArray("incompleted");
+				JSONArray arrUndetermined = object.getJSONArray("undetermined");
+				JSONArray arrReserved = object.getJSONArray("reserved");
+				
+				for (int i = 0; i < arrCompleted.length(); i++){
+					Event e = castJSONObjToEvent(arrCompleted.getJSONObject(i));
+					state.completedEvents.add(e);
+				}
+				for (int i = 0; i < arrIncompleted.length(); i++){
+					Event e = castJSONObjToEvent(arrIncompleted.getJSONObject(i));
+					state.incompletedEvents.add(e);
+				}
+				for (int i = 0; i < arrUndetermined.length(); i++){
+					ReservedEvent e = castJSONObjToFloatingEvent(arrUndetermined.getJSONObject(i));
+					state.undeterminedEvents.add(e);
+				}
+				for (int i = 0; i < arrReserved.length(); i++){
+					ReservedEvent e = castJSONObjToReservedEvent(arrReserved.getJSONObject(i));
+					state.reservedEvents.add(e);
+				}
 			}
-			for (int i = 0; i < arrIncompleted.length(); i++){
-				Event e = castJSONObjToEvent(arrIncompleted.getJSONObject(i));
-				state.incompletedEvents.add(e);
-			}
-			for (int i = 0; i < arrUndetermined.length(); i++){
-				ReservedEvent e = castJSONObjToFloatingEvent(arrUndetermined.getJSONObject(i));
-				state.undeterminedEvents.add(e);
-			}
-			for (int i = 0; i < arrReserved.length(); i++){
-				ReservedEvent e = castJSONObjToReservedEvent(arrReserved.getJSONObject(i));
-				state.reservedEvents.add(e);
-			}
-			
 		} catch(FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + fileName + "'");                
         } catch(IOException ex) {
