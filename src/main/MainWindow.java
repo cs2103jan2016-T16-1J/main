@@ -45,7 +45,7 @@ import java.awt.Font;
 
 /**
  * MainWindow class- the UI component of the program
- * @author Boyan
+ * @@author Boyan
  *
  */
 public class MainWindow {

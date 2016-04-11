@@ -11,8 +11,6 @@ import main.State;
  * @@author Reem Razak
  */
 public class Undo implements Command{
-	//@@author Reem
-
 	State completeState;
 
 	@Override

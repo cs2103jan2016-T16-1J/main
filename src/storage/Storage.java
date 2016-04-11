@@ -36,7 +36,7 @@ import static java.nio.file.StandardCopyOption.*;
 
 /**
  * Storage class- handle storage between state class and local file
- * @@author claudia
+ * @@author claudia zhou
  */
 
 
@@ -46,7 +46,6 @@ public class Storage {
 	public static String folderName;
 	public final static String tempFileName = ("temp.txt");
 	
-	//@@author claudia
 	public Storage(){
 		storageFile =  "./storage/storage.txt";
 		folderName = "./storage/";

@@ -192,7 +192,13 @@ public class Edit implements Command{
 		originalEvent.setName(checkNameParameter(originalEvent.getName()));
 		originalEvent.setLocation(checkLocationParameter(originalEvent.getLocation()));
 		originalEvent.setDescription(checkDescriptionParameter(originalEvent.getDescription()));
-		originalEvent.setCategory(checkCategoryParameter(originalEvent.getCategory()));
+		if(((Event)selectedParameters).getStartTime().equals(Constant.MIN_DATE) && !((Event)selectedParameters).getEndTime().equals(Constant.MAX_DATE) ){
+			originalEvent.setCategory(Category.DEADLINE);
+
+		}
+		else{
+			originalEvent.setCategory(checkCategoryParameter(originalEvent.getCategory()));
+		}
 		originalEvent.setStatus(checkStatusParameter(originalEvent.getStatus()));
 		/*if(!selectedParameters.getSelection().isEmpty()){
 			originalEvent.setSelection(selectedParameters.getSelection());
