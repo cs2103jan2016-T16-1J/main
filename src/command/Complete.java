@@ -34,8 +34,23 @@ public class Complete implements Command{
 		
 		modifiedEvent.setStatus(Status.COMPLETE);
 		
+		replaceEvent();
 		
 		return completeState;
+		
+	}
+	
+	private void replaceEvent(){
+		Command deleting = new Delete(null);
+		Command adding  = new Add(modifiedEvent);
+		try {
+			completeState = deleting.execute(completeState);
+			completeState = adding.execute(completeState);
+
+		} catch (IOException | JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

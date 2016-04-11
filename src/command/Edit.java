@@ -210,7 +210,7 @@ public class Edit implements Command{
 	}
 	
 	public void updateEvent(){
-		((Event)originalEvent).setStartTime(checkStartTimeParameter(((Event)originalEvent).getStartTime()));
+		((Event)originalEvent).setStartTime(((Event)selectedParameters).getStartTime());
 			
 		((Event)originalEvent).setEndTime(checkEndTimeParameter(((Event)originalEvent).getEndTime()));
 		
