@@ -5,7 +5,14 @@ import java.io.IOException;
 import json.JSONException;
 import main.State;
 
+/**
+ * Undos an action
+ * Undo replaces the current state with the previous state.
+ * @@author Reem Razak
+ */
 public class Undo implements Command{
+	//@@author Reem
+
 	State completeState;
 
 	@Override
@@ -14,10 +21,11 @@ public class Undo implements Command{
 		
 		this.completeState = completeState;
 		
-		if(completeState.eventHistory.isEmpty()){
+		if(completeState.eventHistory.isEmpty() || completeState.eventHistory.size() < 2){
 			return completeState;
 		}
 		
+		completeState.eventHistory.pop();
 		
 		return completeState.eventHistory.pop();
 	}

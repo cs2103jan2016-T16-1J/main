@@ -5,8 +5,13 @@ import java.sql.Date;
 import main.GenericEvent;
 import main.GenericEvent.Category;
 import main.GenericEvent.Status;
-
+/**
+ * 
+ * @author Ingine
+ *
+ */
 public class Constant {
+
 	public static final String EMPTY_STRING = "";
 	public static final Date MIN_DATE = new Date(0);
 	public static final Date MAX_DATE = new Date(Long.MAX_VALUE);

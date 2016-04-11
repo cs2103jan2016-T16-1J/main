@@ -8,8 +8,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.*;
 
+/**
+ * 
+ * @@author Ingine
+ *
+ */
 public class DateChecker {
-	
+
 	public static boolean isDay = false;
 	
 	private static final String TOM = "tom";
@@ -42,9 +47,9 @@ public class DateChecker {
 	private static Logger Log = Logger.getLogger("DATECHECKER");
 
 	/**
-	 * 
+	 * Check whether the passed date is of the accepted format
 	 * @param stringDateInput
-	 * @return the converted Date 
+	 * @return the converted Date if the passed date is Day of the week format, otherwise just the date with no conversion
 	 */
 	public static Date validateDate(String stringDateInput){		
 		Date inputDate = null;
@@ -63,6 +68,11 @@ public class DateChecker {
 		return inputDate;
 	}
 	
+	/**
+	 * check whether the passed date is of the accepted time
+	 * @param stringTimeInput
+	 * @return date
+	 */
 	public static Date validateTime(String stringTimeInput){
 		Date inputTime = null;
 		
@@ -73,6 +83,11 @@ public class DateChecker {
 		return inputTime;
 	}
 
+	/**
+	 * check whether the passed date is of the accepted specific date
+	 * @param stringDateInput
+	 * @return date
+	 */
 	public static Date validateSpecificDate(String stringDateInput){
 		Date inputDate = null;
 		
@@ -83,6 +98,7 @@ public class DateChecker {
 		return inputDate;
 	}
 		
+	
 	private static Date parseSpecificDate(String stringDateInput){
 		Date inputDate = null;
 		for(SimpleDateFormat format : specificDateFormats){
@@ -270,6 +286,11 @@ public class DateChecker {
 		
 		return null;
 	}
+	/**
+	 * Convert day of the week to dd/MM/yyyy format 
+	 * @param stringDateInput
+	 * @return
+	 */
 	public static Date convertDayToDate(String stringDateInput){
 		int beginIndex = 0;
 		int endIndex = 3;
@@ -372,6 +393,11 @@ public class DateChecker {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param interval - from the current date to the date the user wnat to set
+	 * @return converted Date
+	 */
 	public static Date findDate(int interval){
 		Initialization();
 

@@ -11,7 +11,13 @@ import main.State;
 import main.GenericEvent.Category;
 import main.GenericEvent.Status;
 
+/**
+ * Confirms a time for a reserved event
+ * Confirm class must be instantiated with either the index of the event time pair tht will be confirmed, or the startTime and endtime that the user has provided
+ * @@author Reem Razak
+ */
 public class Confirm implements Command{
+
 	GenericEvent originalEvent;
 	Event newEvent;
 	Date startTime;
@@ -28,7 +34,7 @@ public class Confirm implements Command{
 	 */
 	
 	public Confirm(int index){
-		this.index = index;
+		this.index = index - 1;
 	}
 
 	public Confirm(Date startTime, Date endTime, String stringStartTime, String stringEndTime){

@@ -14,6 +14,11 @@ import main.GenericEvent.Category;
 import main.GenericEvent.Status;
 import main.State;
 
+/**
+ * Selects an event
+ * Select class must be instantiated with either the index or the parameters of the new event to select
+ * @@author Reem Razak
+ */
 public class Select implements Command{
 
 	Event selectedParameters;
@@ -48,7 +53,7 @@ public class Select implements Command{
 			getMatchingEvents(allEvents);
 			checkSelectionStatus();
 		}
-		return null;
+		return completeState;
 	}
 
 	private boolean selectViaIndex(){

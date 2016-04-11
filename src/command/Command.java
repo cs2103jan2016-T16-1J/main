@@ -9,11 +9,10 @@ import main.Event;
 
 /**
  * Command interface- commands are defined by the action that the user provides
- * @author Reem
- *
+ * @@author Reem Razak
  */
 public interface Command {
-	
+
 	/**
 	 * execute must be inherited by each command. This method invokes the command action
 	 * @param completeState the state of all tasks in the program

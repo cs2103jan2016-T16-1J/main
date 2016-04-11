@@ -58,7 +58,7 @@ public class MainWindow {
 	private int WINDOW_X = 100;
 	private int WINDOW_Y = 100;
 	private int WINDOW_WIDTH = 1200;
-	private int WINDOW_HEIGHT = 800;
+	private int WINDOW_HEIGHT = 700;
 	private double WINDOW_SECTION_HEIGHT_RATIO = 46.0;
 	private double WINDOW_SECTION_WIDTH_RATIO = 12.0;
 	private double WINDOW_WIDTH_SECTION = WINDOW_WIDTH / WINDOW_SECTION_WIDTH_RATIO;
@@ -190,9 +190,7 @@ public class MainWindow {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
-		initializeFile();
-		
+	private void initialize() {		
 		initializeController();
 		
 		intializeState();
@@ -220,11 +218,6 @@ public class MainWindow {
 		initializeCalendar();
 		
 		initializeInfoSection();		
-	}
-
-	private void initializeFile() {
-		Storage storage = new Storage();
-		storage.createFile(Storage.storageFile);
 	}
 
 	private void initializeController() {
