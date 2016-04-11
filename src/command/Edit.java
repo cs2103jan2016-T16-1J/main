@@ -14,10 +14,11 @@ import main.TimePair;
 import main.GenericEvent.Category;
 import main.GenericEvent.Status;
 
+
 /**
- * Edit class must be instantiated two Events- the original Event and the new edited Event
- * @author Reem
- *
+ * Modifies the selected event with new parameters
+ * Edit class must be instantiated with the new parameters
+ * @@author Reem Razak
  */
 public class Edit implements Command{
 	GenericEvent originalEvent;

@@ -10,9 +10,9 @@ import main.ReservedEvent;
 import main.State;
 
 /**
- * Add class must be instantiated with an event to add
- * @author Reem
- *
+ * Creates a new reserved event
+ * Reserve class must be instantiated with the parameters of the new event to reserve
+ * @@author Reem Razak
  */
 public class Reserve implements Command{
 

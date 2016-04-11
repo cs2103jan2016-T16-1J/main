@@ -5,6 +5,11 @@ import java.io.IOException;
 import json.JSONException;
 import main.State;
 
+/**
+ * Undos an action
+ * Undo replaces the current state with the previous state.
+ * @@author Reem Razak
+ */
 public class Undo implements Command{
 	State completeState;
 

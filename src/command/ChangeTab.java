@@ -8,6 +8,10 @@ import main.GenericEvent.Status;
 import main.GenericEvent;
 import main.State;
 
+/**
+ * Changetab class must be instantiated with the new tab which is parsed from user input
+ * @@author Reem Razak
+ */
 public class ChangeTab implements Command{
 	Status newTab;
 	State completeState;

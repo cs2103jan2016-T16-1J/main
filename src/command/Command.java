@@ -9,8 +9,7 @@ import main.Event;
 
 /**
  * Command interface- commands are defined by the action that the user provides
- * @author Reem
- *
+ * @@author Reem Razak
  */
 public interface Command {
 	
