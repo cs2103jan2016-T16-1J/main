@@ -12,9 +12,7 @@ import main.GenericEvent.Status;
  * @@author Reem Razak
  */
 public class State {
-	//@@author Reem Razak
-
-
+	
 	public static final String MESSAGE_EVENT_NOT_FOUND = "The requested event was not found";
 	public static final String MESSAGE_PARSE_ERROR = "Unable to process the requested event";
 	public static final String MESSAGE_TOO_MANY_SELECTIONS = "More than one result was found. Please select the desired event's number";
