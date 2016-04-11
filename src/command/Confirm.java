@@ -19,6 +19,7 @@ public class Confirm implements Command{
 	String stringStartTime;
 	String stringEndTime;
 	State completeState;
+	int index;
 
 	/**
 	 * Edit Event constructor
@@ -27,7 +28,7 @@ public class Confirm implements Command{
 	 */
 	
 	public Confirm(int index){
-		
+		this.index = index;
 	}
 
 	public Confirm(Date startTime, Date endTime, String stringStartTime, String stringEndTime){
@@ -35,6 +36,7 @@ public class Confirm implements Command{
 		this.endTime = endTime;
 		this.stringStartTime = stringStartTime;
 		this.stringEndTime = stringEndTime;
+		this.index = -1;
 	}
 	
 	private boolean checkForSelectedEvent(){
@@ -75,6 +77,23 @@ public class Confirm implements Command{
 		
 	}
 	
+	private boolean getTimesOfSelectedIndex(){
+		int numberOfReservedTimes = ((ReservedEvent)originalEvent).getReservedTimes().size();
+		
+		if((index < 0) || (index > numberOfReservedTimes)){
+			completeState.setErrorMessage(State.MESSAGE_INVALID_INDEX);
+			return false;
+		}
+		
+		startTime = ((ReservedEvent)originalEvent).getReservedTimes().get(index).getStartTime();
+		endTime = ((ReservedEvent)originalEvent).getReservedTimes().get(index).getEndTime();
+		stringStartTime = startTime.toString();
+		stringEndTime = endTime.toString();
+
+		
+		return true;
+	}
+	
 	public State execute(State completeState){
 		this.completeState = completeState;
 		
@@ -87,7 +106,13 @@ public class Confirm implements Command{
 			return completeState;
 		}
 		
-		confirmTimes();
+		if(index != -1){
+			getTimesOfSelectedIndex();
+		}
+		
+		if(!completeState.hasErrorMessage){
+			confirmTimes();
+		}
 		
 		
 		return completeState;
