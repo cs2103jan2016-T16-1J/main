@@ -108,7 +108,8 @@ public class Add implements Command{
 		completeState.displayedEvents.clear();
 		completeState.displayedEvents.addAll(completeState.getCompletedList());
 		completeState.displayedEvents.addAll(completeState.getIncompletedList());
-		completeState.displayedEvents.addAll(completeState.getReservedList());		
+		completeState.displayedEvents.addAll(completeState.getReservedList());
+		completeState.displayedEvents.addAll(completeState.getUndeterminedList());
 	}
 
 }

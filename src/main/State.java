@@ -314,7 +314,7 @@ public class State {
 	}
 	
 	public  ArrayList<ReservedEvent> getReservedList(){
-		return undeterminedEvents;
+		return reservedEvents;
 	}
 	
 	public  ArrayList<ReservedEvent> getFloatingList(){
