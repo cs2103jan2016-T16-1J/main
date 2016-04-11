@@ -20,6 +20,7 @@ import main.GenericEvent.Status;
  *
  */
 public class Edit implements Command{
+
 	GenericEvent originalEvent;
 	GenericEvent selectedParameters;
 	State completeState;

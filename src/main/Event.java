@@ -10,6 +10,7 @@ import main.GenericEvent.Category;
 import main.GenericEvent.Status;
 
 public class Event extends GenericEvent{
+
 	private Date startTime;
 	private Date endTime;
 	private String stringStartTime;

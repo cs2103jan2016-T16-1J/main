@@ -13,7 +13,7 @@ import main.Event;
  *
  */
 public interface Command {
-	
+
 	/**
 	 * execute must be inherited by each command. This method invokes the command action
 	 * @param completeState the state of all tasks in the program

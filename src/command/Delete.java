@@ -19,6 +19,7 @@ import storage.Storage;
  *
  */
 public class Delete implements Command{
+
 	GenericEvent selectedParameters;
 	State completeState;
 

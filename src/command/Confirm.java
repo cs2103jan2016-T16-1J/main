@@ -12,6 +12,7 @@ import main.GenericEvent.Category;
 import main.GenericEvent.Status;
 
 public class Confirm implements Command{
+
 	GenericEvent originalEvent;
 	Event newEvent;
 	Date startTime;
