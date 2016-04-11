@@ -41,11 +41,13 @@ public class Parser {
 	private static String recordedDate;
 	private boolean isNameDefined = true;
 	private boolean isAfterOn = false;
+	private boolean isAfterNext = false;
 	private boolean isEdit = false;
 	private final String PATTERN_SPACE = "(\\s)";
 	private final String PATTERN_AM_OR_PM = "(\\b(am)\\b|\\b(pm)\\b)";
 	private final String PATTERN_AT = "(\\bat\\b)";
 	private final String PATTERN_AT_OR_BY_OR_NEXT = "(\\b(at)\\b|\\b(by)\\b|\\b(next)\\b)";
+	private final String PATTERN_AT_OR_BY = "(\\b(at)\\b|\\b(by)\\b)";
 	private final String PATTERN_COLUMN = "(\\b(:)\\b)";
 	private final String PATTERN_AND = "(\\b(and)\\b|\\b(&)\\b)";
 	private final String PATTERN_TO = "(\\bto\\b)";
@@ -749,7 +751,7 @@ public class Parser {
 			task.setName(name);
 		}
 		
-		if(name == null){
+		if(task.getName().isEmpty() && !isEdit){
 			task = null;
 			return task;
 		}
@@ -918,7 +920,7 @@ public class Parser {
 			task.setName(name);
 		}
 		
-		if(task.getName().isEmpty()){
+		if(task.getName().isEmpty() && !isEdit){
 			task = null;
 			return task;
 		}
@@ -982,13 +984,14 @@ public class Parser {
 		} else if(preposition.equalsIgnoreCase(PREP_NEXT)){
 			
 			newStartIndex = endIndex + PREP_NEXT.length() + 1;
-			newEndIndex = matchPatternOfFirstOccurrence(PATTERN_NEXT, input)[0];
+			newEndIndex = matchPatternOfFirstOccurrence(PATTERN_AT_OR_BY, input)[0];
 			
 			if(newEndIndex == 0){
 				newEndIndex = input.length();
+			} else if(newEndIndex > newStartIndex){
+				isAfterNext = true;
 			}
-			
-			extractDateFromNextPreposition(task, input, newStartIndex, newEndIndex);
+			task = extractDateFromNextPreposition(task, input, newStartIndex, newEndIndex, formatToString);
 		} else if(preposition.equalsIgnoreCase(PREP_AFTER_NEXT)){
 			
 		} else if(preposition.equalsIgnoreCase(PREP_BEFORE)){
@@ -998,7 +1001,8 @@ public class Parser {
 		return task;
 	}
 
-	private void extractDateFromNextPreposition(Event task, String input, int newStartIndex, int newEndIndex){
+	private Event extractDateFromNextPreposition(Event task, String input, int newStartIndex, int newEndIndex,
+			SimpleDateFormat formatToString){
 		Date inputDate;
 		String stringDate;
 		boolean isDay;
@@ -1008,19 +1012,29 @@ public class Parser {
 		String[] dateTime = extractTimeFromDate(stringDate);
 		inputDate = DateChecker.validateDate(stringDate);
 		isDay = DateChecker.isDay;
+		
 		if(isDay){
-			if(dateTime[0] == null && dateTime[1] != null && !stringDate.equals(dateTime[1])){
-				
-			} else if(dateTime[0] == null && dateTime[1] != null && stringDate.equals(dateTime[1])){
-				
+			if(dateTime[0] == null && dateTime[1] != null){
+				return null;
 			} else if(dateTime[0] != null && dateTime[1] != null){
+				Date nextWeekDate = DateChecker.convertNextWeekDayToDate(stringDate);
+				task.setStartTime(Constant.MIN_DATE);
 				
-			} else if(dateTime[0] == null && dateTime[1] == null){
+				String writtenDate = formatToString.format(nextWeekDate);
+				task.setEndTime(DateChecker.writeTime(writtenDate, DateChecker.convertAmPmToTime(dateTime[1])));
+				task.setCategory(Category.DEADLINE);
+			} else if(dateTime[0] == null && dateTime[1] == null){   /*next Friday*/
+				Date nextWeekDate = DateChecker.convertNextWeekDayToDate(stringDate);
+				task.setStartTime(nextWeekDate);
 				
+				String writtenDate = formatToString.format(nextWeekDate);
+				task.setEndTime(DateChecker.writeTime(writtenDate, TIME_BEFORE_MIDNIGHT_SEC));
+				task.setCategory(Category.EVENT);
 			}
 		} else{ 
-			
+			return null;
 		}
+		return task;
 	}
 
 	private void extractDateFromAtPreposition(Event task, String input, int newStartIndex, int newEndIndex,
@@ -1031,7 +1045,7 @@ public class Parser {
 		stringDate = input.substring(newStartIndex, newEndIndex).trim();
 
 		String[] dateTime = extractTimeFromDate(stringDate);
-		if(isAfterOn){
+		if(isAfterOn || isAfterNext){
 			String writtenDate = formatToString.format(task.getEndTime());	
 			time = DateChecker.convertAmPmToTime(dateTime[1]);
 			task.setStartTime(Constant.MIN_DATE);
@@ -1198,7 +1212,7 @@ public class Parser {
 		
 		String[] dateTime = extractTimeFromDate(stringDate);
 
-		if(isAfterOn){
+		if(isAfterOn || isAfterNext){
 			String writtenDate = formatToString.format(task.getEndTime());	
 			task.setStartTime(Constant.MIN_DATE);
 			task.setEndTime(DateChecker.writeTime(writtenDate, DateChecker.convertAmPmToTime(dateTime[1])));
@@ -1252,7 +1266,7 @@ public class Parser {
 
 	}
 
-	private Event extractDateFromOnPreposition(Event task, String input, int newStartIndex, int newEndIndex,
+	private void extractDateFromOnPreposition(Event task, String input, int newStartIndex, int newEndIndex,
 			SimpleDateFormat formatToString) {
 		Date inputDate;
 		String stringDate;
@@ -1304,7 +1318,6 @@ public class Parser {
 				task.setCategory(GenericEvent.Category.DEADLINE);
 			}
 		}
-		return task;
 	}
 
 	/**
