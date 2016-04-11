@@ -46,8 +46,8 @@ public class Confirm implements Command{
 	}
 	
 	private boolean checkForSelectedEvent(){
-		if(completeState.hasSingleEventSelected()){
-			originalEvent = completeState.getSingleSelectedEvent();
+		if(completeState.hasSingleEventFiltered()){
+			originalEvent = completeState.getSingleFilteredEvent();
 		}
 		
 		return true;

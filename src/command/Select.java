@@ -113,7 +113,7 @@ public class Select implements Command{
 				//&&
 				//isCategoryMatching(currentEvent.getCategory(), selectedParameters.getCategory()) &&
 				//isTimeMatching(currentEvent.getStartTime(), currentEvent.getEndTime(), selectedParameters.getStartTime(), selectedParameters.getEndTime())
-				//&& isStatusMatching(currentEvent.getStatus(), selectedParameters.getStatus())
+				&& isStatusMatching(currentEvent.getStatus(), completeState.getSelectedTab())
 				;
 						
 		return isMatch;
