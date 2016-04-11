@@ -28,7 +28,7 @@ public class Confirm implements Command{
 	 */
 	
 	public Confirm(int index){
-		this.index = index;
+		this.index = index - 1;
 	}
 
 	public Confirm(Date startTime, Date endTime, String stringStartTime, String stringEndTime){
