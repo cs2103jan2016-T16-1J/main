@@ -5,7 +5,10 @@ import java.util.List;
 
 import constant.Constant;
 
-
+/**
+ * GenericEvent is an abstract class which branches off into ReservedEvent and Event
+ * @@author Reem Razak
+ */
 public abstract class GenericEvent {
 
 	public enum Status {
