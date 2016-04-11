@@ -57,14 +57,23 @@ public class Controller{
 			return completeState;
 		}
 		
-		userCommand.execute(completeState);
+		completeState = userCommand.execute(completeState);
 		assert isValidCommand(userCommand);
 		//assert false;
 		storage.stateToStorage(completeState, directory);
-		
-		completeState.eventHistory.push(completeState);
+		pushToEventHistory();
 		
 		return completeState;
+	}
+	
+	private void pushToEventHistory(){
+		State newState = new State(completeState);
+		
+		completeState.incompletedEvents = completeState.incompletedEvents;
+		newState.incompletedEvents = newState.incompletedEvents;
+		
+		completeState.eventHistory.push(newState);
+		
 	}
 	
 	private boolean isValidCommand(Command userCommand){
