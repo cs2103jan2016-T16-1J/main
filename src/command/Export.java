@@ -8,7 +8,7 @@ import main.State;
 import storage.Storage;
 
 public class Export implements Command {
-
+	
 	Event modifiedEvent;
 	State completeState;
 	

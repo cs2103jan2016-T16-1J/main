@@ -4,9 +4,6 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.LayoutManager;
-import java.awt.ScrollPane;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
@@ -16,14 +13,11 @@ import controller.Controller;
 import json.JSONException;
 import storage.Storage;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 
 import java.awt.Container;
@@ -33,55 +27,27 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumnModel;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledEditorKit.UnderlineAction;
 
-import org.hamcrest.core.IsInstanceOf;
-
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import command.*;
-
-import javax.swing.border.TitledBorder;
-import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.SoftBevelBorder;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 import java.awt.Font;
-import java.awt.FlowLayout;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
 
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.RowSpec;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.BoxLayout;
-
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-
-
+/**
+ * MainWindow class- the UI component of the program
+ * @author Boyan
+ *
+ */
 public class MainWindow {
 	private String EMPTY_STRING = "";
 	private String NEW_LINE = "\n";
@@ -110,6 +76,9 @@ public class MainWindow {
 	private int WINDOW_OUTPUT_WIDTH_SECTIONS = 7;
 	private int WINDOW_OUTPUT_HEIGHT_SECTIONS = 2;
 	
+	private int WINDOW_MAIN_INFO_WIDTH_SECTIONS = 7;
+	private int WINDOW_MAIN_INFO_HEIGHT_SECTIONS = 24;
+	
 	private int WINDOW_INPUT_WIDTH_SECTIONS = 6;
 	private int WINDOW_INPUT_HEIGHT_SECTIONS = 1;
 	
@@ -133,13 +102,11 @@ public class MainWindow {
 	private JPanel calendarPanel;
 	private JPanel infoPanel;
 	private JPanel floatingTasksPanel;
-	private JPanel infoSectionWrapper;
 	private static JTextArea actionsTextArea;
+	private static JTextArea mainInfoTextArea;
 	
 	private static Color navbarColor;
-	private static Color backgroundColor;
 	private static Color buttonColor;
-	private static Color darkGreen;
 	private static Color lightRed;
 	public static Color fontColor;
 	public static Color lightGray;
@@ -172,15 +139,13 @@ public class MainWindow {
 	static Container pane;
 	static DefaultTableModel mtblCalendar; //Table model
 	static JScrollPane stblCalendar; //The scrollpane
-	static JScrollPane areaScrollPane;	//text area scrollpane
+	static JScrollPane outputScrollPane;	//text area scrollpane
+	static JScrollPane mainInfoScrollPane;
 	static JScrollPane infoScrollPane;
 	static JPanel pnlCalendar; //The panel
 	static int realDay, realMonth, realYear, currentMonth, currentYear;
 	private RowNumberTable rowHeaderTable;
 	private JToggleButton toggleButton;
-	private JLabel lblGuidance;
-	private JLabel lblInfoEventName;
-	private JTextArea lblAdd;
 	
 	private String defaultStorage = "./storage/storage.txt";
 	private Color Color1;
@@ -195,68 +160,7 @@ public class MainWindow {
 	 * @throws JSONException 
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
-
-		
-		/*_________ Testing ADD ______________*/
-		//Creating object manually
-		//Controller controller = new Controller();
-		//State completeState = new State();
-		/*
-		Event testNewEvent = new Event();
-		Event brunch = new Event();
-		String result = new String();
-		final String finalResult;
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
-		String dateInString = "31-08-1982 10:20:56";
-		Date aTime = null;
-		try {
-			aTime = sdf.parse(dateInString);
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		
-		testNewEvent.setName("TEST EVENT NAME");
-		testNewEvent.setDescription("This is a test event created in main");
-		testNewEvent.setLocation("Supahotfire's house");
-		testNewEvent.setStatus(Event.Status.COMPLETE);
-		testNewEvent.setStartTime(aTime);
-		testNewEvent.setEndTime(aTime);
-		
-		brunch.setName("brunch");
-		brunch.setDescription("with supa fire");
-		brunch.setLocation("Supahotfire's house");
-		brunch.setStatus(Event.Status.INCOMPLETE);
-		brunch.setStartTime(aTime);
-		brunch.setEndTime(aTime);
-		
-		
-		Command adding = new Add(testNewEvent);
-		completeState = adding.execute(completeState);
-		/*
-		Command adding2 = new Add(testNewEvent);
-		Command adding3 = new Add(brunch);
-		//Add event, event, brunch to test delete event
-		
-		completeState = adding2.execute(completeState);
-		completeState = adding3.execute(completeState);
-		
-		Command deleting = new Delete(brunch);
-		completeState = deleting.execute(completeState);
-		
-		
-		for(Event e: completeState.displayedEvents){
-			result = result + e.printEvent();
-			System.out.println(result);
-			
-		}
-	
-		finalResult = result;*/
-		
-		/*_________ Testing ADD ______________*/
-		
+	public static void main(String[] args) {	
 		
 		
 		EventQueue.invokeLater(new Runnable() {
@@ -303,6 +207,8 @@ public class MainWindow {
 				
 		initializeInfoSection();
 		
+		initializeMainInfoSection();
+		
 		initializeFloatingSection();
 
 		initializeOutputField();
@@ -325,13 +231,11 @@ public class MainWindow {
 	
 	private void initializeColors() {
 		navbarColor = new Color(55, 71, 79);
-		backgroundColor = new Color(243, 243, 244);
 		buttonColor = new Color(28, 192, 159);
 		lightGray = new Color(244, 246, 250);
 		borderColor = new Color(231, 234, 236);
 		fontColor = new Color(103, 106, 108);
 		lightRed = new Color (231,111,81,160);
-		darkGreen = new Color(42,157,143, 160);
 		transperantColor = new Color(42,157,143, 0);
 		randomColors = new ArrayList<Color>();
 		
@@ -473,7 +377,8 @@ public class MainWindow {
 		this.addEventDetails(wrapper, currentEvent, 0);
 	}
 	
-	private void addEventDetails(JPanel wrapper, GenericEvent currentEvent, int elementNumber) {		
+	private void addEventDetails(JPanel wrapper, GenericEvent currentEvent, int elementNumber) {
+		// TODO: Add info to main panel
 		JPanel currentPanel = new JPanel();
 		currentPanel.setBounds(0, 113 * elementNumber, infoPanel.getWidth(), 113);
 		GridBagLayout layout = new GridBagLayout();
@@ -618,7 +523,7 @@ public class MainWindow {
 		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_INPUT_WIDTH_SECTIONS);
 		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_INPUT_HEIGHT_SECTIONS);
 		int xOffset = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS);
-		int yOffset = (int) (WINDOW_HEIGHT_SECTION * (WINDOW_INFO_SECTION_HEIGHT_SECTIONS + WINDOW_INFO_LABEL_HEIGHT_SECTIONS)) + areaScrollPane.getHeight();
+		int yOffset = (int) (WINDOW_HEIGHT_SECTION * (WINDOW_INFO_SECTION_HEIGHT_SECTIONS + WINDOW_INFO_LABEL_HEIGHT_SECTIONS)) + outputScrollPane.getHeight();
 		
 		textField.setBorder(new LineBorder(borderColor));
 		textField.addKeyListener(new ChangeMonthListener());
@@ -635,7 +540,7 @@ public class MainWindow {
 	}
 	
 	private class ChangeMonthListener implements KeyListener {
-		 public void keyTyped(KeyEvent e) {
+		public void keyTyped(KeyEvent e) {
 		        // Invoked when a key has been typed.
 		    }
 
@@ -680,6 +585,8 @@ public class MainWindow {
 		
 		infoPanel.removeAll();
 		
+		mainInfoTextArea.removeAll();
+		
 		this.refreshMonth();
 		
 		this.renderEvents();
@@ -701,6 +608,9 @@ public class MainWindow {
 		
 		floatingTasksPanel.revalidate();
 		floatingTasksPanel.repaint();
+		
+		mainInfoTextArea.revalidate();
+		mainInfoTextArea.repaint();
 	}
 	
 	private void renderEvents() {
@@ -768,12 +678,28 @@ public class MainWindow {
 		//actionsTextArea.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
 		actionsTextArea.setEditable(false);
 		
-		areaScrollPane = new JScrollPane(actionsTextArea);
-		areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-		areaScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0,1, borderColor));
-		areaScrollPane.setBounds(xOffset, yOffset, width, height);
+		outputScrollPane = new JScrollPane(actionsTextArea);
+		outputScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		outputScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0,1, borderColor));
+		outputScrollPane.setBounds(xOffset, yOffset, width, height);
 	    
-		mainTab.add(areaScrollPane);
+		mainTab.add(outputScrollPane);
+	}
+	
+	private void initializeMainInfoSection() {
+		mainInfoTextArea = new JTextArea();
+		int width = (int) (WINDOW_WIDTH_SECTION * WINDOW_MAIN_INFO_WIDTH_SECTIONS);
+		int height = (int) (WINDOW_HEIGHT_SECTION * WINDOW_MAIN_INFO_HEIGHT_SECTIONS);
+		int xOffset = (int) (WINDOW_WIDTH_SECTION * WINDOW_INFO_SECTION_WIDTH_SECTIONS);
+		//actionsTextArea.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, borderColor));
+		mainInfoTextArea.setEditable(false);
+		
+		mainInfoScrollPane = new JScrollPane(mainInfoTextArea);
+		mainInfoScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		mainInfoScrollPane.setBorder(BorderFactory.createMatteBorder(1, 1, 0,1, borderColor));
+		mainInfoScrollPane.setBounds(xOffset, 0, width, height);
+	    
+		mainTab.add(mainInfoScrollPane);
 	}
 	
 	private void initializeCalendar() {
@@ -794,6 +720,8 @@ public class MainWindow {
 	
 	private void initializeCalendarInstance() {
 		calendarInstance = Calendar.getInstance();
+		calendarInstance.set(Calendar.HOUR_OF_DAY, 0);
+		calendarInstance.set(Calendar.MINUTE, 0);
 	}
 	
 	private void initiliazeCalendarComponents() {
@@ -891,6 +819,7 @@ public class MainWindow {
 		tblCalendar.add(currentEvent);
 		tblCalendar.add(currentEventName);
 		tblCalendar.setComponentZOrder(currentEventName, 1);
+		mainInfoTextArea.append(deadline.printEvent());
 	}
 	
 	private double getEventHeight() {
@@ -975,8 +904,6 @@ public class MainWindow {
 		minute = startEventCalendar.get(Calendar.MINUTE);
 		yOffset = (int) eventHeight * dayDifference;
 		xOffset = (int) (eventWidth * (hour + minute / 60.0));
-		int i = endEventCalendar.get(Calendar.HOUR_OF_DAY);
-		int b = startEventCalendar.get(Calendar.HOUR_OF_DAY);
 
 		xMultiplier = (endEventCalendar.get(Calendar.HOUR_OF_DAY) - startEventCalendar.get(Calendar.HOUR_OF_DAY) +
 				(endEventCalendar.get(Calendar.MINUTE) - startEventCalendar.get(Calendar.MINUTE)) / 60.0);
@@ -986,7 +913,7 @@ public class MainWindow {
 		tblCalendar.add(currentEvent);
 		tblCalendar.add(currentEventName);
 		tblCalendar.setComponentZOrder(currentEventName, 1);
-
+		mainInfoTextArea.append(specificEvent.printEvent());
 	}
 	
 	private JTextField createEventBlock(String name, int xOffset, int yOffset, int eventWidth, int eventHeight, Color color, boolean elipsis) {
