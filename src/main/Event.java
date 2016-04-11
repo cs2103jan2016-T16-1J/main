@@ -31,7 +31,7 @@ public class Event extends GenericEvent{
 	}
 	
 	/**
-	 * Constructor which creates Event using provded parameters
+	 * Constructor which creates Event using provided parameters
 	 * @param name
 	 * @param location
 	 * @param description
