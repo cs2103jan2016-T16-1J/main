@@ -25,12 +25,13 @@ public class State {
 	public static final int NO_EVENTS_SELECTED = 0;
 	public static final int ONE_EVENT_SELECTED = 1;
 	public static final int MULTIPLE_EVENTS_SELECTED = 2;
-	public static ArrayList<Event> completedEvents;
-	public static ArrayList<Event> incompletedEvents;
+	
+	public ArrayList<Event> completedEvents;
+	public ArrayList<Event> incompletedEvents;
 	//Floating events
-	public static ArrayList<ReservedEvent> undeterminedEvents;
+	public ArrayList<ReservedEvent> undeterminedEvents;
 	//Events with multiple times
-	public static ArrayList<ReservedEvent> reservedEvents;
+	public ArrayList<ReservedEvent> reservedEvents;
 	
 	
 	/**Need to implements- selecting of individual types*/
@@ -82,6 +83,71 @@ public class State {
 		
 		tabStatus = Constant.TAB_INCOMPLETE;
 
+	}
+	
+	/**
+	 * Constructs a State which is a clone of the state parameter passed to the constructor
+	 * @param anotherState
+	 */
+	public State(State anotherState){
+		completedEvents = cloneEventArray(anotherState.getCompletedList());
+		incompletedEvents = cloneEventArray(anotherState.getIncompletedList());
+		//Floating events
+		undeterminedEvents = cloneReservedEventArray(anotherState.getUndeterminedList());
+		//Events with multiple times
+		reservedEvents = cloneReservedEventArray(anotherState.getReservedList());
+		
+		
+		/**Need to implements- selecting of individual types*/
+		/*Type is generic for easy access in the UI*/
+		undeterminedSelected = cloneGenericEventArray(anotherState.getUndeterminedSelectedList());
+		completedSelected = cloneGenericEventArray(anotherState.getCompletedSelectedList());
+		incompletedSelected = cloneGenericEventArray(anotherState.getIncompletedSelectedList());
+		filteredSelectedEvent = anotherState.getSingleFilteredEvent();
+		
+		displayedEvents = cloneGenericEventArray(anotherState.getDisplayedEvents());
+		selectedEvents = cloneGenericEventArray(anotherState.getAllSelectedEvents());
+		eventHistory = anotherState.eventHistory;
+		
+		hasErrorMessage = anotherState.hasErrorMessage;
+		selectedEvent = anotherState.getSingleSelectedEvent();
+		
+		
+		//indicates whether an event is selected and if more than one is selected
+	    selectionStatus = anotherState.selectionStatus;
+		filterStatus = anotherState.filterStatus;
+		tabStatus = anotherState.tabStatus;
+		
+		statusMessage = anotherState.statusMessage;
+	}
+	
+	public ArrayList<ReservedEvent> cloneReservedEventArray(ArrayList<ReservedEvent> arrayList){
+		ArrayList<ReservedEvent> newArray = new ArrayList<ReservedEvent>();
+		for(ReservedEvent e: arrayList){
+				newArray.add(e.getClone());
+		}		
+		return newArray;		
+	}
+	
+	public ArrayList<Event> cloneEventArray(ArrayList<Event> arrayList){
+		ArrayList<Event> newArray = new ArrayList<Event>();
+		for(Event e: arrayList){
+				newArray.add(e.getClone());
+		}		
+		return newArray;		
+	}
+		
+	public ArrayList<GenericEvent> cloneGenericEventArray(ArrayList<GenericEvent> arrayList){
+		ArrayList<GenericEvent> newArray = new ArrayList<GenericEvent>();
+		for(GenericEvent e: arrayList){
+			if(e instanceof ReservedEvent){
+				newArray.add( ((ReservedEvent)e).getClone());
+			}
+			if(e instanceof Event){
+				newArray.add( ((Event)e).getClone());
+			}
+		}		
+		return newArray;		
 	}
 	
 	/**
@@ -319,6 +385,22 @@ public class State {
 	
 	public  ArrayList<ReservedEvent> getFloatingList(){
 		return undeterminedEvents;
+	}
+	
+	public  ArrayList<GenericEvent> getCompletedSelectedList(){
+		return completedSelected;
+	}
+	
+	public  ArrayList<GenericEvent> getIncompletedSelectedList(){
+		return incompletedSelected;
+	}
+	
+	public  ArrayList<GenericEvent> getUndeterminedSelectedList(){
+		return undeterminedSelected;
+	}
+	
+	public  ArrayList<GenericEvent> getDisplayedEvents(){
+		return displayedEvents;
 	}
 	
 	public void updateDisplayedEvents(){
