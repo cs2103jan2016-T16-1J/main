@@ -751,7 +751,7 @@ public class Parser {
 			task.setName(name);
 		}
 		
-		if(name == null){
+		if(task.getName().isEmpty() && !isEdit){
 			task = null;
 			return task;
 		}
@@ -920,7 +920,7 @@ public class Parser {
 			task.setName(name);
 		}
 		
-		if(task.getName().isEmpty()){
+		if(task.getName().isEmpty() && !isEdit){
 			task = null;
 			return task;
 		}
