@@ -34,9 +34,11 @@ public class State {
 	
 	
 	/**Need to implements- selecting of individual types*/
-	public ArrayList<ReservedEvent> undeterminedSelected;
-	public ArrayList<Event> completedSelected;
-	public ArrayList<Event> incompletedSelected;
+	/*Type is generic for easy access in the UI*/
+	public ArrayList<GenericEvent> undeterminedSelected;
+	public ArrayList<GenericEvent> completedSelected;
+	public ArrayList<GenericEvent> incompletedSelected;
+	public GenericEvent filteredSelectedEvent;
 	
 	public ArrayList<GenericEvent> displayedEvents;
 	public ArrayList<GenericEvent> selectedEvents;
@@ -48,6 +50,7 @@ public class State {
 	
 	//indicates whether an event is selected and if more than one is selected
 	public int selectionStatus;
+	public int filterStatus;
 	public Status tabStatus;
 	
 	public String statusMessage;
@@ -66,9 +69,10 @@ public class State {
 		
 		
 		//Arrays for selected tabs of each kind of event
-		undeterminedSelected = new ArrayList<ReservedEvent>();
-		completedSelected = new ArrayList<Event>();
-		incompletedSelected = new ArrayList<Event>();
+		undeterminedSelected = new ArrayList<GenericEvent>();
+		completedSelected = new ArrayList<GenericEvent>();
+		incompletedSelected = new ArrayList<GenericEvent>();
+		
 		
 		eventHistory = new Stack<State>();
 		
@@ -80,15 +84,42 @@ public class State {
 
 	}
 	
+	/**
+	 * This method returns 
+	 * @return
+	 */
 	public GenericEvent getSingleSelectedEvent(){
 		return selectedEvent;
+			
 	}
 	
 	public ArrayList<GenericEvent> getAllSelectedEvents(){
-		return filterByTab();
+		return selectedEvents;
+	}
+
+	
+
+	public GenericEvent getSingleFilteredEvent(){
+		return filteredSelectedEvent;
+
 	}
 	
-	public ArrayList<GenericEvent> filterByTab(){
+	public ArrayList<GenericEvent> getAllFilteredEvents(){
+		filterListsByTab();
+		switch (tabStatus){
+			case COMPLETE:
+				return completedSelected;
+			case INCOMPLETE:
+				return incompletedSelected;
+			case UNDETERMINED:
+				return undeterminedSelected;				
+			default:
+				return null;
+		
+		}
+	}
+	
+/*	public ArrayList<GenericEvent> filterByTab(){
 		ArrayList<GenericEvent> filteredEvents = new ArrayList<GenericEvent>();
 		
 		for(GenericEvent e: selectedEvents){
@@ -98,6 +129,42 @@ public class State {
 		}
 		
 		return filteredEvents;
+	}*/
+
+	public void filterListsByTab(){
+		clearFilterArrays();
+		
+		for(GenericEvent e: selectedEvents){
+			filterComplete(e);
+			filterIncomplete(e);
+			filterUndetermined(e);
+		}
+		
+	}
+
+
+	private void filterComplete(GenericEvent e) {
+		if(e.getStatus().equals(Status.COMPLETE)){
+			completedSelected.add(e);
+		}
+	}
+	
+	private void filterIncomplete(GenericEvent e) {
+		if(e.getStatus().equals(Status.INCOMPLETE)){
+			incompletedSelected.add(e);
+		}
+	}
+	
+	private void filterUndetermined(GenericEvent e){
+		if(e.getStatus().equals(Status.UNDETERMINED)){
+			undeterminedSelected.add(e);
+		}
+	}
+	
+	public void clearFilterArrays(){
+		completedSelected.clear();
+		incompletedSelected.clear();
+		undeterminedSelected.clear();
 	}
 	
 	public void clearSelections(){
@@ -105,7 +172,11 @@ public class State {
 			selectedEvents.clear();
 		}
 		selectedEvent = null;
-		setSelectionStatus(NO_EVENTS_SELECTED);;
+		filteredSelectedEvent = null;
+		clearFilterArrays();
+		setSelectionStatus(NO_EVENTS_SELECTED);
+		setFilterStatus(NO_EVENTS_SELECTED);;
+
 	}
 	
 	public boolean isUndeterminedSelected(){
@@ -140,15 +211,41 @@ public class State {
 		return selectionStatus == MULTIPLE_EVENTS_SELECTED;
 	}
 	
+	public boolean hasEventFiltered () {
+		return filterStatus != NO_EVENTS_SELECTED;
+	}
+	
+	public boolean hasSingleEventFiltered () {
+		return filterStatus == ONE_EVENT_SELECTED;
+	}
+	
+	public boolean hasMultipleEventFiltered () {
+		return filterStatus == MULTIPLE_EVENTS_SELECTED;
+	}
+	
 	public void setOneSelectedEvent(GenericEvent event){
 		clearSelections();
 		addToSelectedEvents(event);
 		selectedEvent = event;
-		setSelectionStatus(State.ONE_EVENT_SELECTED);
+		filteredSelectedEvent = event;
+		setSelectionStatus(ONE_EVENT_SELECTED);
+		setFilterStatus(ONE_EVENT_SELECTED);
+
 	}
 	
 	public void addToSelectedEvents(GenericEvent event){
 		selectedEvents.add(event);
+	}
+	
+	public int getFilterStatus(){
+		return filterStatus;
+	}
+	
+	public void setFilterStatus(int filterStatus){
+		if(filterStatus > 2){
+			filterStatus = 2;
+		}
+		this.filterStatus = filterStatus;
 	}
 	
 	public int getSelectionStatus(){
