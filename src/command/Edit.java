@@ -167,8 +167,11 @@ public class Edit implements Command{
 		return original;
 	}
 
-	public Date checkStartTimeParameter(){
-		return ((Event)selectedParameters).getStartTime();
+	public Date checkStartTimeParameter(Date original){
+		if(!((Event)selectedParameters).getStartTime().equals(Constant.MIN_DATE)){
+			return ((Event)selectedParameters).getStartTime();
+		}
+		return original;
 	}
 	
 	public Date checkEndTimeParameter(Date original){
@@ -207,7 +210,7 @@ public class Edit implements Command{
 	}
 	
 	public void updateEvent(){
-		((Event)originalEvent).setStartTime();
+		((Event)originalEvent).setStartTime(((Event)selectedParameters).getStartTime());
 			
 		((Event)originalEvent).setEndTime(checkEndTimeParameter(((Event)originalEvent).getEndTime()));
 		
