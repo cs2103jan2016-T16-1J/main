@@ -112,8 +112,13 @@ public class Parser {
 				oldGenericEvent = (ReservedEvent) task;
 				cmdInterface = new Add(task);
 			} else {
-				oldGenericEvent = (Event) task;
-				cmdInterface = new Add(task);
+				if(((Event) task).getEndTime() == Constant.MAX_DATE){
+					oldGenericEvent = null;
+					cmdInterface = null;
+				} else{
+					oldGenericEvent = (Event) task;
+					cmdInterface = new Add(task);
+				}
 			}	
 		} else if(tempCmd == CommandType.DELETE){
 			Event event = new Event();
