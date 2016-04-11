@@ -36,7 +36,7 @@ import static java.nio.file.StandardCopyOption.*;
 
 /**
  * Storage class- handle storage between state class and local file
- * @@author claudia
+ * @@author claudia zhou
  */
 
 

@@ -17,7 +17,7 @@ import main.ReservedEvent;
 import main.State;
 
 /**
- * @@author claudia
+ * @@author claudia zhou
  */
 
 public class StorageTesting{
