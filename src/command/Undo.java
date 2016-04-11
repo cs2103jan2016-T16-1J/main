@@ -14,10 +14,11 @@ public class Undo implements Command{
 		
 		this.completeState = completeState;
 		
-		if(completeState.eventHistory.isEmpty()){
+		if(completeState.eventHistory.isEmpty() || completeState.eventHistory.size() < 2){
 			return completeState;
 		}
 		
+		completeState.eventHistory.pop();
 		
 		return completeState.eventHistory.pop();
 	}
